@@ -25,7 +25,6 @@ def conectar():
 def registrarse():
     if request.method == "POST":
         nombre_us=request.form["nombre_usuario"]
-        fecha_nc_us=request.form["fecha_nm_usuario"]
         correo_us=request.form["correo_usuario"]
         contraseña_us=request.form["contraseña_usuario"]
         db=conectar()
@@ -33,15 +32,15 @@ def registrarse():
         try:
             validacion=validate_email(correo_us)
             correo_usuario=validacion.email
-            cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo_usuario,))
+            cursor.execute('SELECT * FROM usuarios WHERE correo_usuario = %s', (correo_usuario,))
             if cursor.fetchone():
                 db.close()
                 flash("Correo ya registrado", "warning")
 
                 return redirect(url_for("registrar_usuario"))
             else:
-                valores=(nombre_us, fecha_nc_us, correo_usuario, contraseña_us)
-                sql='INSERT INTO "USUARIOS" (nombre_usuario, fecha_nc_usuario, correo_usuario, contraseña_usuario) VALUES (%s, %s, %s, %s)'
+                valores=(nombre_us, correo_usuario, contraseña_us)
+                sql='INSERT INTO usuarios (nombre_usuario, correo_usuario, contrasena_usuario) VALUES (%s, %s, %s)'
                 cursor.execute(sql,valores)
                 db.commit()
                 db.close()

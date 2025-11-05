@@ -16,17 +16,13 @@
             <h2>Registrarse</h2>
             <form method="post" action="/registrarse" class="formulario_ingresar">
                 <div class="fila_ingresar">
-                    <input class="input_ingresar" name="nombre_usuario" type="text" required placeholder="Nombre De Usuario">
+                    <input class="input_ingresar" name="nombre_usuario" type="text" required placeholder="Nombre De Usuario" maxlength="100">
                 </div>
                 <div class="fila_ingresar">
-                    <label for="fecha_nm_usuario" class="enunciado_fecha_nm_registrarse">Fecha De Nacimiento:</label>
-                    <input class="input_ingresar" name="fecha_nm_usuario" id="fecha_nm_usuario" type="date">
+                    <input class="input_ingresar" name="correo_usuario" type="email" required placeholder="Correo" maxlength="100">
                 </div>
                 <div class="fila_ingresar">
-                    <input class="input_ingresar" name="correo_usuario" type="email" required placeholder="Correo">
-                </div>
-                <div class="fila_ingresar">
-                    <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña">
+                    <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña" maxlength="255">
                 </div>
                 <button type="submit" class="boton_ingresar">Registrarse</button>
                 
