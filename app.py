@@ -11,7 +11,7 @@ def index():
 
 def conectar():
     try:
-        db= ps.connect(
+        db = ps.connect(
             host="localhost",
             user="postgres",
             password="123456",
@@ -39,6 +39,10 @@ def registrarse():
 
                 return redirect(url_for("registrar_usuario"))
             else:
+                if len(contraseña_us) < 8:
+                    db.close()
+                    flash("La contraseña debe tener al menos 8 caracteres", "danger")
+                    return redirect(url_for("registrar_usuario"))
                 valores=(nombre_us, correo_usuario, contraseña_us)
                 sql='INSERT INTO usuarios (nombre_usuario, correo_usuario, contrasena_usuario) VALUES (%s, %s, %s)'
                 cursor.execute(sql,valores)
