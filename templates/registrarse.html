@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" class="html_registrarse">
+    <head>
+        {% include "head.html" %}
+        <title>Registrarse</title>
+    </head>
+    <body class="body_registrarse">
+        <div class="contenido_registrarse">
+        <div class="muñeco_proximamente">
+            <div class="titulo_registrarse">
+            <img src="{{ url_for('static', filename='logo_temporal.jpg')}}">
+            <h1>TeleRin</h1>
+            </div>
+        </div>
+        <div class="registrarse_caja">
+            <h2>Registrarse</h2>
+            <form method="post" action="/registrarse" class="formulario_ingresar">
+                <div class="fila_ingresar">
+                    <input class="input_ingresar" name="nombre_usuario" type="text" required placeholder="Nombre De Usuario">
+                </div>
+                <div class="fila_ingresar">
+                    <label for="fecha_nm_usuario" class="enunciado_fecha_nm_registrarse">Fecha De Nacimiento:</label>
+                    <input class="input_ingresar" name="fecha_nm_usuario" id="fecha_nm_usuario" type="date">
+                </div>
+                <div class="fila_ingresar">
+                    <input class="input_ingresar" name="correo_usuario" type="email" required placeholder="Correo">
+                </div>
+                <div class="fila_ingresar">
+                    <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña">
+                </div>
+                <button type="submit" class="boton_ingresar">Registrarse</button>
+                
+                {% with mensajes = get_flashed_messages(with_categories=true) %}
+                    {% if mensajes %}
+                        {% for categoria, mensaje in mensajes  %}
+                            <div class="fila_ingresar">
+                                <div class="mensaje-ingresar mensaje-{{ categoria }}">{{ mensaje }}</div>
+                            </div>
+                            {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+            </form>
+        </div>
+        </div>
+
+        {% include "footer_inicio.html" %}
+    </body>
+</html>

@@ -1,0 +1,145 @@
+/* Footer */
+
+.footer_inicio {
+    background-color: #36C9C6;
+    margin-top: auto;
+    width: 100%;
+    border-top: 2px solid #000000;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.footer_inicio ul {
+    display: flex;
+    gap: 2.5%;
+    list-style: none; 
+    margin-bottom: 0;
+}
+.footer_inicio a {
+    color: #ED6A5A;
+    text-decoration: none;
+}
+.contenido_registrarse {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+.footer_inicio p {
+    height: min-content;
+    width: max-content;
+    font-size: 10px;
+    gap: 2.5%;
+    margin: 1%;
+    margin-top: 0.5%;
+    margin-left: 3%;
+}
+
+/* Registrarse */
+.muñeco_proximamente img {
+    width: 10%;
+    height: 10%;
+    margin: 0 2.5% 0 5%;
+    border-radius: 10px;
+}
+.muñeco_proximamente h1 {
+    height: max-content;
+    font-size: 70px;
+    margin: 0%;
+}
+.titulo_registrarse {
+    display: flex;
+    align-items: center;
+    height: max-content;
+    margin-top: 2.5%;
+}
+
+.muñeco_proximamente {
+    background-color: transparent;
+    flex: 1;
+}
+.body_registrarse, .html_registrarse {
+    width: 100%;
+    height: 110%;
+    padding: 0;
+    margin: 0;
+    background-color: #DBE1E1;
+    display: flex;
+    flex-direction: column;
+}
+.registrarse_caja {
+    background-color: #9BC1BC;
+    width: 30%;
+    height: 100%;
+    margin: 0;
+    border-left: 5px groove #9bc1bcb9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 50px gray;
+}
+.registrarse_caja h2 {
+    font-size: 200%;
+}
+.fila_ingresar {
+    margin: 0;
+    text-align: center;
+    height: max-content;
+    margin-top: 2%;
+    width: 90%;
+    
+}
+.fila_ingresar input {
+    width: 100%;
+    text-align: center;
+    font-size: 200%;
+    height: 50px;
+    margin: 0;
+    border-radius: 20px;
+}
+.formulario_ingresar {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.boton_ingresar {
+    margin-top: 5%;
+    height: 10%;
+    width: 30%;
+    font-size: 100%;
+    border-radius: 20px;
+    background-color: #E6EBE0;
+}
+.boton_ingresar:hover {
+    background-color: #9FE1BC;
+}
+.mensaje-ingresar {
+    margin-top: 1%;
+    align-self: center;
+    background-color: transparent;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 10px;
+    font-size: 200%;
+}
+.enunciado_fecha_nm_registrarse {
+    color:black;
+
+}
+.mensaje-warning {
+    border-color:#FF0000;
+    color: #FF0000;
+}
+.mensaje-success {
+    border-color:#00FF00;
+    color: #00FF00;
+}
+.mensaje-danger {
+    border-color:#FF8000;
+    color: #FF8000;
+}
+
+
+/* Iniciar Secion */
+
