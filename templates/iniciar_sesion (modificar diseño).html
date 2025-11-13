@@ -1,8 +1,8 @@
-<!DOCTYPE html> 
-<html lang="en" class="html_registrarse">
+<!DOCTYPE html>
+<html lang="en">
     <head>
         {% include "head.html" %}
-        <title>Registrarse</title>
+        <title>Iniciar Sesion</title>
     </head>
     <body class="body_registrarse">
         <div class="contenido_registrarse">
@@ -10,19 +10,16 @@
             <div class="titulo_registrarse">
             <img src="{{ url_for('static', filename='logo_temporal.jpg')}}">
             <h1>TeleRin</h1>
-        </div>
+            </div>
         </div>
         <div class="registrarse_caja">
             <h2>Registrarse</h2>
-            <form method="post" action="/registrarse" class="formulario_ingresar">
+            <form method="post" action="/inicio_usuario" class="formulario_ingresar">
                 <div class="fila_ingresar">
-                    <input class="input_ingresar" name="nombre_usuario" type="text" required placeholder="Nombre De Usuario" maxlength="100">
+                    <input class="input_ingresar" name="correo_usuario" id="correo_usuario" type="email" required placeholder="Correo" maxlength="100">
                 </div>
                 <div class="fila_ingresar">
-                    <input class="input_ingresar" name="correo_usuario" type="email" required placeholder="Correo" maxlength="100">
-                </div>
-                <div class="fila_ingresar">
-                    <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
+                    <input class="input_ingresar" name="contrasena_usuario" id="contraseña_usuario"  required placeholder="Contraseña" maxlength="255" minlength="8">
                 </div>
                 <button type="submit" class="boton_ingresar">Registrarse</button>
                 
