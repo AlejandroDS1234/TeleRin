@@ -1,20 +1,20 @@
 <!DOCTYPE html> 
-<html lang="en" class="html_registrarse">
+<html lang="en">
     <head>
         {% include "head.html" %}
         <title>Registrarse</title>
     </head>
-    <body class="body_registrarse">
-        <div class="contenido_registrarse">
+    <body>
+        <div class="contenido">
         <div class="muñeco_proximamente">
-            <div class="titulo_registrarse">
+            <div class="titulo">
             <img src="{{ url_for('static', filename='logo_temporal.jpg')}}">
             <h1>TeleRin</h1>
         </div>
         </div>
-        <div class="registrarse_caja">
+        <div class="ingresar_datos">
             <h2>Registrarse</h2>
-            <form method="post" action="/registrarse" class="formulario_ingresar">
+            <form method="post" action="/registrarse" class="formulario">
                 <div class="fila_ingresar">
                     <input class="input_ingresar" name="nombre_usuario" type="text" required placeholder="Nombre De Usuario" maxlength="100">
                 </div>
@@ -24,13 +24,13 @@
                 <div class="fila_ingresar">
                     <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
                 </div>
-                <button type="submit" class="boton_ingresar">Registrarse</button>
+                <button type="submit" class="boton">Registrarse</button>
                 
                 {% with mensajes = get_flashed_messages(with_categories=true) %}
                     {% if mensajes %}
                         {% for categoria, mensaje in mensajes  %}
                             <div class="fila_ingresar">
-                                <div class="mensaje-ingresar mensaje-{{ categoria }}">{{ mensaje }}</div>
+                                <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
                             </div>
                             {% endfor %}
                     {% endif %}
@@ -40,6 +40,6 @@
         </div>
         </div>
 
-        {% include "footer_inicio.html" %}
+        {% include "registrarse/footer_inicio.html" %}
     </body>
 </html>

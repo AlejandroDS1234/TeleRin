@@ -3,7 +3,9 @@ import psycopg2 as ps
 from email_validator import validate_email, EmailNotValidError
 from itsdangerous import URLSafeTimedSerializer
 import smtplib
+import random
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
@@ -62,11 +64,40 @@ def registrarse():
 
 @app.route("/registrar_usuario")
 def registrar_usuario():
-    return render_template("registrarse.html")
+    return render_template("registrarse/registrarse.html")
 
 @app.route("/iniciar_sesion")
 def iniciar_sesion():
-    return render_template("iniciar_sesion.html")
+    return render_template("iniciar_sesion/iniciar_sesion.html")
+
+def correo_validacion(correo):
+    emisor="telerincontac@gmail.com"
+    verficacion="emej vpkm srqe rkzn"
+    server="smtp.gmail.com"
+    port=587
+    receptor=correo
+    codigo=random.randint(100000,999999)
+    mensaje=MIMEMultipart()
+    mensaje["From"]=emisor
+    mensaje["To"]=receptor
+    mensaje["Subject"]="Codigo de verificacion"
+    cuerpo=f""" <!DOCTYPE html>
+                <html lang="en">
+                <body>
+                <h1>Codigo De Verificacion</h1>
+                <p>Tu codigo de verificacion es: {codigo}</p>
+                </body>
+                </html> """
+    mensaje.attach(MIMEText(cuerpo, "html"))
+    try:
+        with smtplib.SMTP(server, port) as smtp:
+            smtp.starttls()
+            smtp.login(emisor, verficacion)
+            smtp.send_message(mensaje)
+            return codigo
+    except Exception as e:
+        return False
+            
 
 @app.route("/inicio_usuario", methods=["GET", "POST"])
 def inicio_usuario():
@@ -78,14 +109,30 @@ def inicio_usuario():
         cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
         usuario = cursor.fetchone()
         if usuario:
-            if usuario[3]==contraseña:
-                return render_template("inicio.html", usuario=usuario) 
+            if usuario[2]==contraseña:
+                codigo=correo_validacion(correo)
+                if codigo:
+                    return render_template("iniciar_sesion/codigo_verificacion.html", usuario=usuario, codigo=codigo)
+                flash("No se pudo enviar el codigo, intente despues", "danger")
+                return redirect(url_for("codigo_verificacion.html"))
             flash("Contraseña incorrecta", "danger")
             return redirect(url_for("iniciar_sesion"))
         flash("Coreo no encontrado", "danger")
         return redirect(url_for("iniciar_sesion"))
     return "error"
 
+@app.route("/verificar_codigo", methods=["GET","POST"])
+def verificar_codigo():
+    if request.method=="POST":
+        codigo_us=request.form["codigo_usuario"]
+        codigo=request.form["codigo_original"]
+        usuario=request.form["usuario"]
+        if codigo_us==codigo:
+            return render_template("inicio.html", usuario=usuario)
+        else:
+            flash("Codigo incorrecto", "danger")
+            return redirect(url_for("iniciar_sesion"))
+    return "error"
 
 if __name__=="__main__":
     app.run(debug=True)
