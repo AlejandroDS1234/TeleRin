@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 import psycopg2 as ps
 from email_validator import validate_email, EmailNotValidError
 from itsdangerous import URLSafeTimedSerializer
@@ -6,6 +6,7 @@ import smtplib
 import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import psycopg2.extras
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
@@ -105,14 +106,16 @@ def inicio_usuario():
         correo=request.form["correo_usuario"]
         contraseña=request.form.get('contrasena_usuario')
         db=conectar()
-        cursor=db.cursor()
-        cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute('SELECT contraseña_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
         usuario = cursor.fetchone()
         if usuario:
-            if usuario[2]==contraseña:
+            if usuario["contraseña_usuario"]==contraseña:
                 codigo=correo_validacion(correo)
                 if codigo:
-                    return render_template("iniciar_sesion/codigo_verificacion.html", usuario=usuario, codigo=codigo)
+                    session["codigo_verificacion"]=str(codigo)
+                    session["correo_usuario"]=correo
+                    return render_template("iniciar_sesion/codigo_verificacion.html")
                 flash("No se pudo enviar el codigo, intente despues", "danger")
                 return redirect(url_for("codigo_verificacion.html"))
             flash("Contraseña incorrecta", "danger")
@@ -125,9 +128,15 @@ def inicio_usuario():
 def verificar_codigo():
     if request.method=="POST":
         codigo_us=request.form["codigo_usuario"]
-        codigo=request.form["codigo_original"]
-        usuario=request.form["usuario"]
+        codigo=session.get("codigo_verificacion")
+        correo_us=session.get("correo_usuario")
         if codigo_us==codigo:
+            db=conectar()
+            cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            cursor.execute('SELECT nombre_usuario, correo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo_us,))
+            usuario=cursor.fetchone()
+            cursor.close()
+            db.close()
             return render_template("inicio.html", usuario=usuario)
         else:
             flash("Codigo incorrecto", "danger")
