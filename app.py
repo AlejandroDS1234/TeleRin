@@ -7,6 +7,7 @@ import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import psycopg2.extras
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
@@ -35,11 +36,11 @@ def registrarse():
         correo_us=request.form["correo_usuario"]
         contraseña_us=request.form["contraseña_usuario"]
         db=conectar()
-        cursor=db.cursor()
+        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         try:
             validacion=validate_email(correo_us)
             correo_usuario=validacion.email
-            cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo_usuario,))
+            cursor.execute('SELECT correo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo_usuario,))
             if cursor.fetchone():
                 cursor.close()
                 db.close()
@@ -51,6 +52,7 @@ def registrarse():
                     db.close()
                     flash("La contraseña debe tener al menos 8 caracteres", "danger")
                     return redirect(url_for("registrar_usuario"))
+                contraseña_us=generate_password_hash(contraseña_us)
                 valores=(nombre_us, correo_usuario, contraseña_us)
                 sql='INSERT INTO "USUARIOS" (nombre_usuario, correo_usuario, contraseña_usuario) VALUES (%s, %s, %s)'
                 cursor.execute(sql,valores)
@@ -109,18 +111,16 @@ def inicio_usuario():
         cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('SELECT contraseña_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
         usuario = cursor.fetchone()
-        if usuario:
-            if usuario["contraseña_usuario"]==contraseña:
-                codigo=correo_validacion(correo)
-                if codigo:
-                    session["codigo_verificacion"]=str(codigo)
-                    session["correo_usuario"]=correo
-                    return render_template("iniciar_sesion/codigo_verificacion.html")
-                flash("No se pudo enviar el codigo, intente despues", "danger")
-                return redirect(url_for("codigo_verificacion.html"))
-            flash("Contraseña incorrecta", "danger")
-            return redirect(url_for("iniciar_sesion"))
-        flash("Coreo no encontrado", "danger")
+        if usuario and check_password_hash(usuario["contraseña_usuario"], contraseña):
+
+            codigo=correo_validacion(correo)
+            if codigo:
+                session["codigo_verificacion"]=str(codigo)
+                session["correo_usuario"]=correo
+                return render_template("iniciar_sesion/codigo_verificacion.html")
+            flash("No se pudo enviar el codigo, intente despues", "danger")
+            return redirect(url_for("codigo_verificacion.html"))
+        flash("Contraseña o correo incorrectos", "danger")
         return redirect(url_for("iniciar_sesion"))
     return "error"
 
