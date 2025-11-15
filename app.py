@@ -8,12 +8,14 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import psycopg2.extras
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
 
 @app.route("/")
 def index():
+    session.clear()
     return render_template("index.html")
 
 def conectar():
@@ -32,7 +34,7 @@ def conectar():
 @app.route("/registrarse", methods=["GET", "POST"])
 def registrarse():
     if request.method == "POST":
-        nombre_us=request.form["nombre_usuario"]
+        nombre_us=request.form["nombre_usuario"]#
         correo_us=request.form["correo_usuario"]
         contraseña_us=request.form["contraseña_usuario"]
         db=conectar()
@@ -57,9 +59,13 @@ def registrarse():
                 sql='INSERT INTO "USUARIOS" (nombre_usuario, correo_usuario, contraseña_usuario) VALUES (%s, %s, %s)'
                 cursor.execute(sql,valores)
                 db.commit()
-                cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo_usuario,))
-                usuario=cursor.fetchone()
-                return render_template("inicio.html", usuario=usuario)
+                codigo=correo_validacion(correo_usuario)
+                if codigo:
+                    session["codigo_verificacion"]=str(codigo)
+                    session["correo_usuario"]=correo_usuario
+                    return redirect(url_for("mandar_codigo"))
+                flash("No se pudo enviar el codigo, intente despues", "danger")
+                return redirect(url_for("mandar_codigo"))
         except EmailNotValidError:
             flash("Email no valido", "danger")
             return redirect(url_for("registrar_usuario"))
@@ -83,7 +89,7 @@ def correo_validacion(correo):
     mensaje=MIMEMultipart()
     mensaje["From"]=emisor
     mensaje["To"]=receptor
-    mensaje["Subject"]="Codigo de verificacion"
+    mensaje["Subject"]=f"Codigo de verificacion TeleRin: {codigo}"
     cuerpo=f""" <!DOCTYPE html>
                 <html lang="en">
                 <body>
@@ -100,6 +106,10 @@ def correo_validacion(correo):
             return codigo
     except Exception as e:
         return False
+    
+@app.route("/mandar_codigo")
+def mandar_codigo():
+    return render_template("iniciar_sesion/codigo_verificacion.html")
             
 
 @app.route("/inicio_usuario", methods=["GET", "POST"])
@@ -112,16 +122,15 @@ def inicio_usuario():
         cursor.execute('SELECT contraseña_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
         usuario = cursor.fetchone()
         if usuario and check_password_hash(usuario["contraseña_usuario"], contraseña):
-
             codigo=correo_validacion(correo)
             if codigo:
                 session["codigo_verificacion"]=str(codigo)
                 session["correo_usuario"]=correo
-                return render_template("iniciar_sesion/codigo_verificacion.html")
+                return redirect(url_for("mandar_codigo"))
             flash("No se pudo enviar el codigo, intente despues", "danger")
-            return redirect(url_for("codigo_verificacion.html"))
+            return redirect(url_for("mandar_codigo"))
         flash("Contraseña o correo incorrectos", "danger")
-        return redirect(url_for("iniciar_sesion"))
+        return redirect(url_for("iniciar_sesion")) 
     return "error"
 
 @app.route("/verificar_codigo", methods=["GET","POST"])
@@ -137,11 +146,55 @@ def verificar_codigo():
             usuario=cursor.fetchone()
             cursor.close()
             db.close()
-            return render_template("inicio.html", usuario=usuario)
+            session.pop("codigo_verificacion", None)
+            return redirect(url_for("inicio"))
         else:
             flash("Codigo incorrecto", "danger")
-            return redirect(url_for("iniciar_sesion"))
+            return redirect(url_for("mandar_codigo"))
     return "error"
+
+@app.route("/inicio")
+def inicio():
+    usuario = session.get("correo_usuario")
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT nombre_usuario, correo_usuario, foto_perfil_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (usuario,))
+    usuario=cursor.fetchone()
+    cursor.close()
+    db.close()
+    return render_template("inicio.html", usuario=usuario, imagen_url=usuario["foto_perfil_usuario"])
+
+@app.route("/guardar_foto", methods=["POST"])
+def guardar_foto():
+    if request.method!="POST":
+        flash("Metodo no permitido", "danger")
+        return redirect(url_for("inicio"))
+    
+    direccion_proyecto=os.getcwd()
+    usuario=session.get("correo_usuario")
+    if 'imagen' not in request.files:
+        flash("No se seleccionó ningún archivo", "danger")
+        return redirect(url_for("inicio"))
+    
+    file = request.files['imagen']
+    
+    if file.filename == '':
+        flash("No se seleccionó ningún archivo", "danger")
+        return redirect(url_for("inicio"))
+    
+    if file:
+        
+        ruta_guardado = os.path.join('static', 'perfil', f"{usuario}_perfil.jpg")
+        ruta_completa= os.path.join(direccion_proyecto, ruta_guardado)
+        file.save(ruta_completa)
+        flash("Foto de perfil actualizada", "success")
+        db=conectar()
+        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
+        db.commit()
+        cursor.close()
+        db.close()
+        return redirect(url_for("inicio"))
 
 if __name__=="__main__":
     app.run(debug=True)

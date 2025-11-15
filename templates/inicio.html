@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% include "head.html" %}
     <title>inicio</title>
 </head>
 <body>
-    <h1>Hi {{ usuario["correo_usuario"] }}</h1>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/rLZTANR0-fc?si=HNx__gsYH2nZC3mD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    <h1>Hi {{ usuario["nombre_usuario"] }}</h1>
+
+    {% if imagen_url %}
+        <img src="{{ imagen_url }}" alt="Imagen subida">
+    {% endif %}
+    <form method="post" action="/guardar_foto" enctype="multipart/form-data">
+        <label for="imagen">Selecciona una foto para subir:</label>
+        <input type="file" name="imagen" id="imagen" accept="image/*" required>
+        <button type="submit">Subir Foto</button>
+    </form>
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+            {% for categoria, mensaje in mensajes  %}
+                <div class="fila_ingresar">
+                    <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
+                </div>
+                {% endfor %}
+        {% endif %}
+    {% endwith %}
     {% include "registrarse/footer_inicio.html" %}
 </body>
 </html>
