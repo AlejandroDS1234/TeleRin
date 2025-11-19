@@ -1,13 +1,29 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    </head>
-    <body>
-    </body>
-</html>
+<header class="header_tt">
+    <div class="header">
+        <div class="header usuario_logo_header">
+            <div class="menu_usuario_caja" id="foto_perfil_caja">
+                {% if imagen_url %}
+                    <img src="{{ imagen_url }}" alt="Imagen subida" class="menu_usuario">
+                {% endif %}
+            </div>
+            <div class="mas_opciones">
+                <div class="barra"></div>
+                <div class="barra"></div>
+                <div class="barra"></div>
+            </div>
+        </div>
+        <div class=" header marca">
+            <h1 class="titulo_marca">TeleRin</h1>
+            <img src="{{ url_for('static', filename='logo_temporal.jpg')}}" class="logo_header">
+        </div>
+    </div>
+    <div class="secciones">
+        <nav>
+            <ul>
+                <li>seccion1</li>
+                <li>seccion2</li>
+                <li>seccion3</li>
+            </ul>
+        </nav>
+    </div>
+</header>

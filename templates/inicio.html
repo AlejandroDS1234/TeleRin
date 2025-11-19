@@ -5,25 +5,51 @@
     <title>inicio</title>
 </head>
 <body>
-    <h1>Hi {{ usuario["nombre_usuario"] }}</h1>
+    {% include "header.html" %}
+    <!-- <div class="ingresar_info_usuario">
+        <div class="parte1_menu">
+            <div class="menu_usuario_caja foto_perfil_caja" id="foto_cerrar">
+                {% if imagen_url %}
+                    <img src="{{ imagen_url }}" alt="Imagen subida" class="menu_usuario foto_perfil">
+                {% endif %}
+            </div>
+            <div class="info_nombres">
+                <h2 class="nombre"> {{ usuario["nombre_usuario"] }} </h2>
+                <p class="correo"> {{ usuario["correo_usuario"] }} </p>
+            </div>
+            <div class="cerrar"><button class="cerrar_ventana">X</button></div>
+        </div>
+        <div class="informacion_adicional">
+            aa
+        </div>
+    </div> -->
+    <dialog class="foto_mostrar" id="foto_mostrar">
+        <div>
+            <button class="cerrar_ventana" id="cerrar_ventana">X</button>
+        </div>
+        <div>
+            <img src="{{ imagen_url }}" alt="Imagen subida" class="foto_perfil">
+        </div>
+        <form method="post" action="/guardar_foto" enctype="multipart/form-data">
+            <label for="imagen">Selecciona una foto para subir:</label>
+            <input type="file" name="imagen" id="imagen" accept="image/*" required>
+            <button type="submit">Subir Foto</button>
+        </form>
+    </dialog>
 
-    {% if imagen_url %}
-        <img src="{{ imagen_url }}" alt="Imagen subida">
-    {% endif %}
-    <form method="post" action="/guardar_foto" enctype="multipart/form-data">
-        <label for="imagen">Selecciona una foto para subir:</label>
-        <input type="file" name="imagen" id="imagen" accept="image/*" required>
-        <button type="submit">Subir Foto</button>
-    </form>
-    {% with mensajes = get_flashed_messages(with_categories=true) %}
-        {% if mensajes %}
-            {% for categoria, mensaje in mensajes  %}
-                <div class="fila_ingresar">
-                    <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
-                </div>
-                {% endfor %}
-        {% endif %}
-    {% endwith %}
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes  %}
+                    <div class="fila_ingresar">
+                        <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
+                    </div>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    <h1>Hi {{ usuario["nombre_usuario"] }}</h1>
     {% include "registrarse/footer_inicio.html" %}
 </body>
+    <!-- <script src="{{ url_for('static', filename='perfil/funciones.js') }}"></script> -->
+</html>
 </html>

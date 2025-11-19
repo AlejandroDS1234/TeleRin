@@ -15,7 +15,6 @@ app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
 
 @app.route("/")
 def index():
-    session.clear()
     return render_template("index.html")
 
 def conectar():
@@ -153,16 +152,21 @@ def verificar_codigo():
             return redirect(url_for("mandar_codigo"))
     return "error"
 
+
 @app.route("/inicio")
 def inicio():
     usuario = session.get("correo_usuario")
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT foto_perfil_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (usuario,))
+    usuario_ = cursor.fetchone()
+    if usuario_["foto_perfil_usuario"] == None:
+        ruta_guardado="static\perfil\predefinido.jpg"
+        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
     cursor.execute('SELECT nombre_usuario, correo_usuario, foto_perfil_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (usuario,))
-    usuario=cursor.fetchone()
-    cursor.close()
-    db.close()
-    return render_template("inicio.html", usuario=usuario, imagen_url=usuario["foto_perfil_usuario"])
+    usuario_ = cursor.fetchone()
+    session['imagen_url']=usuario_["foto_perfil_usuario"]
+    return render_template("inicio.html", usuario=usuario_, imagen_url=session.get("imagen_url"))
 
 @app.route("/guardar_foto", methods=["POST"])
 def guardar_foto():
