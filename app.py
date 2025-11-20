@@ -9,6 +9,7 @@ from email.mime.multipart import MIMEMultipart
 import psycopg2.extras
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import socket
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
@@ -16,6 +17,28 @@ app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
 @app.route("/")
 def index():
     return render_template("index.html")
+
+def guardar_ip(correo):
+    ip_local = socket.gethostbyname(socket.gethostname())
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+    ip=cursor.fetchone()
+    if check_password_hash(ip["ip_usuario"], ip_local)==False:
+        ip_local=generate_password_hash(ip_local)
+        cursor.execute('UPDATE "USUARIOS" SET ip_usuario = %s WHERE correo_usuario = %s', (ip_local, correo))
+        db.commit()
+        db.close()
+        cursor.close()
+        codigo=correo_validacion(correo)
+        if codigo:
+            session["codigo_verificacion"]=str(codigo)
+            session["correo_usuario"]=correo
+            return redirect(url_for("mandar_codigo"))
+        flash("No se pudo enviar el codigo, intente despues", "danger")
+        return redirect(url_for("mandar_codigo"))
+    session["correo_usuario"]=correo
+    return redirect(url_for("inicio"))
 
 def conectar():
     try:
@@ -121,13 +144,7 @@ def inicio_usuario():
         cursor.execute('SELECT contraseña_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
         usuario = cursor.fetchone()
         if usuario and check_password_hash(usuario["contraseña_usuario"], contraseña):
-            codigo=correo_validacion(correo)
-            if codigo:
-                session["codigo_verificacion"]=str(codigo)
-                session["correo_usuario"]=correo
-                return redirect(url_for("mandar_codigo"))
-            flash("No se pudo enviar el codigo, intente despues", "danger")
-            return redirect(url_for("mandar_codigo"))
+            return guardar_ip(correo)
         flash("Contraseña o correo incorrectos", "danger")
         return redirect(url_for("iniciar_sesion")) 
     return "error"
