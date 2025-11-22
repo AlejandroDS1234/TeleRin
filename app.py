@@ -216,6 +216,16 @@ def guardar_foto():
         cursor.close()
         db.close()
         return redirect(url_for("inicio"))
+    
+@app.route("/paises")
+def paises():
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT id_pais, nombre_pais FROM "PAISES"')
+    paises=cursor.fetchall()
+    cursor.close()
+    db.close()
+    return paises
 
 if __name__=="__main__":
     app.run(debug=True)

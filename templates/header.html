@@ -6,6 +6,7 @@
                     <img src="{{ imagen_url }}" alt="Imagen subida" class="menu_usuario">
                 {% endif %}
             </div>
+            
             <div class="mas_opciones">
                 <div class="barra"></div>
                 <div class="barra"></div>
@@ -27,3 +28,28 @@
         </nav>
     </div>
 </header>
+<div class="ingresar_info_usuario" aria-labelledby="dropdownMenuButton2">
+    <div class="cerrar"><img src="{{ url_for('static', filename='iconos/x.png')}}" alt="Cerrar" class="cerrar_ventana" type="button"></div>
+    <div class="parte1_menu">
+        <div class="menu_usuario_caja foto_perfil_caja" id="foto_cerrar">
+            {% if imagen_url %}
+                <img src="{{ imagen_url }}" alt="Imagen subida" class="menu_usuario foto_perfil">
+            {% endif %}
+        </div>
+        <div class="info_nombres">
+            <h2> {{ usuario["nombre_usuario"] }} </h2>
+            <p> {{ usuario["correo_usuario"] }} </p>
+        </div> 
+    </div>
+    <div class="informacion_adicional">
+        <form action="#" method="post">
+
+            <select id="pais" class="select2">
+                <option value="{{ id_pais_actual }}" selected>{{ nombre_pais_actual }}</option>
+                {% for id_pais, nombre_pais in paises %}
+                    <option value="{{ id_pais }}">{{ nombre_pais }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+</div>
