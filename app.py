@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 import psycopg2 as ps
 from email_validator import validate_email, EmailNotValidError
 from itsdangerous import URLSafeTimedSerializer
@@ -217,15 +217,26 @@ def guardar_foto():
         db.close()
         return redirect(url_for("inicio"))
     
-@app.route("/paises")
+@app.route("/api/paises")
 def paises():
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('SELECT id_pais, nombre_pais FROM "PAISES"')
+    cursor.execute('SELECT id_pais, nombre_pais FROM paises ORDER BY id_pais')
     paises=cursor.fetchall()
-    cursor.close()
-    db.close()
-    return paises
+
+    usuario=session.get("correo_usuario")
+    cursor.execute('SELECT id_pais FROM "USUARIOS" WHERE correo_usuario= %s', (usuario,))
+    pais_usuario_id=cursor.fetchone()
+
+    cursor.execute('SELECT id_pais, nombre_pais FROM paises WHERE id_pais = %s', (pais_usuario_id["id_pais"],))
+    pais_usuario=cursor.fetchone()
+
+    lista_paises_mandar={
+        "pais_usuario": pais_usuario,
+        "paises":paises
+    }
+
+    return jsonify(lista_paises_mandar)
 
 if __name__=="__main__":
     app.run(debug=True)

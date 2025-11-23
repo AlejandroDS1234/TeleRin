@@ -40,8 +40,10 @@
 .menu_usuario_caja {
     margin: 2vh;
     padding: 0%;
-    height: 12vh;
-    min-width: 12vh;
+    max-height: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    min-width: 80px;
     box-sizing: border-box;
     /* background-color: #36C9C6; */
 }
@@ -148,7 +150,7 @@
 }
 body, html {
     width: 100%;
-    height: 110%;
+    height: 110vh;
     padding: 0;
     margin: 0;
     background-color: #DBE1E1;
@@ -241,11 +243,12 @@ body, html {
     bottom: 0;
     border-right: 3px solid #000;
     margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .cerrar {
-    display: flex;
-    justify-content: right;
+    text-align: right;
     /* background-color: #FF0000; */
     width: 100%;
 }
@@ -259,17 +262,11 @@ body, html {
 
 .cerrar_ventana {
     width: 10%;
-    height: 25%;
+    height: 80%;
     /* background-color:#36C9C6; */
-    font-size: 100%;
-    border: none;
     cursor: pointer;
-    font-weight: 700;
-    transition: font-weight .2s linear;
-    padding: 0%;
     margin: 1vh;
     margin-left: auto;
-    
 }
 
 .cerrar_ventana:hover {
