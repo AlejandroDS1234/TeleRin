@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include "head.html" %}
+    <script src="./tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+    <title>Historias</title>
+</head>
+<body>
+    {% include "header.html" %}
+    <form class="historia" method="POST" action="/guardar">
+        <textarea id="editor" name="Historias">
+            crea tus propias historias
+        </textarea>
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+    <script src="{{ url_for('static', filename='perfil/funciones.js') }}"></script> 
+</html>
+</html>

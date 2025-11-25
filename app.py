@@ -238,5 +238,13 @@ def paises():
 
     return jsonify(lista_paises_mandar)
 
+@app.route("/guardar", methods=["POST"])
+def guardar():
+    contenido = request.form.get("historia")
+    db=conectar()
+    cursor = db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute()
+    #falta finalizar la incersion de la historia a la columna contenido de la tabla usuarios
+
 if __name__=="__main__":
     app.run(debug=True)
