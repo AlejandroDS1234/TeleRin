@@ -24,7 +24,8 @@ def guardar_ip(correo):
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
     ip=cursor.fetchone()
-    if check_password_hash(ip["ip_usuario"], ip_local)==False:
+
+    if ip["ip_usuario"] == None or check_password_hash(ip["ip_usuario"], ip_local)==False:
         ip_local=generate_password_hash(ip_local)
         cursor.execute('UPDATE "USUARIOS" SET ip_usuario = %s WHERE correo_usuario = %s', (ip_local, correo))
         db.commit()
@@ -163,6 +164,7 @@ def verificar_codigo():
             cursor.close()
             db.close()
             session.pop("codigo_verificacion", None)
+            
             return redirect(url_for("inicio"))
         else:
             flash("Codigo incorrecto", "danger")
@@ -173,13 +175,7 @@ def verificar_codigo():
 @app.route("/inicio")
 def inicio():
     usuario = session.get("correo_usuario")
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('SELECT foto_perfil_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (usuario,))
-    usuario_ = cursor.fetchone()
-    if usuario_["foto_perfil_usuario"] == None:
-        ruta_guardado="static\perfil\predefinido.jpg"
-        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
+    guardar_ip(usuario)
     actualizar_sesion(usuario)
     return render_template("inicio.html")
 
@@ -275,6 +271,11 @@ def actualizar_info():
 def actualizar_sesion(correo):
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+    usuario_ = cursor.fetchone()
+    if usuario_["foto_perfil_usuario"] == None:
+        ruta_guardado="static\perfil\predefinido.jpg"
+        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
     cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
     usuario_ = cursor.fetchone()
     session['usuario']=usuario_
