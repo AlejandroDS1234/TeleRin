@@ -1,17 +1,22 @@
 <header class="header_tt">
     <div class="header">
-        <div class="header usuario_logo_header">
-            <div class="menu_usuario_caja" id="foto_perfil_caja">
-                {% if imagen_url %}
-                    <img src="{{ imagen_url }}" alt="Imagen subida" class="menu_usuario">
-                {% endif %}
-            </div>
-            
-            <div class="mas_opciones">
-                <div class="barra"></div>
-                <div class="barra"></div>
-                <div class="barra"></div>
-            </div>
+        
+        <div class="menu_usuario_caja" id="foto_perfil_caja">
+            <img src="{{ session['usuario']['foto_perfil_usuario'] }}" alt="Imagen subida" class="menu_usuario">
+        </div>
+        
+        <div class="mas_opciones">
+            <img src="{{ url_for('static', filename='iconos/menu.png')}}" class="menu_mas_opciones">
+        </div>
+        
+        <div class="buscar_caja fin">
+            <input class="buscar" placeholder="Buscar Libros">
+            <button class="boton">Buscar</button>
+        </div>
+        <div class="buscar_caja">
+            <input type="text" class="buscar" placeholder="Buscar usuario" id="input-datalist" list="list-timezone">
+            <button class="boton">Buscar</button>
+            <div class="buscar usuarios_encontrados"></div>
         </div>
         <div class=" header marca">
             <h1 class="titulo_marca">TeleRin</h1>
@@ -28,23 +33,68 @@
         </nav>
     </div>
 </header>
-<div class="ingresar_info_usuario" >
-    <div class="cerrar"><img src="{{ url_for('static', filename='iconos/x.png')}}" alt="Cerrar" class="cerrar_ventana" type="button"></div>
+<div class="ingresar_info_usuario ocultar" id="ingresar_info_usuario">
+    <div class="cerrar" ><img id="cerrar_ventana" src="{{ url_for('static', filename='iconos/x.png')}}" alt="Cerrar" class="cerrar_ventana" type="button" ></div>
     <div class="parte1_menu">
         <div class="menu_usuario_caja foto_perfil_caja" id="foto_perfil_cambiar">
-            {% if imagen_url %}
-                <img src="{{ imagen_url }}" alt="Foto de perfil" class="menu_usuario foto_perfil">
-            {% endif %}
+            <img src="{{ session['usuario']['foto_perfil_usuario'] }}" alt="Foto de perfil" class="menu_usuario foto_perfil">
         </div>
+        <dialog class="foto_mostrar" id="foto_mostrar">
+            <div class="fila">
+                <div class="cerrar">
+                    <img  src="{{ url_for('static', filename='iconos/x.png')}}" alt="Cerrar" class="cerrar_ventana" type="button" id="cerrar_ventana_editar_foto">
+                </div>
+            </div>
+            <div class="fila mostrar_foto_perfil">
+                <img src="{{ session['usuario']['foto_perfil_usuario'] }}" alt="Imagen subida" class=" foto_perfil_mostrada">
+            </div>
+            <form method="post" action="/guardar_foto" enctype="multipart/form-data">
+                <div class="fila">
+                    <label for="imagen">Selecciona una foto para subir:</label>
+                    <input type="file" name="imagen" id="imagen" accept="image/*" required>
+                </div>
+                <div>
+                    <button class="boton editar" type="submit">Subir Foto</button>
+                </div>
+            </form>
+        </dialog>
         <div class="info_nombres">
-            <h2> {{ usuario["nombre_usuario"] }} </h2>
-            <p> {{ usuario["correo_usuario"] }} </p>
+            <h2> {{ session["usuario"]["nombre_usuario"] }} </h2>
+            <p> {{ session["usuario"]["correo_usuario"] }} </p>
         </div> 
     </div>
     <div class="informacion_adicional">
-        <form action="#" method="post">
-            <select id="pais" class="select2">
-            </select>
+        <form method="post" action="/actulizar_info" class="formulario_datos">
+            <div class="fila">
+                <label for="nombre_usuario">Editar nombre de usuario:</label>
+                <input name="nombre_usuario" id="nombre_usuario" type="text" value="{{ session['usuario']['nombre_usuario'] }}" placeholder="nombre de usuario" maxlength="100"> 
+            </div>
+            <div class="fila juntos">
+                <div class="sub_fila">
+                    <label for="pais">Pais:</label>
+                    <select name="pais" id="pais" class="form-select"></select>
+                </div>
+                <div class="sub_fila">
+                    <label for="genero">Genero:</label>
+                    <select name="genero" id="genero" class="form-select"></select>
+                </div>
+            </div>
+            <div class="fila">
+                <label for="descripcion">Descripcion:</label>
+                <textarea name="descripcion" id="descripcion" placeholder="descripcion" maxlength="225">{{ session['usuario']['descripcion_personal'] }}</textarea>
+            </div>
+            <div class="fila"><button type="submit" class="boton editar">Editar</button></div>
         </form>
+        <div class="fila mensaje_fila">
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    {% for categoria, mensaje in mensajes  %}
+                        <div class="fila_ingresar">
+                            <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
+                        </div>
+                        {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
     </div>
 </div>

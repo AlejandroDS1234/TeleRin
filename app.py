@@ -180,28 +180,26 @@ def inicio():
     if usuario_["foto_perfil_usuario"] == None:
         ruta_guardado="static\perfil\predefinido.jpg"
         cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
-    cursor.execute('SELECT nombre_usuario, correo_usuario, foto_perfil_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (usuario,))
-    usuario_ = cursor.fetchone()
-    session['imagen_url']=usuario_["foto_perfil_usuario"]
-    return render_template("inicio.html", usuario=usuario_, imagen_url=session.get("imagen_url"))
+    actualizar_sesion(usuario)
+    return render_template("inicio.html")
 
 @app.route("/guardar_foto", methods=["POST"])
 def guardar_foto():
     if request.method!="POST":
         flash("Metodo no permitido", "danger")
-        return redirect(url_for("inicio"))
+        return redirect(request.referrer)
     
     direccion_proyecto=os.getcwd()
-    usuario=session.get("correo_usuario")
+    usuario=session["usuario"]["correo_usuario"]
     if 'imagen' not in request.files:
         flash("No se seleccionó ningún archivo", "danger")
-        return redirect(url_for("inicio"))
+        return redirect(request.referrer)
     
     file = request.files['imagen']
     
     if file.filename == '':
         flash("No se seleccionó ningún archivo", "danger")
-        return redirect(url_for("inicio"))
+        return redirect(request.referrer)
     
     if file:
         
@@ -215,28 +213,80 @@ def guardar_foto():
         db.commit()
         cursor.close()
         db.close()
-        return redirect(url_for("inicio"))
+        return redirect(request.referrer)
     
-@app.route("/api/paises")
+@app.route("/api/paises_generos")
 def paises():
+    #paises
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('SELECT id_pais, nombre_pais FROM paises ORDER BY id_pais')
     paises=cursor.fetchall()
-
-    usuario=session.get("correo_usuario")
+    usuario=session["usuario"]["correo_usuario"]
     cursor.execute('SELECT id_pais FROM "USUARIOS" WHERE correo_usuario= %s', (usuario,))
     pais_usuario_id=cursor.fetchone()
-
+    if pais_usuario_id["id_pais"]==None:
+        pais_usuario_id["id_pais"]=0
     cursor.execute('SELECT id_pais, nombre_pais FROM paises WHERE id_pais = %s', (pais_usuario_id["id_pais"],))
     pais_usuario=cursor.fetchone()
 
-    lista_paises_mandar={
+    #genero
+    cursor.execute('SELECT id_genero, nombre_genero FROM generos ORDER BY id_genero')
+    generos=cursor.fetchall()
+
+    usuario=session["usuario"]["correo_usuario"]
+    cursor.execute('SELECT id_genero FROM "USUARIOS" WHERE correo_usuario= %s', (usuario,))
+    genero_usuario_id=cursor.fetchone()
+    if genero_usuario_id["id_genero"]==None:
+        genero_usuario_id["id_genero"]=0
+
+    cursor.execute('SELECT id_genero, nombre_genero FROM generos WHERE id_genero = %s', (genero_usuario_id["id_genero"],))
+    genero_usuario=cursor.fetchone()
+
+    lista_mandar={
+        "genero_usuario": genero_usuario,
+        "generos": generos,
         "pais_usuario": pais_usuario,
         "paises":paises
     }
+    return jsonify(lista_mandar)
 
-    return jsonify(lista_paises_mandar)
+@app.route("/api/generos")
+def generos():
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
+    return jsonify(lista_generos_mandar)
+
+@app.route("/actulizar_info", methods=["GET","POST"])
+def actualizar_info():
+    if request.method=="POST":
+        db=conectar()
+        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        usuario=session["usuario"]["correo_usuario"]
+        nombre_usuario=request.form["nombre_usuario"]
+        pais_usuario=request.form.get("pais")
+        genero_usuario=request.form.get("genero")
+        descripcion_usuario=request.form["descripcion"]
+        cursor.execute('UPDATE "USUARIOS" SET nombre_usuario = %s, id_pais = %s, id_genero = %s, descripcion_personal = %s WHERE correo_usuario = %s', (nombre_usuario,pais_usuario,genero_usuario,descripcion_usuario, usuario))
+        db.commit()
+        db.close()
+        cursor.close()
+        actualizar_sesion(usuario)
+        flash("Cambios guardados", "success")
+        return redirect(request.referrer)
+    return "error"
+        
+
+def actualizar_sesion(correo):
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+    usuario_ = cursor.fetchone()
+    session['usuario']=usuario_
+    db.close()
+    cursor.close()
+    
 
 if __name__=="__main__":
     app.run(debug=True)

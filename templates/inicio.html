@@ -5,22 +5,12 @@
     <title>inicio</title>
 </head>
 <body>
-    {% include "header.html" %}
+    <div class="contenido d-flex flex-column">
+        {% include "header.html" %}
 
-
-        {% with mensajes = get_flashed_messages(with_categories=true) %}
-            {% if mensajes %}
-                {% for categoria, mensaje in mensajes  %}
-                    <div class="fila_ingresar">
-                        <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
-                    </div>
-                    {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-    <h1>Hi {{ usuario["nombre_usuario"] }}</h1>
+        <h1>Hi {{ session["usuario"]["nombre_usuario"] }}</h1>
+    </div>
     {% include "registrarse/footer_inicio.html" %}
 </body>
-    <script src="{{ url_for('static', filename='perfil/funciones.js') }}"></script> 
-</html>
+{% include 'scripts.html' %}
 </html>
