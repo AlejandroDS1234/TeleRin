@@ -251,12 +251,6 @@ def paises():
     }
     return jsonify(lista_mandar)
 
-@app.route("/api/generos")
-def generos():
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    
-    return jsonify(lista_generos_mandar)
 
 @app.route("/actulizar_info", methods=["GET","POST"])
 def actualizar_info():

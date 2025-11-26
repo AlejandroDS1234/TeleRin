@@ -51,6 +51,7 @@
     border-radius: 50%;
     width: 100%;
     height: 100%;
+    
     border: 5px solid #0f0f0f;
     box-sizing: border-box;
     transition: box-shadow .25s linear;
@@ -291,7 +292,7 @@ body, html {
     background-color: #B7C6D4;
     width: 100%;
     margin: 0;
-    height: max-content;
+    height: 15%;
 }
 
 .cerrar_ventana {
@@ -414,4 +415,3 @@ body, html {
     /* background-color: #00FF00; */
     margin-top: 0%;
 }
-.buscar
