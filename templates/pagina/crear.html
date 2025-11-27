@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include "head.html" %}
+        <title>Editor de texto</title>
+    </head>
+    <body>
+        <div class="contenido d-flex flex-column">
+            {% include "pagina/header.html" %}
+            <h1>Crea Tu Historia</h1>
+            <form id="formulario" class="formulario">
+                <textarea class="editor" id="editor" placeholder="Escribe tu historia aquí"></textarea>
+                <button type="submit" class="boton">Enviar</button>
+            </form>
+        </div>
+        {% include "registrarse/footer_inicio.html" %}
+    </body>
+    {% include 'scripts.html' %}
+</html>

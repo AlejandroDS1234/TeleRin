@@ -18,17 +18,17 @@
             <button class="boton">Buscar</button>
             <div class="buscar usuarios_encontrados"></div>
         </div>
-        <div class=" header marca">
+        <a href="{{ url_for('inicio') }}" class=" header marca">
             <h1 class="titulo_marca">TeleRin</h1>
             <img src="{{ url_for('static', filename='logo_temporal.jpg')}}" class="logo_header">
-        </div>
+        </a>
     </div>
     <div class="secciones">
         <nav>
             <ul>
-                <li>seccion1</li>
-                <li>seccion2</li>
-                <li>seccion3</li>
+                <li><a href="{{ url_for('inicio') }}">Inicio</a></li>
+                <li>Personas Que Sigues</li>
+                <li><a href="{{ url_for('historias_creadas') }}">Historias Creadas</a></li>
             </ul>
         </nav>
     </div>

@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
+from werkzeug.exceptions import HTTPException
 import psycopg2 as ps
 from email_validator import validate_email, EmailNotValidError
 from itsdangerous import URLSafeTimedSerializer
@@ -174,10 +175,11 @@ def verificar_codigo():
 
 @app.route("/inicio")
 def inicio():
+    no_sesion()
     usuario = session.get("correo_usuario")
     guardar_ip(usuario)
     actualizar_sesion(usuario)
-    return render_template("inicio.html")
+    return render_template("pagina/inicio.html")
 
 @app.route("/guardar_foto", methods=["POST"])
 def guardar_foto():
@@ -281,7 +283,24 @@ def actualizar_sesion(correo):
     session['usuario']=usuario_
     db.close()
     cursor.close()
+
+@app.route('/prueba')
+def prueba():
+    no_sesion()
+    return render_template('pagina/crear.html')
+
+def no_sesion():
+    if session.get('usuario') != None:
+        return
+    if session.get('correo_usuario') != None:
+        return
+    flash("Debes iniciar sesion para acceder a esta pagina", "warning")
+    raise HTTPException(response=redirect(url_for("index")))
     
+@app.route('/historias_creadas')
+def historias_creadas():
+    no_sesion()
+    return render_template('pagina/paginas_creadas.html')
 
 if __name__=="__main__":
     app.run(debug=True)

@@ -94,6 +94,8 @@
     align-self: flex-start;
     height: 100%;
     width: 25%;
+    text-decoration: none;
+    color: #000;
     /* background-color: #B7C6D4; */
 }
 .marca h1, .marca img {
@@ -130,6 +132,12 @@
     margin: 0%;
     /* background-color: aqua; */
     justify-content: center;
+    
+}
+.secciones ul li a {
+    text-decoration: none;
+    color: #000;
+    cursor: pointer;
 }
 
 .buscar_caja {

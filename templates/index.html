@@ -7,6 +7,15 @@
     <body>
         <div class="contenido">
             <h1>Pagina Principal</h1>
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    {% for categoria, mensaje in mensajes  %}
+                        <div class="fila_ingresar">
+                            <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
+                        </div>
+                        {% endfor %}
+                {% endif %}
+            {% endwith %}
         </div>
         {% include "registrarse/footer_inicio.html" %}
     </body>
