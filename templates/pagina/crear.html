@@ -7,11 +7,76 @@
     <body>
         <div class="contenido d-flex flex-column">
             {% include "pagina/header.html" %}
-            <h1>Crea Tu Historia</h1>
-            <form id="formulario" class="formulario">
-                <textarea class="editor" id="editor" placeholder="Escribe tu historia aquí"></textarea>
-                <button type="submit" class="boton">Enviar</button>
+            <form id="formulario" class="h-100  d-flex flex-row justify-content-end">
+                <div class="columna p-5 h-100 d-flex flex-column flex-grow-1 align-items-center ">  
+                    <h1>Crea Tu Historia</h1>
+                    <div class="fila">
+                        <label for="nombre_historia">Nombre:</label>
+                        <input id="nombre_historia" type="text" maxlength="20" placeholder="El nombre de tu historia" required>
+                    </div>
+                    <div class="fila">
+                        <label for="descripcion">Descripcion:</label>
+                        <textarea id="descripcion"  placeholder="Descripcion de la historia" maxlength="225" style="resize: none;"></textarea>
+                    </div>
+                    <div class="fila juntos">
+                        <input type="hidden" id="id_saga" name="id_saga" required>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="elegir_saga" data-bs-toggle="dropdown" aria-expanded="false">
+                                Seleccionar Saga
+                            </button>
+                            <div class="dropdown-menu p-3" id="listaSagas" aria-labelledby="elegir_saga" style="width: 350px; max-height: 300px; overflow-y: auto;">
+
+                            </div>
+                        </div>
+                        <button id="crear_saga" type="button">Crear Saga</button>
+                    </div>
+                    <div class="fila">
+                        <label>Visualizacion:</label>
+                        <div class="d-flex align-items-center">
+                            <label for="publico">Publica:</label>
+                            <input name="visibilidad" id="publico" type="radio" checked>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <label for="privado">Pribada:</label>
+                            <input name="visibilidad" id="privado" type="radio">
+                        </div>
+                    </div>
+                    <button type="submit" class="boton">Enviar</button>
+
+
+
+                </div>
+                <div class="crear_texto texto h-100">
+                    <textarea class="editor" id="editor" placeholder="Escribe tu historia aquí"></textarea>
+                </div>
             </form>
+        <dialog id="menu_crear_saga" class="dialog">
+            <div class="fila">
+                <div class="cerrar">
+                    <img  src="{{ url_for('static', filename='iconos/x.png')}}" alt="Cerrar" class="cerrar_ventana" type="button" id="cerrar_ventana_menu_crear_saga">
+                </div>
+            </div>
+            <div class="fila mostrar_foto_perfil">
+                <img id="imagen_saga" class="foto_saga">
+            </div>
+            <form id="form_crear_saga" enctype="multipart/form-data">
+                <div class="fila">
+                    <input type="file" id="cargar_imagen_saga" accept="imagen/*" name="foto_saga" required>
+                </div>
+                <div class="fila">
+                    <input type="text" placeholder="Nombre de la saga" name="nombre_saga" required maxlength="20">
+                </div>
+                <div class="fila">
+                    <textarea name="descripcion_saga" id="#" placeholder="Descripcion saga" maxlength="225" required></textarea>
+                </div>
+                <div class="fila">
+                    <button class="boton editar" type="button" id="btn_crear_saga">Crear Nueva Saga</button>
+                </div>
+            </form>
+            <div class="fila">
+                <div class="" id="menaje_json"></div>
+            </div>
+        </dialog>
         </div>
         {% include "registrarse/footer_inicio.html" %}
     </body>

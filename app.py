@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
+from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify, abort, send_from_directory
 from werkzeug.exceptions import HTTPException
 import psycopg2 as ps
 from email_validator import validate_email, EmailNotValidError
@@ -11,6 +11,7 @@ import psycopg2.extras
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import socket
+from PIL import Image
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
@@ -170,7 +171,8 @@ def verificar_codigo():
         else:
             flash("Codigo incorrecto", "danger")
             return redirect(url_for("mandar_codigo"))
-    return "error"
+    flash("ruta no valida", "secces")
+    return redirect( url_for("index"))
 
 
 @app.route("/inicio")
@@ -186,32 +188,54 @@ def guardar_foto():
     if request.method!="POST":
         flash("Metodo no permitido", "danger")
         return redirect(request.referrer)
-    
-    direccion_proyecto=os.getcwd()
     usuario=session["usuario"]["correo_usuario"]
-    if 'imagen' not in request.files:
-        flash("No se seleccionó ningún archivo", "danger")
+    foto=request.files['imagen']
+    comprobar_imagen = validar_imagen_completa(foto, max_w=1000, max_h=1000)
+    if comprobar_imagen[1]:
+        flash(f"{comprobar_imagen[0]}", "danger cambiar_foto")
         return redirect(request.referrer)
-    
-    file = request.files['imagen']
-    
-    if file.filename == '':
-        flash("No se seleccionó ningún archivo", "danger")
-        return redirect(request.referrer)
-    
-    if file:
-        
-        ruta_guardado = os.path.join('static', 'perfil', f"{usuario}_perfil.jpg")
-        ruta_completa= os.path.join(direccion_proyecto, ruta_guardado)
-        file.save(ruta_completa)
-        flash("Foto de perfil actualizada", "success")
-        db=conectar()
-        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
-        db.commit()
-        cursor.close()
-        db.close()
-        return redirect(request.referrer)
+    ruta_guardado=guardar_fotos(foto, "perfil", usuario)
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
+    db.commit()
+    cursor.close()
+    db.close()
+    flash("Foto de perfil actualizada", "success cambiar_foto")
+    return redirect(request.referrer)
+
+def guardar_fotos(foto, direccion, nombre):
+    direccion_proyecto=os.getcwd()
+    if foto:
+        ruta_guardado = os.path.join(f"{nombre}_perfil.jpg")
+        ruta_completa = os.path.join(direccion_proyecto, direccion,ruta_guardado)
+        foto.save(ruta_completa)
+        return ruta_guardado
+
+
+def validar_imagen_completa(file, max_mb=5, min_w=300, min_h=300, max_w=350, max_h=350):
+    # 1. Validar que sea imagen real
+    try:
+        img = Image.open(file)
+        img.verify()
+    except:
+        return ["El archivo no es una imagen válida", True]
+    file.seek(0)  # reset
+    # 2. Validar peso
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+    if size > max_mb * 1024 * 1024:
+        return [f"La imagen pesa más de {max_mb} MB", True]
+    # 3. Validar dimensiones
+    img = Image.open(file)
+    w, h = img.size
+    file.seek(0)
+    if w < min_w or h < min_h:
+        return [f"La imagen debe ser mínimo {min_w}x{min_h} px", True]
+    if w > max_w or h > max_h:
+        return [f"La imagen debe ser maximo {max_w}x{max_h} px", True]
+    return [None, False]
     
 @app.route("/api/paises_generos")
 def paises():
@@ -265,7 +289,7 @@ def actualizar_info():
         db.close()
         cursor.close()
         actualizar_sesion(usuario)
-        flash("Cambios guardados", "success")
+        flash("Cambios guardados", "success cambiar_datos")
         return redirect(request.referrer)
     return "error"
         
@@ -276,8 +300,9 @@ def actualizar_sesion(correo):
     cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
     usuario_ = cursor.fetchone()
     if usuario_["foto_perfil_usuario"] == None:
-        ruta_guardado="static\perfil\predefinido.jpg"
-        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
+        ruta_guardado="predefinido.jpg"
+        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, correo))
+        db.commit()
     cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
     usuario_ = cursor.fetchone()
     session['usuario']=usuario_
@@ -300,7 +325,61 @@ def no_sesion():
 @app.route('/historias_creadas')
 def historias_creadas():
     no_sesion()
+    sagas_creadas()
     return render_template('pagina/paginas_creadas.html')
+
+@app.route("/crear_saga", methods=["POST"])
+def crear_saga():
+    if request.method != "POST":
+        return "ruta no valida >:("
+    id_saga=random.randint(100000,999999)
+    nombre_saga=request.form['nombre_saga']
+    descripcion_saga=request.form["descripcion_saga"]
+    correo_usuario=session["usuario"]["correo_usuario"]
+    imagen=request.files["foto_saga"]
+    if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen.filename == "":
+        return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute("SELECT nombre_saga FROM saga WHERE correo_usuario = %s AND nombre_saga = %s",(correo_usuario,nombre_saga))
+    nombre=cursor.fetchone()
+    if nombre:
+        return jsonify({"mensaje": "ya existe una saga con ese nombre", "tipo": "danger"})
+    comprobar_img = validar_imagen_completa(imagen)
+    if comprobar_img[1]:
+        return jsonify({"mensaje": f"{comprobar_img[0]}", "tipo": "danger"})
+    imagen_saga=guardar_fotos(imagen, "fotos_sagas", id_saga)
+    cursor.execute("INSERT INTO saga (id_saga, nombre_saga, descripcion_saga, correo_usuario, imagen_saga) VALUES (%s,%s,%s,%s,%s)",(id_saga, nombre_saga, descripcion_saga, correo_usuario, imagen_saga))
+    db.commit()
+    db.close()
+    cursor.close()
+    sagas_creadas()
+    return jsonify({"mensaje": "Saga Creada", "tipo":"success"})
+
+@app.route("/sagas_creadas", methods=["POST", "GET"])
+def sagas_creadas():
+    if request.method != "POST":
+        return "error"
+    usuario=session["usuario"]["correo_usuario"]
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute("SELECT * FROM saga WHERE correo_usuario = %s", (usuario,))
+    sagas=cursor.fetchall()
+    cursor.close()
+    db.close()
+    return jsonify(sagas)
+
+@app.route("/perfil/<filename>")
+def perfil_img(filename):
+    if "usuario" not in session:
+        abort(403)
+    return send_from_directory("perfil", filename)
+@app.route("/fotos_sagas/<filename>")
+def fotos_saga(filename):
+    if "usuario" not in session:
+        abort(403)
+    return send_from_directory("fotos_sagas", filename)
+
 
 if __name__=="__main__":
     app.run(debug=True)

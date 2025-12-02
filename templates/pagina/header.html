@@ -2,11 +2,7 @@
     <div class="header">
         
         <div class="menu_usuario_caja" id="foto_perfil_caja">
-            <img src="{{ session['usuario']['foto_perfil_usuario'] }}" alt="Imagen subida" class="menu_usuario">
-        </div>
-        
-        <div class="mas_opciones">
-            <img src="{{ url_for('static', filename='iconos/menu.png')}}" class="menu_mas_opciones">
+            <img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}" alt="Imagen subida" class="menu_usuario">
         </div>
         
         <div class="buscar_caja fin">
@@ -27,7 +23,7 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('inicio') }}">Inicio</a></li>
-                <li>Personas Que Sigues</li>
+                <li><a href="#">Personas Que Sigues</a></li>
                 <li><a href="{{ url_for('historias_creadas') }}">Historias Creadas</a></li>
             </ul>
         </nav>
@@ -37,16 +33,16 @@
     <div class="cerrar" ><img id="cerrar_ventana" src="{{ url_for('static', filename='iconos/x.png')}}" alt="Cerrar" class="cerrar_ventana" type="button" ></div>
     <div class="parte1_menu">
         <div class="menu_usuario_caja foto_perfil_caja" id="foto_perfil_cambiar">
-            <img src="{{ session['usuario']['foto_perfil_usuario'] }}" alt="Foto de perfil" class="menu_usuario foto_perfil">
+            <img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}" alt="Foto de perfil" class="menu_usuario foto_perfil">
         </div>
-        <dialog class="foto_mostrar" id="foto_mostrar">
+        <dialog class="dialog" id="foto_mostrar">
             <div class="fila">
                 <div class="cerrar">
                     <img  src="{{ url_for('static', filename='iconos/x.png')}}" alt="Cerrar" class="cerrar_ventana" type="button" id="cerrar_ventana_editar_foto">
                 </div>
             </div>
             <div class="fila mostrar_foto_perfil">
-                <img src="{{ session['usuario']['foto_perfil_usuario'] }}" alt="Imagen subida" class=" foto_perfil_mostrada">
+                <img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}" alt="Imagen subida" class=" foto_perfil_mostrada">
             </div>
             <form method="post" action="/guardar_foto" enctype="multipart/form-data">
                 <div class="fila">
@@ -57,6 +53,19 @@
                     <button class="boton editar" type="submit">Subir Foto</button>
                 </div>
             </form>
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    {% for categoria, mensaje in mensajes  %}
+                        {% set partes =categoria.split() %}
+                        {% if "cambiar_foto" in partes %}
+                        <div class="fila_ingresar">
+                            <div class="mensaje mensaje-{{ partes[0] }}">{{ mensaje }}</div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        
         </dialog>
         <div class="info_nombres">
             <h2> {{ session["usuario"]["nombre_usuario"] }} </h2>
@@ -83,18 +92,23 @@
                 <label for="descripcion">Descripcion:</label>
                 <textarea name="descripcion" id="descripcion" placeholder="descripcion" maxlength="225">{{ session['usuario']['descripcion_personal'] }}</textarea>
             </div>
-            <div class="fila"><button type="submit" class="boton editar">Editar</button></div>
+            <div class="fila" id="boton1"></div>
         </form>
         <div class="fila mensaje_fila">
+
             {% with mensajes = get_flashed_messages(with_categories=true) %}
                 {% if mensajes %}
                     {% for categoria, mensaje in mensajes  %}
-                        <div class="fila_ingresar">
-                            <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
-                        </div>
-                        {% endfor %}
+                        {% set partes = categoria.split() %}
+                        {% if "cambiar_datos" in partes %}
+                            <div class="fila_ingresar">
+                                <div class="mensaje mensaje-{{ partes[0] }}">{{ mensaje }}</div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 {% endif %}
             {% endwith %}
+
         </div>
     </div>
 </div>
