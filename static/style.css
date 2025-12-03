@@ -233,7 +233,7 @@ body, html {
     background-color: var(--azulFooterHeader);
     width: 30%;
     height: 100%;
-    margin: 0;
+    padding: 2%;
     border-left: 5px groove var(--bordes);
     display: flex;
     flex-direction: column;
@@ -412,7 +412,7 @@ body, html {
 } 
 
 .editar {
-    min-width: 100% !important;
+    min-width: 100%;
 }
 
 

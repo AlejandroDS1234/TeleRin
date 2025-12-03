@@ -14,7 +14,7 @@
             </div>
             <div class="ingresar_datos">
                 <h2>Iniciar Sesion</h2>
-                <form method="post" action="/inicio_usuario" class="formulario">
+                <form method="post" action="/inicio_usuario" class="formulario" id="formulario_iniciar_sesion">
                     <div class="fila_ingresar">
                         <input class="input_ingresar" name="correo_usuario" type="email" required placeholder="Correo" maxlength="100">
                     </div>
@@ -22,6 +22,8 @@
                         <input class="input_ingresar" name="contrasena_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
                     </div>
                     <button type="submit" class="boton">Iniciar Sesion</button>
+                    <div class="fila_ingresar" id="olvidar_contraseña"> 
+                    </div>
                     
                     {% with mensajes = get_flashed_messages(with_categories=true) %}
                         {% if mensajes %}
@@ -29,7 +31,7 @@
                                 <div class="fila_ingresar">
                                     <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
                                 </div>
-                                {% endfor %}
+                            {% endfor %}
                         {% endif %}
                     {% endwith %}
                     
@@ -39,4 +41,5 @@
 
         {% include "registrarse/footer_inicio.html" %}
     </body>
+    {% include 'scripts.html' %}
 </html>

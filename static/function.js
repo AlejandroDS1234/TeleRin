@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", async function() {
-
-    // Inicializar TinyMCE cuando el DOM esté listo
     if (typeof tinymce !== "undefined") {
         tinymce.init({
             selector: '#editor',
@@ -61,6 +59,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             e.preventDefault();
 
             setTimeout(() => {
+                actualizarEnlaceOlvidarContraseña();
                 form.submit();
             }, 50);
         });
@@ -252,3 +251,14 @@ async function CrearSagaFuncion(e) {
     mensajeArea.classList.add(`mensaje-${crearSagaDatos.tipo}`)
     }
 
+// intentos iniciar sesion
+const iniciarSesion = document.querySelector("#form_iniciar_sesion");
+iniciarSesion.addEventListener("submit", async (e) => {
+    const conresponse = await fetch("/cantida_errores")
+    const errores = await conresponse.json()
+    const cantidadErrores = errores.errores;
+    if (cantidadErrores >= 3) {
+        const captchaContainer = document.querySelector("#olvidar_contraseña");
+        captchaContainer.innerHTML = `<a href="/olvidar_contraseña">¿Olvidaste tu contraseña?</a>`;
+    }
+})

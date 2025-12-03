@@ -146,14 +146,40 @@ def inicio_usuario():
         cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cursor.execute('SELECT contraseña_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
         usuario = cursor.fetchone()
+        cursor.close()
+        db.close()
         if usuario and check_password_hash(usuario["contraseña_usuario"], contraseña):
             return guardar_ip(correo)
+        session["correo_usuario"]=correo
         flash("Contraseña o correo incorrectos", "danger")
         return redirect(url_for("iniciar_sesion")) 
     return "error"
 
+@app.route("/cantida_errores")
+def cantida_errores():
+    try:
+        session["intentos_fallidos"]+=1
+        print(session["intentos_fallidos"])
+        return jsonify({"errores": session["intentos_fallidos"]})
+    except:
+        session["intentos_fallidos"]=0
+        return jsonify({"errores": session["intentos_fallidos"]})
+
+
+
 @app.route("/verificar_codigo", methods=["GET","POST"])
-def verificar_codigo():
+def verificarCodigo():
+    return verificar_codigo("inicio")
+
+@app.route("/cambiar_contraseña")
+def cambiar_contraseña():
+    return render_template("iniciar_sesion/cambiar_contraseña.html")
+
+@app.route("/verificar_contraseña", methods=["GET","POST"])
+def verificar_contraseña():
+    return verificar_codigo("cambiar_contraseña")
+
+def verificar_codigo(ruta):
     if request.method=="POST":
         codigo_us=request.form["codigo_usuario"]
         codigo=session.get("codigo_verificacion")
@@ -166,13 +192,11 @@ def verificar_codigo():
             cursor.close()
             db.close()
             session.pop("codigo_verificacion", None)
-            
-            return redirect(url_for("inicio"))
+            return redirect(url_for(ruta))
         else:
             flash("Codigo incorrecto", "danger")
             return redirect(url_for("mandar_codigo"))
-    flash("ruta no valida", "secces")
-    return redirect( url_for("index"))
+    return "Ruta no valida >:("
 
 
 @app.route("/inicio")
@@ -181,6 +205,7 @@ def inicio():
     usuario = session.get("correo_usuario")
     guardar_ip(usuario)
     actualizar_sesion(usuario)
+    session.pop("intentos_fallidos", None)
     return render_template("pagina/inicio.html")
 
 @app.route("/guardar_foto", methods=["POST"])

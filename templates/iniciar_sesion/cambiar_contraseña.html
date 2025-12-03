@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         {% include "head.html" %}
-        <title>Codigo de Verificacion</title>
+        <title>Cambiar Contraseña</title>
     </head>
     <body>
         <div class="contenido">
@@ -10,16 +10,15 @@
             <div class="titulo">
             <img src="{{ url_for('static', filename='logo_temporal.jpg')}}">
             <h1>TeleRin</h1>
-        </div>
+            </div>
         </div>
         <div class="ingresar_datos">
-            <h2>Entrar</h2>
-            <form method="post" action="/verificar_codigo" class="formulario">
+            <h2>Cambiar Contraseña</h2>
+            <form method="post" action="/inicio" class="formulario">
                 <div class="fila_ingresar">
-                    <label for="codigo_usuario" >Ingrese el codigo de verificacion:</label>
-                    <input class="input_ingresar" name="codigo_usuario" id="codigo_usuario" type="number" required placeholder="Codigo" maxlength="255" minlength="8">
+                    <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
                 </div>
-                <button type="submit" class="boton">Verificar</button>
+                <button type="submit" class="boton">Cambiar contraseña y entrar</button>
                 
                 {% with mensajes = get_flashed_messages(with_categories=true) %}
                     {% if mensajes %}
