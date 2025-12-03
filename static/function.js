@@ -10,6 +10,26 @@ document.addEventListener("DOMContentLoaded", async function() {
             height: '100%',
             toolbar: 'undo redo | styles forecolor | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | image',
             statusbar: false,
+            content_css: "static/style.css",
+            content_style: `
+                body {
+                    color: var(--texto);
+                    
+                }`,
+            setup: (editor)=> {
+                editor.on("init", ()=>{
+                    const container = editor.editorContainer
+                    
+                    container.style.borderRadius = "0px"
+                    container.style.border = "2px solid var(--bordes)";
+
+                    const toolbar = editor.editorContainer.querySelector(".tox-editor-header");
+                    toolbar.style.backgroundColor = "var(--parteMenuLateral)";
+
+                    const editArea = container.querySelector(".tox-edit-area");
+                    editArea.style.backgroundColor = "var(--colorBotones)";
+                })
+            }
         });
     } else {
         console.error("❌ TinyMCE no se cargó. Revisa la ruta del script en el HTML.");
