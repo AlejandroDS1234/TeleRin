@@ -8,6 +8,7 @@ async function errores() {
     const cantidadErrores = errores.errores;
     if (cantidadErrores >= 3) {
         const captchaContainer = document.querySelector("#olvidar_contraseña");
-        captchaContainer.innerHTML = `<a href="/olvidar_contraseña">¿Olvidaste tu contraseña?</a>`;
+        const url = captchaContainer.getAttribute("data-url");
+        captchaContainer.innerHTML = `<a href="${url}">¿Olvidaste tu contraseña?</a>`;
     }
 }

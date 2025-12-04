@@ -14,11 +14,11 @@
         </div>
         <div class="ingresar_datos">
             <h2>Cambiar Contraseña</h2>
-            <form method="post" action="/inicio" class="formulario">
+            <form method="post" action="/cambiarContrasena" class="formulario">
                 <div class="fila_ingresar">
                     <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
                 </div>
-                <button type="submit" class="boton">Cambiar contraseña y entrar</button>
+                <button type="submit" class="boton">Cambiar contraseña</button>
                 
                 {% with mensajes = get_flashed_messages(with_categories=true) %}
                     {% if mensajes %}

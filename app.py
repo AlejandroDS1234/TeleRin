@@ -6,7 +6,7 @@ from itsdangerous import URLSafeTimedSerializer
 import smtplib
 import random
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from email.mime.multipart import MIMEMultipart 
 import psycopg2.extras
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
@@ -33,15 +33,20 @@ def guardar_ip(correo):
         db.commit()
         db.close()
         cursor.close()
-        codigo=correo_validacion(correo)
-        if codigo:
-            session["codigo_verificacion"]=str(codigo)
-            session["correo_usuario"]=correo
-            return redirect(url_for("mandar_codigo"))
-        flash("No se pudo enviar el codigo, intente despues", "danger")
-        return redirect(url_for("mandar_codigo"))
+        return redirect(url_for("enviar_codigo", correo=correo))
     session["correo_usuario"]=correo
     return redirect(url_for("inicio"))
+
+@app.route("/enviar_codigo/<correo>/<direccion>",)
+def enviar_codigo(correo, direccion="inicio"):
+    codigo=correo_validacion(correo)
+    if codigo:
+        session["codigo_verificacion"]=str(codigo)
+        session["correo_usuario"]=correo
+        session["direccion"]=direccion
+        return redirect(url_for("mandar_codigo"))
+    flash("No se pudo enviar el codigo, intente despues", "danger")
+    return redirect(url_for("mandar_codigo")) 
 
 def conectar():
     try:
@@ -136,6 +141,8 @@ def correo_validacion(correo):
 def mandar_codigo():
     return render_template("iniciar_sesion/codigo_verificacion.html")
             
+            
+
 
 @app.route("/inicio_usuario", methods=["GET", "POST"])
 def inicio_usuario():
@@ -166,37 +173,37 @@ def cantida_errores():
         return jsonify({"errores": session["intentos_fallidos"]})
 
 
-
-@app.route("/verificar_codigo", methods=["GET","POST"])
-def verificarCodigo():
-    return verificar_codigo("inicio")
+    
 
 @app.route("/cambiar_contraseña")
 def cambiar_contraseña():
+    if not session.get("correo_usuario"):
+        flash("No puedes acceder a esta pagina", "danger")
+        return redirect(url_for("index"))
     return render_template("iniciar_sesion/cambiar_contraseña.html")
 
-@app.route("/verificar_contraseña", methods=["GET","POST"])
-def verificar_contraseña():
-    return verificar_codigo("cambiar_contraseña")
 
-def verificar_codigo(ruta):
-    if request.method=="POST":
-        codigo_us=request.form["codigo_usuario"]
-        codigo=session.get("codigo_verificacion")
-        correo_us=session.get("correo_usuario")
-        if codigo_us==codigo:
-            db=conectar()
-            cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cursor.execute('SELECT nombre_usuario, correo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo_us,))
-            usuario=cursor.fetchone()
-            cursor.close()
-            db.close()
-            session.pop("codigo_verificacion", None)
-            return redirect(url_for(ruta))
-        else:
-            flash("Codigo incorrecto", "danger")
-            return redirect(url_for("mandar_codigo"))
-    return "Ruta no valida >:("
+@app.route("/verificar_codigo", methods=["GET","POST"])
+def verificar_codigo():
+    if request.method!="POST":
+        flash("Metodo no permitido", "danger")
+        return redirect(url_for("index"))
+    codigo_us=request.form["codigo_usuario"]
+    codigo=session.get("codigo_verificacion")
+    correo_us=session.get("correo_usuario")
+    if codigo_us==codigo:
+        db=conectar()
+        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute('SELECT nombre_usuario, correo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo_us,))
+        usuario=cursor.fetchone()
+        cursor.close()
+        db.close()
+        session.pop("codigo_verificacion", None)
+        return redirect(url_for(session.get("direccion")))
+    else:
+        flash("Codigo incorrecto", "danger")
+        return redirect(url_for("mandar_codigo"))
+    
 
 
 @app.route("/inicio")
@@ -206,6 +213,7 @@ def inicio():
     guardar_ip(usuario)
     actualizar_sesion(usuario)
     session.pop("intentos_fallidos", None)
+    session.pop("direccion", None)
     return render_template("pagina/inicio.html")
 
 @app.route("/guardar_foto", methods=["POST"])
@@ -404,6 +412,29 @@ def fotos_saga(filename):
     if "usuario" not in session:
         abort(403)
     return send_from_directory("fotos_sagas", filename)
+
+@app.route("/cambiarContrasena", methods=["GET","POST"])
+def cambiarContrasena():
+    if not session.get("correo_usuario"):
+        flash("No puedes acceder a esta pagina", "danger")
+        return redirect(url_for("index"))
+    if request.method!="POST":
+        return "ruta no valida >:("
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    nueva_contraseña=request.form["contraseña_usuario"]
+    if len(nueva_contraseña) < 8:
+        flash("La contraseña debe tener al menos 8 caracteres", "danger")
+        return redirect(url_for("cambiarContraseña"))
+    nueva_contraseña=generate_password_hash(nueva_contraseña)
+    correo=session.get("correo_usuario")
+    cursor.execute('UPDATE "USUARIOS" SET contraseña_usuario = %s WHERE correo_usuario = %s', (nueva_contraseña, correo))
+    db.commit()
+    cursor.close()
+    db.close()
+    session.pop("intentos_fallidos", None)
+    flash("Contraseña cambiada con exito", "success")
+    return redirect(url_for("iniciar_sesion"))
 
 
 if __name__=="__main__":

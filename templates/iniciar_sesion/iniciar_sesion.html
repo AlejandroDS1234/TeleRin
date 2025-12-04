@@ -22,7 +22,7 @@
                         <input class="input_ingresar" name="contrasena_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
                     </div>
                     <button type="submit" class="boton">Iniciar Sesion</button>
-                    <div class="fila_ingresar" id="olvidar_contraseña"> 
+                    <div class="fila_ingresar" id="olvidar_contraseña" data-url="{{ url_for('enviar_codigo', correo=session["correo_usuario"], direccion='cambiar_contraseña') }}"> 
                     </div>
                     
                     {% with mensajes = get_flashed_messages(with_categories=true) %}
@@ -41,5 +41,6 @@
 
         {% include "registrarse/footer_inicio.html" %}
     </body>
+    {% include 'scripts.html' %}
     <script src="{{ url_for('static', filename='function_iniciar_sesion.js') }}"></script>
 </html>
