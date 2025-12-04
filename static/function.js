@@ -252,13 +252,3 @@ async function CrearSagaFuncion(e) {
     }
 
 // intentos iniciar sesion
-const iniciarSesion = document.querySelector("#form_iniciar_sesion");
-iniciarSesion.addEventListener("submit", async (e) => {
-    const conresponse = await fetch("/cantida_errores")
-    const errores = await conresponse.json()
-    const cantidadErrores = errores.errores;
-    if (cantidadErrores >= 3) {
-        const captchaContainer = document.querySelector("#olvidar_contraseña");
-        captchaContainer.innerHTML = `<a href="/olvidar_contraseña">¿Olvidaste tu contraseña?</a>`;
-    }
-})
