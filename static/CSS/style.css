@@ -1,15 +1,16 @@
 /* Footer */
 :root {
-    --azulFooterHeader: #9BC1BC; /**/
-    --bordes: #000; /**/
-    --colorBotonesFooterHeader: #ED6A5A; /**/
+    --azulFooterHeader: #9BC1BC; /**/ /**/
+    --bordes: #000; /**/ /**/
+    --colorBotonesFooterHeader: #ED6A5A; /**/ /**/
     --brilloMenu: #36C9C6; /**/
-    --texto: #000; /**/
-    --colorFondo: #DBE1E1; /**/
-    --sombra: #808080; /**/
-    --colorBotones: #E6EBE0; /**/
-    --colorBotonesPresionado: #9FE1BC;
-    --menusLaterales: #CAD5DF;
+    --texto: #000; /**/ /**/
+    --colorFondo: #DBE1E1; /**/ /**/
+    --sombra: #808080; /**/ /**/
+    --colorBotones: #E6EBE0; /**/ /**/
+    --colorBotonesPresionado: #9FE1BC; /**/ /**/
+    --colorBotonesPresionadoDesabilitado: #9FE1BC90;
+    --menusLaterales: #CAD5DF; /**/ /**/
     --parteMenuLateral: #B7C6D4;
 }
 @media (prefers-color-scheme: dark) {
@@ -21,7 +22,12 @@
         --colorBotones: #425C6D;
         --textoInputPlaceholder: #8c8c8c;
         --colorBotonesPresionado: #ED6A5A;
+        --colorBotonesPresionadoDesabilitado: #ED6A5A90;
         --bordes: #35E1C2;
+        --menusLaterales: #707881; 
+        --parteMenuLateral: #535B64;
+        --headerTinyMCE: #212932;
+        --bodyTinyMCE: #
     }
 }
 
@@ -30,10 +36,61 @@
 *::-webkit-scrollbar-thumb {background-color: var(--colorBotonesPresionado);}
 *::-webkit-scrollbar-track {background: var(--colorFondo);}
 
+/* tinyMCE */
 
-input, textarea {
+/* Fondo de la toolbar */
+.tox .tox-editor-header,
+.tox .tox-toolbar-overlord,
+.tox .tox-toolbar {
+    background-color: var(--headerTinyMCE) !important;
+}
+
+/* TinyMCE quita el gradient y permite tu color */
+.tox .tox-toolbar__primary {
+    background: none !important;
+}
+
+
+/* Botones de la toolbar */
+.tox .tox-tbtn {
+    background-color: var(--colorBotones) !important;
+    color: var(--texto) !important;
+}
+
+/* Hover */
+.tox .tox-tbtn:hover {
+    background-color: var(--colorBotonesPresionado) !important;
+}
+
+/* Botón activo o presionado */
+.tox .tox-tbtn--enabled {
+    background-color: var(--colorBotonesPresionado) !important;
+}
+
+/* Iconos (SVG) de los botones */
+.tox .tox-tbtn svg {
+    fill: var(--texto) !important;
+}
+
+/* fin tinyMCE */
+
+.lista_sagas {
+    background-color: var(--parteMenuLateral) !important;
+}
+
+input, textarea, .ingresar {
     color: var(--texto);
     background-color: var(--colorBotones) ;
+}
+
+.sagas_creadas_item {
+    background-color: var(--menusLaterales) !important;
+}
+
+.img_centrada {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 input::placeholder, textarea::placeholder {
@@ -48,6 +105,7 @@ input::placeholder, textarea::placeholder {
     flex-direction: column;
     text-align: center; 
     z-index: 5;
+    height: 10vh;
 }
 .footer_inicio ul {
     display: flex;
@@ -82,10 +140,12 @@ input::placeholder, textarea::placeholder {
 .menu_usuario_caja {
     margin: 2vh;
     padding: 0%;
-
     height: 80%;
-    width: 15vh;
+    min-width: 15vh;
+    max-height: 80%;
+    max-width: 15vh;
     box-sizing: border-box;
+
 }
 .menu_usuario {
     border-radius: 50%;
@@ -270,14 +330,20 @@ body, html {
     height: max-content;
     max-height: 50px;
     width: max-content;
-    max-width: 100px;
+    max-width: 150px;
     font-size: 100%;
     border-radius: 20px;
     background-color: var(--colorBotones);
 }
 .boton:hover {
+    cursor: pointer;
     background-color: var(--colorBotonesPresionado);
 }
+.boton:disabled:hover {
+    background-color: var(--colorBotonesPresionadoDesabilitado);
+    cursor: not-allowed;
+}
+
 .mensaje {
     margin-top: 1%;
     align-self: center;
@@ -286,7 +352,18 @@ body, html {
     border-style: solid;
     border-radius: 10px;
     font-size: 200%;
+    animation: desaparecer 5s linear 3s 1 forwards;
 }
+@keyframes desaparecer {
+    50% {
+        opacity: 50%;
+        
+    }
+    100% {
+        opacity: 0%;
+    }
+}
+
 .mensaje-warning {
     border-color:#FF0000;
     color: #FF0000;
@@ -299,7 +376,9 @@ body, html {
     border-color:#FF8000;
     color: #FF8000;
 }
-
+.foto_perfil {
+    height: 90% !important;
+}
 
 /* datos usuario */
 .foto_perfil, .foto_perfil:hover {
@@ -309,9 +388,9 @@ body, html {
 
 .ingresar_info_usuario {
     box-sizing: border-box;
-    position:absolute;
+    position:fixed;
     background-color: var(--menusLaterales);
-    z-index: 3;
+    z-index: 7;
     width: 70vh;
     top:0;
     bottom: 0;
@@ -320,7 +399,7 @@ body, html {
     margin: 0;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
     
 }
 
@@ -332,9 +411,13 @@ body, html {
 
 
 .cerrar {
-    text-align: right;
     width: 100%;
-    height: 10%;
+    min-height: 10%;
+    box-sizing: border-box;
+    margin: 10px;
+    display: flex;
+    align-items: center;
+    
 }
 
 .parte1_menu {
@@ -343,14 +426,17 @@ body, html {
     width: 100%;
     margin: 0;
     height: 15%;
+    box-sizing: border-box;
 }
 
 .cerrar_ventana {
     width: 10%;
-    height: 80%;
+    height: auto;
     cursor: pointer;
-    margin: 1vh;
     margin-left: auto;
+    border-radius: 50%;
+    margin-right: 25px;
+    
 }
 
 .cerrar_ventana:hover {
@@ -415,24 +501,6 @@ body, html {
     min-width: 100%;
 }
 
-
-.form-select {
-    max-height: 40px !important;  /* altura del select cerrado */
-    overflow: hidden;
-}
-
-/* Limitar altura del menú cuando se abre (solo navegadores que lo soportan) */
-.form-select option {
-    padding: 4px 8px;
-    font-size: 14px;
-}
-
-.form-select {
-    /* Fuerza que no crezca demasiado al abrir */
-    overflow-y: auto;
-    height: auto;
-}
-
 .dialog {
     width: 60vh;
     height: 95vh;
@@ -455,12 +523,15 @@ body, html {
 }
 
 .foto_perfil_caja {
-    height: 100%;
+    min-height: 100% !important;
     width: 20%;
     margin-top: 0%;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+
 }
 
-/* Editor de texto */
 
 .crear_texto {
     width: 70%;
@@ -469,6 +540,7 @@ body, html {
 .foto_saga{
     min-height: 100%;
     min-width: 80%;
+    max-width: 90%;
     background-color: var(--parteMenuLateral);
 }
 
@@ -485,3 +557,61 @@ body, html {
     height: auto;
 }
 
+.form-select:checked {
+    background-color: var(--menusLaterales);
+}
+
+.form-select {
+    background-color: var(--parteMenuLateral) !important;
+    color: var(--texto) !important;
+    border-color: var(--bordes) !important;
+}
+
+
+
+/* usuarios */
+
+.orden_info_usuario {
+    height: 100%;
+    width: 100%;
+    display: grid;
+    /* background-color: #00FF00; */
+    grid-template-rows: 50vh 40vh;
+}
+
+.info_usuarios_seccion {
+    /* background-color: #36C9C6; */
+    grid-column: 1/2;
+    grid-row: 1/2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+
+}
+
+.imagen_usuario_foto {
+    /* background-color: #ED6A5A; */
+    grid-column: 1/2;
+    grid-row: 1/11;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.info_usuario_text {
+    /* background-color: #FF8000; */
+    grid-column: 2/4;
+    grid-row: 2/10;
+}
+
+.carrucel {
+    /* background-color: #FF0000; */
+    grid-row: 2/3;
+    margin: 0%;
+}
+
+.foto_perfil_ampliada_usuario_seccion {
+    width: 90%;
+    height: 90%;
+    border-radius: 20px;
+}

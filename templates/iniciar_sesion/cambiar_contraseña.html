@@ -18,22 +18,18 @@
                 <div class="fila_ingresar">
                     <input class="input_ingresar" name="contraseña_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
                 </div>
-                <button type="submit" class="boton">Cambiar contraseña</button>
+                <button type="submit" class="boton" name="Cambiar contraseña">Cambiar contraseña</button>
                 
-                {% with mensajes = get_flashed_messages(with_categories=true) %}
-                    {% if mensajes %}
-                        {% for categoria, mensaje in mensajes  %}
-                            <div class="fila_ingresar">
-                                <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
-                            </div>
-                            {% endfor %}
-                    {% endif %}
-                {% endwith %}
-                
+                <div class="fila_ingresar">
+                    <div id="json_mensaje" ></div>
+                </div>
+
             </form>
         </div>
         </div>
 
         {% include "registrarse/footer_inicio.html" %}
     </body>
+    {% include 'scripts.html' %}
+    <script type="module" src="{{ url_for('static', filename='JS/function_cambiar_contraseña.js') }}"></script>
 </html>

@@ -14,26 +14,22 @@
             </div>
             <div class="ingresar_datos">
                 <h2>Iniciar Sesion</h2>
-                <form method="post" action="/inicio_usuario" class="formulario" id="formulario_iniciar_sesion">
+                <form class="formulario" id="formulario_iniciar_sesion">
                     <div class="fila_ingresar">
                         <input class="input_ingresar" name="correo_usuario" type="email" required placeholder="Correo" maxlength="100">
                     </div>
                     <div class="fila_ingresar">
                         <input class="input_ingresar" name="contrasena_usuario" type="password" required placeholder="Contraseña" maxlength="255" minlength="8">
                     </div>
-                    <button type="submit" class="boton">Iniciar Sesion</button>
-                    <div class="fila_ingresar" id="olvidar_contraseña" data-url="{{ url_for('enviar_codigo', correo=session["correo_usuario"], direccion='cambiar_contraseña') }}"> 
+                    <button type="submit" class="boton" name="Iniciar Sesion">Iniciar Sesion</button>
+                    <div class="fila_ingresar" id="olvidar_contraseña" data-url="{{ url_for('enviar_codigo', correo=session['correo_usuario'], direccion='cambiar_contrasena') }}"> 
                     </div>
                     
-                    {% with mensajes = get_flashed_messages(with_categories=true) %}
-                        {% if mensajes %}
-                            {% for categoria, mensaje in mensajes  %}
-                                <div class="fila_ingresar">
-                                    <div class="mensaje mensaje-{{ categoria }}">{{ mensaje }}</div>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
+
+                    <div class="fila_ingresar">
+                        <div id="json_mensaje"></div>
+                    </div>
+
                     
                 </form>
             </div>
@@ -42,5 +38,5 @@
         {% include "registrarse/footer_inicio.html" %}
     </body>
     {% include 'scripts.html' %}
-    <script src="{{ url_for('static', filename='function_iniciar_sesion.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='JS/function_iniciar_sesion.js') }}"></script>
 </html>

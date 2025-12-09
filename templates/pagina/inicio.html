@@ -8,6 +8,9 @@
     <div class="contenido d-flex flex-column">
         {% include "pagina/header.html" %}
         <h1>Hi {{ session["usuario"]["nombre_usuario"] }}</h1>
+        <div class="spinner-border text-dark" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
         <a href="{{ url_for('prueba') }}">prueba creacion de historias</a>
     </div>
     {% include "registrarse/footer_inicio.html" %}

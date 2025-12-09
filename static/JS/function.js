@@ -28,17 +28,20 @@ async function paisesLlenar() {
     miPais.value = String(up.id_pais);
     miPais.textContent = String(up.nombre_pais);
     miPais.selected = true;
+    miPais.classList.add("ingresar")
     listap.appendChild(miPais);
     const miGenero = document.createElement("option");
     miGenero.value = String(ug.id_genero);
     miGenero.textContent = String(ug.nombre_genero);
     miGenero.selected = true;
+    miGenero.classList.add("ingresar")
     listag.appendChild(miGenero);
     p.forEach(pais => {
         if (pais.id_pais === up.id_pais) return;
         const opcion = document.createElement("option");
         opcion.value = String(pais.id_pais);
         opcion.textContent = String(pais.nombre_pais);
+        opcion.classList.add("ingresar")
         listap.appendChild(opcion);
     });
     g.forEach(genero => {
@@ -46,6 +49,7 @@ async function paisesLlenar() {
         const opcion = document.createElement("option");
         opcion.value = String(genero.id_genero);
         opcion.textContent = String(genero.nombre_genero);
+        opcion.classList.add("ingresar")
         listag.appendChild(opcion);
     });
     const botonFila = document.getElementById("boton1");
@@ -56,6 +60,7 @@ async function paisesLlenar() {
     boton.classList.add("editar")
     botonFila.appendChild(boton)
 }
+
 const menu_info = document.querySelector("#ingresar_info_usuario")
 const boton_cerrar = document.querySelector("#cerrar_ventana")
 const boton_abrir = document.querySelector("#foto_perfil_caja")
@@ -79,3 +84,5 @@ cerrar_ventana_foto.addEventListener("click", () => {
     menu_cambiar_foto.close()
     sessionStorage.setItem("menuCambiarFotoCerrado", "true")
 })
+
+
