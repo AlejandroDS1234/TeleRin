@@ -30,7 +30,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     } else {
         console.error("❌ TinyMCE no se cargó. Revisa la ruta del script en el HTML.");
     }
-    cargarSagas()
+    const usuario = document.querySelector(".header").getAttribute("data-usuario-correo")
+    cargarSagas(1, usuario)
     const forms = document.querySelectorAll("form");
 
     forms.forEach(form => {
@@ -67,7 +68,8 @@ inputPrevizualizar.addEventListener('change', function() {
 
 const elegirSaga = document.querySelector("#elegir_saga")
 elegirSaga.addEventListener("click", ()=> {
-    cargarSagas(1)
+    const usuario = document.querySelector(".header").getAttribute("data-usuario-correo")
+    cargarSagas(1, usuario)
 
 })
 

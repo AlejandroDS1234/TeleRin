@@ -615,3 +615,9 @@ body, html {
     height: 90%;
     border-radius: 20px;
 }
+
+.foto_saga_creada {
+    max-height: 200px;
+    max-width: 250px;
+    width: auto;
+}

@@ -55,7 +55,7 @@ def prueba():
 @app.route('/historias_creadas')
 @necesita_sesion
 def historias_creadas():
-    sagas_creadas()
+    sagas_creadas(session["usuario"]["correo_usuario"])
     return render_template('pagina/paginas_creadas.html')
 
 
@@ -287,7 +287,7 @@ def guardar_foto():
     if comprobar_imagen[1]:
         flash(f"{comprobar_imagen[0]}", "danger cambiar_foto")
         return redirect(request.referrer)
-    ruta_guardado=guardar_fotos(foto, "Fotos/perfil", usuario)
+    ruta_guardado=guardar_fotos(foto, "Fotos\perfil", usuario)
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
@@ -430,27 +430,26 @@ def crear_saga():
         return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT nombre_saga FROM saga WHERE correo_usuario = %s ",(correo_usuario,))
+    cursor.execute("SELECT nombre_saga, id_saga FROM saga WHERE correo_usuario = %s ",(correo_usuario,))
     nombre=cursor.fetchall()
     for nom in nombre:
-        if nom["nombre_saga"].replace(" ", "") == nombre_saga.replace("", " "):
+        if nom["nombre_saga"].replace(" ", "") == nombre_saga.replace("", " ") or nom["id_saga"]==id_saga:
             return jsonify({"mensaje": "ya existe una saga con ese nombre", "tipo": "danger"})
     comprobar_img = validar_imagen_completa(imagen)
     if comprobar_img[1]:
         return jsonify({"mensaje": f"{comprobar_img[0]}", "tipo": "danger"})
-    imagen_saga=guardar_fotos(imagen, "Fotos/fotos_sagas", id_saga)
+    imagen_saga=guardar_fotos(imagen, r"Fotos\fotos_sagas", id_saga)
     cursor.execute("INSERT INTO saga (id_saga, nombre_saga, descripcion_saga, correo_usuario, imagen_saga) VALUES (%s,%s,%s,%s,%s)",(id_saga, nombre_saga, descripcion_saga, correo_usuario, imagen_saga))
     db.commit()
     db.close()
     cursor.close()
-    sagas_creadas()
+    sagas_creadas(session["usuario"]["correo_usuario"])
     return jsonify({"mensaje": "Saga Creada", "tipo":"success"})
 
 @app.route("/sagas_creadas/<usuario>", methods=["POST", "GET"])
 def sagas_creadas(usuario):
     if request.method != "POST":
         return "error"
-    usuario=session["usuario"]["correo_usuario"]
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute("SELECT * FROM saga WHERE correo_usuario = %s ", (usuario,))

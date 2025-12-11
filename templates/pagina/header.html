@@ -1,5 +1,5 @@
 <header class="header_tt">
-    <div class="header">
+    <div class="header" data-usuario-correo="{{ session['usuario']['correo_usuario'] }}">
         
         <div class="menu_usuario_caja" id="foto_perfil_caja">
             <img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}" alt="Imagen subida" class="menu_usuario">
