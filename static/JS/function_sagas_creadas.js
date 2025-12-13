@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", async function() {
     try {
         const usuario = document.querySelector(".header").getAttribute("data-usuario-correo")
-        cargarSagas(1, usuario)
+        cargarSagas(1, usuario, "listaSagas")
     } catch {
         null
     }
     
 })
 
-export async function cargarSagas(tipo, usuario) {
+export async function cargarSagas(tipo, usuario, conten) {
     const respuesta = await fetch(`/sagas_creadas/${usuario}`, {method:"POST"});
     const sagas = await respuesta.json();
-    const contenedor = document.getElementById("listaSagas");
+    const contenedor = document.getElementById(conten);
     contenedor.innerHTML = ""; // limpiar
     sagas.forEach(saga => {
         let html

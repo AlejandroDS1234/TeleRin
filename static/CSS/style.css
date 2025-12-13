@@ -5,9 +5,10 @@
     --colorBotonesFooterHeader: #ED6A5A; /**/ /**/
     --brilloMenu: #36C9C6; /**/
     --texto: #000; /**/ /**/
+    --colorFondoOscuro: #98c1d9;
     --colorFondo: #DBE1E1; /**/ /**/
     --sombra: #808080; /**/ /**/
-    --colorBotones: #E6EBE0; /**/ /**/
+    --colorBotones: #A7AEBC; /**/ /**/
     --colorBotonesPresionado: #9FE1BC; /**/ /**/
     --colorBotonesPresionadoDesabilitado: #9FE1BC90;
     --menusLaterales: #CAD5DF; /**/ /**/
@@ -16,6 +17,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --colorFondo: #393D45;
+        --colorFondoOscuro: #232830;
         --azulFooterHeader: #212932;
         --sombra: #000;
         --texto: #6F9EE7;
@@ -104,7 +106,7 @@ input::placeholder, textarea::placeholder {
     display: flex;
     flex-direction: column;
     text-align: center; 
-    z-index: 5;
+    z-index: 1;
     height: 10vh;
 }
 .footer_inicio ul {
@@ -120,7 +122,7 @@ input::placeholder, textarea::placeholder {
 .contenido {
     display: flex;
     width: 100%;
-    height: 110vh;
+    height: 100vh;
     align-items: stretch;
     background-color: var(--colorFondo);
 }
@@ -174,6 +176,7 @@ input::placeholder, textarea::placeholder {
     width: 100%;
     box-sizing: border-box;
     background-color: var(--azulFooterHeader);
+    z-index: 1;
 }
 .mas_opciones {
     height: 100%;
@@ -279,6 +282,7 @@ input::placeholder, textarea::placeholder {
 .muñeco_proximamente {
     background-color: transparent;
     flex: 1;
+    z-index: 1;
 }
 body, html {
     width: 100%;
@@ -299,6 +303,7 @@ body, html {
     flex-direction: column;
     align-items: center;
     box-shadow: 0 0 50px var(--sombra);
+    z-index: 1;
 }
 .ingresar_datos h2 {
     font-size: 200%;
@@ -390,10 +395,11 @@ body, html {
     box-sizing: border-box;
     position:fixed;
     background-color: var(--menusLaterales);
-    z-index: 7;
+    z-index: 3;
     width: 70vh;
     top:0;
     bottom: 0;
+    left: 0;
     height: 110vh;
     border-right: 3px solid var(--bordes);
     margin: 0;
@@ -608,6 +614,9 @@ body, html {
     /* background-color: #FF0000; */
     grid-row: 2/3;
     margin: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .foto_perfil_ampliada_usuario_seccion {
@@ -620,4 +629,171 @@ body, html {
     max-height: 200px;
     max-width: 250px;
     width: auto;
+}
+
+
+
+.hi {
+    height: 100vh;
+    width: 100%;
+    background: var(--colorFondoOscuro);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "proxima-nova", sans-serif; 
+}
+
+.degradado {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(var(--colorFondoOscuro), var(--colorFondo));
+    opacity: 0;
+    z-index: 0;
+}
+
+.degradado_izquierda {
+    background: linear-gradient(to left, var(--colorFondoOscuro), var(--colorFondo));
+}
+
+#demo {
+    max-height: 80%;
+    max-width: 80%;
+    font-weight: 700;
+    margin: 0;
+    z-index: 1;
+    overflow: visible;
+}
+.hii {
+    visibility: hidden;
+}
+
+@keyframes jaja {
+    100% {
+        visibility: hidden;
+    }
+}
+
+#mensaje_promocional {
+    opacity: 0;
+}
+
+
+
+
+.crear_historia {
+    position: fixed;
+    right: 0%;
+    bottom: 0%;
+    margin: 5vh;
+    border-radius: 50%;
+    min-height: 50px !important;
+    min-width: 50px !important;
+    min-height: 10vh !important;
+    width: 10vh;
+    z-index: 2;
+}
+
+.inicio_secciones {
+    align-items: center;
+    min-height: 100vh;
+    height: min-content;
+}
+
+.seccion_inicio {
+    background-color: var(--colorFondoOscuro);
+    width: 80%;
+    min-height: 100vh;
+    height: 100%;
+    border-left: 3px solid var(--bordes);
+    border-right: 3px solid var(--bordes);
+    padding: 10px;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+#carouselExampleControls {
+    height: 50vh;
+    margin: 0%;
+}
+
+
+.carrucel_sagas .row {
+    align-items: stretch;
+}
+
+.carrucel_sagas .card {
+    height: 100%;
+}
+
+.img_saga_card {
+    height: 180px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.carousel-controls-bottom {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+}
+
+.carousel-controls-bottom button {
+    position: static; /* muy importante */
+    width: 40px;
+    height: 40px;
+}
+
+.card-text small {
+    overflow-wrap: break-word;
+}
+
+.seleccionar-saga {
+    background: var(--parteMenuLateral) !important;
+}
+
+.seleccionar-saga:hover {
+    border-color: var(--bordes);
+    border-width: 5px;
+    cursor: pointer;
+}
+
+.historias_creadas_lista {
+    border: 3px solid var(--bordes);
+    overflow-y: scroll;
+    background-color: var(--menusLaterales);
+    min-width: 70%;
+    max-width: 80%;
+    min-height: 80%;
+    box-sizing: border-box;
+}
+
+.historia {
+    display: flex;
+    gap: 20px;
+    background-color: var(--parteMenuLateral);
+    min-height: 10%;
+    max-height: 10%;
+    margin: 0%;
+    padding: 10px;
+    box-sizing: border-box;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+
+.historia:hover {
+    cursor: pointer;
+    border-color: var(--bordes);
+    border-width: 3px;
+}
+
+.historias_creadas_lista::before {
+    content: "Historias:";
 }

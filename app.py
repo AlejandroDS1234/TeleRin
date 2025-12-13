@@ -13,6 +13,7 @@ import os
 import socket
 from PIL import Image
 from functools import wraps
+import datetime 
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
@@ -23,7 +24,6 @@ def necesita_sesion(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if session.get('usuario') == None:    
-            flash("Debes iniciar sesion para acceder a esta pagina", "warning")
             return redirect(url_for("index"))
         return func(*args, **kwargs)
     return wrapper
@@ -287,7 +287,7 @@ def guardar_foto():
     if comprobar_imagen[1]:
         flash(f"{comprobar_imagen[0]}", "danger cambiar_foto")
         return redirect(request.referrer)
-    ruta_guardado=guardar_fotos(foto, "Fotos\perfil", usuario)
+    ruta_guardado=guardar_fotos(foto, "Fotos/perfil", usuario)
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
@@ -425,7 +425,7 @@ def crear_saga():
     descripcion_saga=request.form["descripcion_saga"]
     correo_usuario=session["usuario"]["correo_usuario"]
     imagen=request.files["foto_saga"]
-    id_saga=f"{correo_usuario}--{nombre_saga.replace(" ", "")}"
+    id_saga=f"""-inicio-{correo_usuario}-{nombre_saga.replace(" ", "_")}"""
     if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen.filename == "":
         return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
     db=conectar()
@@ -482,11 +482,12 @@ def crear_historias():
     saga_historia=info["saga_historia"]
     visibilidad_historia = info["visibilidad_historia"]
     html_historia=info["html_historia"]
-    id_historia = f"{saga_historia}--{nombre_historia}"
+    time_historia = datetime.datetime.now()
+    id_historia = f"""-inicio-{usuario}-{saga_historia}-{nombre_historia}"""
     ruta_guardar = guardar_escritos(html_historia, f"historias/{usuario}/{saga_historia}", nombre_historia)
     db=conectar()
     cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("INSERT INTO historias (id_historia, nombre_historia, descripcion_historia, visibilidad_historia, contenido_historia, id_saga) VALUES (%s,%s,%s,%s,%s,%s)", (id_historia, nombre_historia, descripcion_historia, visibilidad_historia, ruta_guardar, saga_historia))
+    cursor.execute("INSERT INTO historias (id_historia, nombre_historia, descripcion_historia, visibilidad_historia, contenido_historia, id_saga, fecha_actualizacion) VALUES (%s,%s,%s,%s,%s,%s, %s)", (id_historia, nombre_historia, descripcion_historia, visibilidad_historia, ruta_guardar, saga_historia, time_historia))
     db.commit()
     cursor.close()
     db.close()
@@ -544,9 +545,43 @@ def usuario(usuario_correo):
     genero, pais = genero_pais(usuario)
     return render_template("pagina/usuario.html", usuario=usuario, genero=genero, pais=pais)
 
+@app.route("/cerrar_sesion", methods=["GET", "POST"])
+def cerrar_sesion():
+    session.clear()
+    print(session)
+    return redirect(url_for("index"))
 
+@app.route("/sagas_recomendadas")
+def sagas_recomensadas():
+    db=conectar() 
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute("""SELECT * FROM saga WHERE correo_usuario <> %s """,(session["usuario"]["correo_usuario"],))
+    sagas=cursor.fetchmany(18)
+    return jsonify(sagas)
 
+@app.route("/inicio/<usuario>/<saga>")
+def historias_saga(usuario, saga):
+    db=conectar()
+    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cursor.execute(""" SELECT * FROM saga WHERE correo_usuario = %s """, (usuario,))
+    sagas=cursor.fetchall()
+    nombre_saga = saga.replace("_"," ")
+    for sag in sagas:
+        if sag["nombre_saga"]==nombre_saga:
+            id_saga = request.path
+            id_saga= id_saga.replace("/", "-")
+            print(id_saga)
+            cursor.execute(""" SELECT * FROM historias WHERE id_saga = %s AND visibilidad_historia = %s """, (id_saga, True))
+            historias = cursor.fetchall()
+            editar = usuario == session["usuario"]["correo_usuario"]
+            return ingresar(historias, editar, sag)
+    return abort(404)
 
+def ingresar(historias, editar, saga):
+    print(historias, editar, saga)
+    if editar:
+        return render_template("pagina/saga_editar.html", historias=historias, saga=saga)
+    return render_template("pagina/saga.html", historias=historias, saga=saga)
 
 
 if __name__=="__main__":

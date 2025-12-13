@@ -8,65 +8,65 @@
             * {
                 box-sizing: border-box;
             }
-
-            .hi {
-                height: 100vh;
-                width: 100%;
-                padding: 0;
-                margin: 0;
-                /* overflow: hidden; */
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                font-family: "proxima-nova", sans-serif; 
-                background: rgb(0, 0, 0);
-            }
-
-            #demo {
-                max-height: 80%;
-                max-width: 80%;
-                font-weight: 700;
-            }
-
-    </style>
+            
+        </style>
     </head>
     <body>
         <div class="contenido hi">
+            <div class="degradado"></div>
             <svg id="demo" xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 100 100">
                 <defs>
                     <clipPath id="theClipPath">
-                    <rect id="theSquare" x="0" y="50" width="100" height="0" fill="red" />
+                        <rect id="theSquare" x="0" y="50" width="100" height="0" fill="red" />
                     </clipPath>
                 </defs>
-                <line id="target1" x1="0" y1="50" x2="0" y2="50" stroke-width="1" stroke="#00f2ff" />
-                <line id="target2" x1="0" y1="50" x2="0" y2="50" stroke-width="1" stroke="#00f2ff" />
+                <line id="target1" x1="0" y1="50" x2="0" y2="50" stroke-width="1" stroke="var(--bordes)" />
+                <line id="target2" x1="0" y1="50" x2="0" y2="50" stroke-width="1" stroke="var(--bordes)" />
                 <g id="clipPathReveal" clip-path="url(#theClipPath)">
-                    <text transform="translate(50 55)" text-anchor="middle" font-size="18" fill="#fff">TeleRin <img src="{{ url_for('static', filename='logo_temporal.jpg')}}" class="logo_header"></text>
+                    <g id="logoGroup" transform="translate(50, 55)">
+                        <!-- Texto -->
+                        <text data-titulo="TeleRin" class="hii" x="15" y="0" text-anchor="end" font-size="18" fill="var(--texto)"></text>
+                        <!-- Imagen a la derecha del texto -->
+                        <image 
+                            id="logoImg"
+                            xlink:href="{{ url_for('static', filename='logo_temporal.jpg')}}"
+                            x="20"
+                            y="-20"
+                            width="28"
+                            height="28"
+                            preserveAspectRatio="xMidYMid slice"
+                        />
+                    </g>
                 </g>
+                <text fill="var(--texto)" id="mensaje_promocional" x="-20" y="80" font-size="5" style="paint-order: stroke;">¿Te sientes mal? , no hay problema, solo escribe un poco</text>
+                <foreignObject
+                    id="enlaces"
+                    x="0"
+                    y="85"
+                    width="100"
+                    height="0">
+
+                    <div xmlns="http://www.w3.org/1999/xhtml"
+                        style="
+                            width:100%;
+                            height:100%;
+                            display:flex;
+                            flex-direction: column;
+                            justify-content:center;
+                            align-items:center;
+                            gap: 10px;
+                            transform: scale(0.25);
+                            transform-origin:center ;
+                        ">
+                        <a href="{{url_for('iniciar_sesion')}}"><button class="boton" style="min-width: 100px;">Iniciar Sesion</button></a>
+                        <p style="min-width:max-content;">¿no tienes cuenta? <a href="{{url_for('registrar_usuario')}}">Registrate</a></p>
+                    </div>
+                </foreignObject>
+
             </svg>
-            <button class="boton"></button>
-            <button class="boton"></button>
+
         </div>
         {% include "registrarse/footer_inicio.html" %}
     </body>
-    <script>
-        console.clear();
-        const tl = gsap.timeline({
-        repeat: -1,
-        repeatDelay: 0.5,
-        defaults: { duration: 0.6, ease: "power2.inOut" }
-        });
-        gsap.set("#target1", { rotation: 45, svgOrigin: "50 50" });
-        gsap.set("#target2", { rotation: 135, svgOrigin: "50 50" });
-        tl.to("line", { attr: { x2: 100 } });
-        tl.to("#target1", { rotation: 0 }, "turn");
-        tl.to("#target2", { rotation: 180 }, "turn");
-        tl.to("#target1", { y: -10 }, "move");
-        tl.to("#target2", { y: 10 }, "move");
-        tl.to("#theSquare", { attr: { height: 22, y: 38 } }, "move");
-        tl.to("line", { attr: { x1: 50, x2: 50 } });
-        tl.to("text", { duration: 1, opacity: 0, ease: "none" });
-
-    </script>
+    <script src="{{ url_for('static', filename='JS/function_index.js') }}" ></script>
 </html>

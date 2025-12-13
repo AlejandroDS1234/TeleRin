@@ -67,7 +67,7 @@
                     <input type="file" id="cargar_imagen_saga" accept="imagen/*" name="foto_saga" required>
                 </div>
                 <div class="fila">
-                    <input type="text" placeholder="Nombre de la saga" name="nombre_saga" required maxlength="20">
+                    <input type="text" placeholder="Nombre de la saga" name="nombre_saga" required maxlength="30">
                 </div>
                 <div class="fila">
                     <textarea name="descripcion_saga" id="#" placeholder="Descripcion saga" maxlength="225" required></textarea>
@@ -81,7 +81,7 @@
             </div>
         </dialog>
         </div>
-        {% include "registrarse/footer_inicio.html" %}
+        {% include "pagina/footer_pagina.html" %}
     </body>
     {% include 'scripts.html' %}
     <script type="module" src="{{ url_for('static', filename='JS/function_crear_historias.js') }}"></script>

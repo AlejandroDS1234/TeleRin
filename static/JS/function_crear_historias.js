@@ -69,7 +69,7 @@ inputPrevizualizar.addEventListener('change', function() {
 const elegirSaga = document.querySelector("#elegir_saga")
 elegirSaga.addEventListener("click", ()=> {
     const usuario = document.querySelector(".header").getAttribute("data-usuario-correo")
-    cargarSagas(1, usuario)
+    cargarSagas(1, usuario, "listaSagas")
 
 })
 

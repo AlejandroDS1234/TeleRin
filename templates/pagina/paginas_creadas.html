@@ -6,15 +6,14 @@
     </head>
     <body>
         <div class="contenido d-flex flex-column sagas_creadas_pg">
+            {% include "pagina/boton_crear_historia.html" %}
             {% include "pagina/header.html" %}
-            
             <div class="d-flex flex-column sagas_creadas " >
-              <h1>Sagas Creadas</h1>
-              hola
-              <div id="listaSagas"></div>
+                <h1>Sagas Creadas</h1>
+                <div id="listaSagas"></div>
             </div>
         </div>
-        {% include "registrarse/footer_inicio.html" %}
+        {% include "pagina/footer_pagina.html" %}
     </body>
     {% include 'scripts.html' %}
     <script type="module" defer src="{{ url_for('static', filename='JS/function_sagas_creadas.js') }}"></script>

@@ -5,15 +5,35 @@
     <title>inicio</title>
 </head>
 <body>
-    <div class="contenido d-flex flex-column">
+    <div class="contenido d-flex flex-column inicio_secciones">
+        {% include "pagina/boton_crear_historia.html" %}
         {% include "pagina/header.html" %}
-        <h1>Hi {{ session["usuario"]["nombre_usuario"] }}</h1>
-        <div class="spinner-border text-dark" role="status">
-            <span class="sr-only">Loading...</span>
+        <div class="seccion_inicio">
+            <div class="carrucel_sagas_recomendadas ">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                    <div class="carousel-inner carrucel_sagas" id="carousel_inner"></div>
+                </div>
+                
+                <div class="carousel-controls-bottom">
+                    <button class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#carouselExampleControls"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                
+                    <button class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#carouselExampleControls"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div> 
+            </div>
         </div>
-        <a href="{{ url_for('prueba') }}">prueba creacion de historias</a>
     </div>
-    {% include "registrarse/footer_inicio.html" %}
+    {% include "pagina/footer_pagina.html" %}
 </body>
 {% include 'scripts.html' %}
+<script src="{{ url_for('static', filename='JS/function_inicio.js') }}"></script>
 </html>

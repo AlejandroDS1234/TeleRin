@@ -70,7 +70,8 @@
         <div class="info_nombres">
             <h2> {{ session["usuario"]["nombre_usuario"] }} </h2>
             <p> {{ session["usuario"]["correo_usuario"] }} </p>
-        </div> 
+            <a href="{{ url_for('cerrar_sesion') }}"><button class="boton">Cerrar Sesion</button></a>
+        </div>
     </div>
     <div class="informacion_adicional">
         <form method="post" action="/actulizar_info" class="formulario_datos">
