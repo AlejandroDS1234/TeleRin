@@ -263,6 +263,7 @@ def inicio_usuario():
         if usuario and check_password_hash(usuario["contraseña_usuario"], contraseña):
             return guardar_ip(correo)
         session["correo_usuario"]=correo
+        print(session["correo_usuario"])
         return jsonify({"mensaje":"Contraseña o correo incorrectos", "tipo":"danger"}) 
     return redirect(url_for("index"))
 
@@ -275,7 +276,9 @@ def cantida_errores():
         session["intentos_fallidos"]+=1
         return jsonify({"errores": session["intentos_fallidos"]})
 
-
+@app.route("/sesion")
+def sesion():
+    return jsonify({"ses":session["correo_usuario"]})
 
 @app.route("/guardar_foto", methods=["POST"])
 def guardar_foto():
