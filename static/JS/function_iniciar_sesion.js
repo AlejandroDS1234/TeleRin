@@ -1,29 +1,19 @@
 import { enviarInfoServer } from "./function_generales.js";
-
-
+import { mostrarContraseña } from "./function_generales.js";
 
 // /inicio_usuario
-
 const formularioIniciarSesion = document.getElementById("formulario_iniciar_sesion")
 formularioIniciarSesion.addEventListener("submit", async(e) => {
     const correoUsuario = document.querySelector("[name='correo_usuario']").value
     const contrasenaUsuario = document.querySelector("[name='contrasena_usuario'] ").value
-    const datosIniciarSesion = { "correo_usuario": correoUsuario, "contrasena_usuario": contrasenaUsuario }
+    const datosIniciarSesion = { "correo_usuario": correoUsuario, "contraseña_usuario": contrasenaUsuario }
 
-    enviarInfoServer(e, datosIniciarSesion, "/inicio_usuario", "json_mensaje", "errores", "./function_iniciar_sesion.js")
-
+    enviarInfoServer(e, datosIniciarSesion, "/iniciar_sesion", "json_mensaje")
+ 
 })
 
-
-export async function errores() {
-    const conresponse = await fetch("/cantida_errores")
-    const errores = await conresponse.json()
-    const cantidadErrores = errores.errores;
-    if (cantidadErrores >= 2) {
-        const captchaContainer = document.querySelector("#olvidar_contraseña");
-        const url = captchaContainer.getAttribute("data-url");
-        const res = await fetch("/sesion")
-        const sesi = await res.json()
-        captchaContainer.innerHTML = `<a href="/enviar_codigo/${sesi["ses"]}/cambiar_contrasena">¿Olvidaste tu contraseña?</a>`;
-    }
-}
+const mostrarContraseñaBoton = document.getElementById("mostrar_contraseña")
+const contraseñaInput = document.querySelector("[name='contrasena_usuario'] ")
+mostrarContraseñaBoton.addEventListener("click", () => {
+    mostrarContraseña(mostrarContraseñaBoton, contraseñaInput)
+})

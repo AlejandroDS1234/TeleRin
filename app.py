@@ -8,6 +8,7 @@ import random
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart 
 import psycopg2.extras
+from psycopg2.extras import Json
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import socket
@@ -15,153 +16,32 @@ from PIL import Image
 from functools import wraps
 import datetime 
 
+
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
 
-#funciones para renderizar 
 
-def necesita_sesion(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if session.get('usuario') == None:    
-            return redirect(url_for("index"))
-        return func(*args, **kwargs)
-    return wrapper
+#decoradores
+funciones={}
+def registrar_funcion(nombre):
+    def decorador(func):
+        funciones[nombre]=func
+        return func
+    return decorador
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+def necesita(nombre, validacion):
+    def decorador(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if not validacion():    
+                print(request.referrer)
+                flash(f"Necesitas {nombre} para acceder", "warning")
+                return redirect(request.referrer or "/")
+            return func(*args, **kwargs)
+        return wrapper
+    return decorador
 
-@app.route("/registrar_usuario")
-def registrar_usuario():
-    return render_template("registrarse/registrarse.html")
-
-@app.route("/inicio")
-@necesita_sesion
-def inicio():
-    print("inicio")
-    actualizar_sesion(session["usuario"]["correo_usuario"])
-    guardar_ip(session["usuario"]["correo_usuario"])
-    session.pop("cambio_contrasena", None)
-    session.pop("intentos_fallidos", None)
-    session.pop("direccion", None)
-    return render_template("pagina/inicio.html")
-
-@app.route('/prueba')
-@necesita_sesion
-def prueba():
-    return render_template('pagina/crear.html')
-
-@app.route('/historias_creadas')
-@necesita_sesion
-def historias_creadas():
-    sagas_creadas(session["usuario"]["correo_usuario"])
-    return render_template('pagina/paginas_creadas.html')
-
-
-
-
-
-
-# proceso cambiar contraseña 
-
-@app.route("/iniciar_sesion")
-def iniciar_sesion():
-    return render_template("iniciar_sesion/iniciar_sesion.html")
-
-@app.route("/enviar_codigo/<correo>/<direccion>",)
-def enviar_codigo(correo, direccion="inicio"):
-    codigo=correo_validacion(correo)
-    if codigo:
-        session["codigo_verificacion"]=str(codigo)
-        session["correo_usuario"]=correo
-        session["direccion"]=direccion
-        return redirect(url_for("mandar_codigo"))
-    flash("No se pudo enviar el codigo, intente despues", "danger")
-    return redirect(url_for("mandar_codigo")) 
-
-@app.route("/mandar_codigo")
-def mandar_codigo():
-    return render_template("iniciar_sesion/codigo_verificacion.html")
-
-@app.route("/verificar_codigo/<codigo>", methods=["GET","POST"])
-def verificar_codigo(codigo):
-    if request.method!="POST":
-        flash("Metodo no permitido", "danger")
-        return redirect(url_for("index"))
-    codigoS=session.get("codigo_verificacion")
-    if str(codigo)==str(codigoS):
-        session.pop("codigo_verificacion", None)
-        if str(session.get("direccion"))=='cambiar_contrasena':
-            session["cambio_contrasena"]=True
-            print
-        else:
-            actualizar_sesion(session["correo_usuario"])
-        return redirect(url_for(session.get("direccion")))
-    else:
-        return jsonify({"mensaje":"Codigo incorrecto", "tipo":"danger"})
-
-@app.route("/cambiar_contrasena")
-def cambiar_contrasena():
-    if not session.get("cambio_contrasena"):
-        flash("No puedes acceder a esta pagina", "danger")
-        return redirect(url_for("index"))
-    return render_template("iniciar_sesion/cambiar_contraseña.html")
-
-@app.route("/cambiarContrasena", methods=["GET","POST"])
-def cambiarContrasena():
-    if not session.get("cambio_contrasena"):
-        flash("No puedes acceder a esta pagina", "danger")
-        return redirect(url_for("index"))
-    if request.method!="POST":
-        return "ruta no valida >:("
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    nueva_contraseña=request.form["contraseña_usuario"]
-    if len(nueva_contraseña) < 8:
-        flash("La contraseña debe tener al menos 8 caracteres", "danger")
-        return redirect(url_for("cambiar_contrasena"))
-    nueva_contraseña=generate_password_hash(nueva_contraseña)
-    correo=session.get("correo_usuario")
-    cursor.execute('UPDATE "USUARIOS" SET contraseña_usuario = %s WHERE correo_usuario = %s', (nueva_contraseña, correo))
-    db.commit()
-    cursor.close()
-    db.close()
-    session.pop("intentos_fallidos", None)
-    flash("Contraseña cambiada con exito", "success")
-    return redirect(url_for("iniciar_sesion"))
-
-
-
-
-
-
-
-
-
-def guardar_ip(correo):
-    ip_local = socket.gethostbyname(socket.gethostname())
-    user_agent = request.headers.get("User-Agent", "")
-    lenguaje=request.headers.get("Accept-Lenguage", "")
-    encoding=request.headers.get("Accept-Encoding", "")
-    dispositivo=f"{ip_local}--{user_agent}--{lenguaje}--{encoding}"
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
-    ip=cursor.fetchone()
-
-    if ip["ip_usuario"] == None or check_password_hash(ip["ip_usuario"], dispositivo)==False:
-        dispositivo=generate_password_hash(dispositivo)
-        cursor.execute('UPDATE "USUARIOS" SET ip_usuario = %s WHERE correo_usuario = %s', (dispositivo, correo))
-        db.commit()
-        db.close()
-        cursor.close()
-        return redirect(url_for("enviar_codigo", correo=correo, direccion="inicio"))
-    actualizar_sesion(correo)
-    return redirect(url_for("inicio"))
-
-
-
+#funciones reutilizables
 def conectar():
     try:
         db = ps.connect(
@@ -175,56 +55,109 @@ def conectar():
     except:
         print("Error al conectar")
 
-@app.route("/registrarse", methods=["GET", "POST"])
-def registrarse():
-    if request.method == "POST":
-        form=request.get_json()
-        nombre_us=form["nombre_usuario"]
-        correo_us=form["correo_usuario"]
-        contraseña_us=form["contraseña_usuario"]
-        db=conectar()
-        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        try:
-            validacion=validate_email(correo_us)
-            correo_usuario=validacion.email
-            cursor.execute('SELECT correo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo_usuario,))
-            if cursor.fetchone():
-                cursor.close()
-                db.close()
-                return jsonify({"mensaje":"Correo ya registrado", "tipo":"warning"})
-            else:
-                if len(contraseña_us) < 8:
-                    cursor.close()
-                    db.close()
-                    return jsonify({"mensaje":"La contraseña debe tener al menos 8 caracteres", "tipo": "danger"})
-                contraseña_us=generate_password_hash(contraseña_us)
-                valores=(nombre_us, correo_usuario, contraseña_us)
-                sql='INSERT INTO "USUARIOS" (nombre_usuario, correo_usuario, contraseña_usuario) VALUES (%s, %s, %s)'
-                cursor.execute(sql,valores)
-                db.commit()
-                codigo=correo_validacion(correo_usuario)
-                if codigo:
-                    session["codigo_verificacion"]=str(codigo)
-                    session["correo_usuario"]=correo_usuario
-                    session["direccion"]="inicio"
-                    return redirect(url_for("mandar_codigo"))
-                return jsonify({"mensaje": "No se pudo enviar el codigo, intente despues", "tipo": "danger"})
-        except EmailNotValidError:
-            return jsonify({"mensaje": "Email no valido", "tipo":"danger"})
-    return redirect(url_for("index"))
+def encriptar(dato: str | int) -> str:
+    return generate_password_hash(str(dato))
 
+def validar_email(correo: str) -> str | bool:
+    try:
+        validacion=validate_email(correo)
+        return validacion.email
+    except EmailNotValidError:
+        return False
+    
+def comprobar_contraseña(contraseña: str) -> bool:
+    if len(contraseña) < 8:
+        return False
+    cantidad_Numeros = filter(str.isdigit, contraseña)
+    if len(list(cantidad_Numeros)) < 2:
+        return False
+    cantidad_Mayusculas = filter(str.isupper, contraseña)
+    if len(list(cantidad_Mayusculas)) < 3:
+        return False
+    cantidad_Minusculas = filter(str.islower, contraseña)
+    if len(list(cantidad_Minusculas)) < 3:
+        return False
+    return True  
+    
+def guardar_temporalmente_datos(datos: dict):
+    session["datos_temporales"]=datos
+            
+def guardar_funcion_proveniente(nombre_funcion: str):
+    session["funcion_proveniente"]=nombre_funcion
+    
+def ruta_guardado(nombre_archivo, archivo_de_que, direccion, extension=".jpg"):
+    direccion_proyecto=os.getcwd()
+    nombre_archivo=os.path.join(f"{nombre_archivo}{archivo_de_que}{extension}")
+    ruta_completa=os.path.join(direccion_proyecto, direccion, nombre_archivo)
+    return nombre_archivo, ruta_completa
 
+def validar_imagen_completa(file, max_mb=5, min_w=300, min_h=300):
+    # 1. Validar que sea imagen real
+    try:
+        img = Image.open(file)
+        img.verify()
+    except:
+        return "El archivo no es una imagen válida", True
+    file.seek(0)  # reset
+    # 2. Validar peso
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+    if size > max_mb * 1024 * 1024:
+        return f"La imagen pesa más de {max_mb} MB", True
+    # 3. Validar dimensiones
+    img = Image.open(file)
+    w, h = img.size
+    file.seek(0)
+    if w < min_w or h < min_h:
+        return f"La imagen debe ser mínimo {min_w}x{min_h} px", True
+    return None, False   
 
-def correo_validacion(correo):
+#funciones del sistema
+def actualizar_sesion(correo: str):
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+            usuario=cursor.fetchone()
+            datos_indefinidos(usuario)
+            session["usuario"]=usuario
+           
+def guardar_ip(correo: str):
+    dispositivo=obtener_ip()
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+            ip=cursor.fetchone()
+            if ip["ip_usuario"] == None or check_password_hash(ip["ip_usuario"], dispositivo)==False:
+                dispositivo=encriptar(dispositivo)
+                actualizar_datos("USUARIOS", {"ip_usuario": dispositivo}, {"correo_usuario": correo})
+    return actualizar_sesion(correo)
+
+def datos_indefinidos(usuario: dict):
+    if usuario["foto_perfil_usuario"] == None:
+        ruta_guardado="predefinido.jpg"
+        actualizar_datos("USUARIOS", {"foto_perfil_usuario": ruta_guardado}, {"correo_usuario": usuario["correo_usuario"]})
+    generos=dato_en_db(1, "1", "generos")
+    id_genero=[genero["id_genero"] for genero in generos]
+    if usuario["id_genero"] == None or usuario["id_genero"] not in id_genero:
+        id_genero=0
+        actualizar_datos("USUARIOS", {"id_genero": id_genero}, {"correo_usuario": usuario["correo_usuario"]})
+    paises=dato_en_db(1, "1", "paises")
+    id_pais=[pais["id_pais"] for pais in paises]
+    if usuario["id_pais"] == None or usuario["id_pais"] not in id_pais:
+        id_pais=0
+        actualizar_datos("USUARIOS", {"id_pais": id_pais}, {"correo_usuario": usuario["correo_usuario"]})
+   
+def enviar_correo_validacion(correo):
     emisor="telerincontac@gmail.com"
     verficacion="emej vpkm srqe rkzn"
     server="smtp.gmail.com"
     port=587
-    receptor=correo
     codigo=random.randint(100000,999999)
+    codigodb=f"{correo}{codigo}"
     mensaje=MIMEMultipart()
     mensaje["From"]=emisor
-    mensaje["To"]=receptor
+    mensaje["To"]=correo
     mensaje["Subject"]=f"Codigo de verificacion TeleRin: {codigo}"
     cuerpo=f""" <!DOCTYPE html>
                 <html lang="en">
@@ -239,353 +172,397 @@ def correo_validacion(correo):
             smtp.starttls()
             smtp.login(emisor, verficacion)
             smtp.send_message(mensaje)
-            return codigo
+            return codigodb
     except Exception as e:
         return False
-    
+   
+def enviar_correo(correo):
+    codigo= enviar_correo_validacion(correo)
+    if codigo==False:
+        print("Error to send email")
+        return jsonify({"mensaje":"Error al enviar el correo de validacion", "tipo":"danger"})
+        
+    session["codigo_validacion"]=encriptar(codigo)
+    return redirect(url_for("ingresar_codigo_validacion"))
 
+def dato_en_db(dato: str | None, nombre_dato: str | dict, tabla: str = "USUARIOS") -> dict | None:
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            comando=f"""SELECT * FROM "{tabla}" WHERE """
+            datos=[]
+            if isinstance(nombre_dato, dict):
+                condicion=""
+                for clave in nombre_dato.keys():
+                    condicion+=f"{clave} = %s AND "
+                    datos.append(nombre_dato[clave])
+                condicion=condicion[:-5]
+                comando+=condicion
+            else:
+                comando+=f"{nombre_dato} = %s"
+                datos.append(dato)
+            cursor.execute(comando, tuple(datos))
+            resultado=cursor.fetchall()
+            return resultado
+
+def obtener_ip():
+    ip_local = socket.gethostbyname(socket.gethostname())
+    user_agent = request.headers.get("User-Agent", "")
+    lenguaje=request.headers.get("Accept-Lenguage", "")
+    encoding=request.headers.get("Accept-Encoding", "")
+    dispositivo=f"{ip_local}--{user_agent}--{lenguaje}--{encoding}"
+    return dispositivo
+
+def verificar_ip(correo: str):
+    dispositivo=obtener_ip()
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+            ip=cursor.fetchone()
+            if check_password_hash(ip["ip_usuario"], dispositivo):
+                return True
+    return False
+
+def actualizar_datos(tabla: str, datos: dict, condicion: dict):
+    with conectar() as db:
+        with db.cursor() as cursor:
+            comando=f"""UPDATE "{tabla}" SET """
+            datos_actualizar=[]
+            datos_str=""
+            for clave in datos.keys():
+                datos_str+=f"{clave} = %s, "
+                datos_actualizar.append(datos[clave])
+            datos_str=datos_str[0:-2]
+            comando+=datos_str
+            comando+=" WHERE "
+            datos_str=""
+            for clave in condicion.keys():
+                datos_str+=f"{clave} = %s AND "
+                datos_actualizar.append(condicion[clave])
+            datos_str=datos_str[:-5]
+            comando+=datos_str
+            cursor.execute(comando, tuple(datos_actualizar))
+            db.commit()
             
-            
+#funciones en el diccionario
+@registrar_funcion("registro")
+def registro(form: dict):
+    nombre_us=form["nombre_usuario"]
+    correo_us=form["correo_usuario"]
+    contraseña_us=form["contraseña_usuario"]
+    codigo_us_numero=random.randint(100000,999999)
+    codigo_us=f"{codigo_us_numero}{correo_us[0:5]}"
+    contraseña_encriptada=encriptar(f"{correo_us}{contraseña_us}")
+    insertar_db("USUARIOS",{"nombre_usuario": nombre_us, "correo_usuario": correo_us, "contraseña_usuario": contraseña_encriptada, "codigo_usuario": codigo_us})
+    guardar_ip(correo_us)
+    actualizar_sesion(correo_us)
+    return redirect(url_for("inicio"))
+        
+@registrar_funcion("iniciar_sesion_dispositivo_nuevo")
+def iniciar_sesion_dispositivo_nuevo(dato: dict | str):
+    correo = dato["correo_usuario"] if isinstance(dato, dict) else dato
+    guardar_ip(correo)
+    actualizar_sesion(correo)
+    return redirect(url_for("inicio"))
 
-
-@app.route("/inicio_usuario", methods=["GET", "POST"])
-def inicio_usuario():
+@registrar_funcion("cambiar_contraseña_comprobador")
+def cambiar_contraseña_comprobador(_=None):
+    session["cambiar_contraseña_usuario"]=True
+    return redirect(url_for("cambiar_contraseña"))
+   
+#rutas
+@app.route("/")
+def index():
+    return render_template("llenar_datos/iniciar_sesion.html")
+   
+@app.route("/registrarse", methods=["GET", "POST"])
+def registrarse():
     if request.method=="POST":
         form = request.get_json()
-        correo=form["correo_usuario"]
-        contraseña=form['contrasena_usuario']
-        db=conectar()
-        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cursor.execute('SELECT contraseña_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
-        usuario = cursor.fetchone()
-        cursor.close()
-        db.close()
-        if usuario and check_password_hash(usuario["contraseña_usuario"], contraseña):
-            return guardar_ip(correo)
-        session["correo_usuario"]=correo
-        print(session["correo_usuario"])
-        return jsonify({"mensaje":"Contraseña o correo incorrectos", "tipo":"danger"}) 
+        nombre_us=form["nombre_usuario"]
+        correo_us=form["correo_usuario"]
+        contraseña_us=form["contraseña_usuario"]
+        email=validar_email(correo_us)
+        if not email:
+            return jsonify({"mensaje":"Correo no valido", "tipo":"danger"})
+        if dato_en_db(email, 'correo_usuario'):
+            return jsonify({"mensaje":"Correo ya registrado", "tipo":"warning"})
+        if dato_en_db(nombre_us, 'nombre_usuario'):
+            return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
+        if not comprobar_contraseña(contraseña_us):
+            return jsonify({"mensaje":"Ponga una contraseña mas segura (8 caracteres, 3 mayusculas, 3 minusculas, 2 numeros)", "tipo":"danger"})
+        guardar_temporalmente_datos(form)
+        guardar_funcion_proveniente("registro")
+        return enviar_correo(correo_us)
+    elif request.method=="GET":
+        return render_template("llenar_datos/registrarse.html")
+   
+@app.route("/ingresar_codigo_validacion", methods=["GET"])
+def ingresar_codigo_validacion():
+    if request.method=="GET":
+        return render_template("llenar_datos/codigo_verificacion.html")
+   
+@app.route("/validar_codigo", methods=["POST"])
+@necesita("codigo", lambda: session.get("codigo_validacion")!=None)
+def validar_codigo():
+    if request.method!="POST":
+        abort(405)
+    codigo=request.get_json().get("codigo")
+    if check_password_hash(session["codigo_validacion"], f"{session['datos_temporales']['correo_usuario']}{codigo}"):
+        session.pop("codigo_validacion")
+        return funciones[session["funcion_proveniente"]](session["datos_temporales"])
+    return jsonify({"mensaje":"Codigo de validacion incorrecto", "tipo":"danger"})
+
+@app.route("/cerrar_sesion", methods=["GET", "POST"])
+def cerrar_sesion():
+    session.clear()
     return redirect(url_for("index"))
 
-@app.route("/cantida_errores")
-def cantida_errores():
-    if not "intentos_fallidos" in session:
-        session["intentos_fallidos"]=0
-        return jsonify({"errores": session["intentos_fallidos"]})
-    else:
-        session["intentos_fallidos"]+=1
-        return jsonify({"errores": session["intentos_fallidos"]})
-
-@app.route("/sesion")
-def sesion():
-    return jsonify({"ses":session["correo_usuario"]})
-
-@app.route("/guardar_foto", methods=["POST"])
-def guardar_foto():
-    if request.method!="POST":
-        return redirect(url_for("index"))
-    usuario=session["usuario"]["correo_usuario"]
-    foto=request.files['imagen']
-    comprobar_imagen = validar_imagen_completa(foto)
-    if comprobar_imagen[1]:
-        flash(f"{comprobar_imagen[0]}", "danger cambiar_foto")
-        return redirect(request.referrer)
-    ruta_guardado=guardar_fotos(foto, "Fotos/perfil", usuario)
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario))
-    db.commit()
-    cursor.close()
-    db.close()
-    flash("Foto de perfil actualizada", "success cambiar_foto")
-    return redirect(request.referrer)
-
-
-def guardar_fotos(foto, direccion, nombre):
-    direccion_proyecto=os.getcwd()
-    if foto:
-        ruta_guardado = os.path.join(f"{nombre}_perfil.jpg")
-        ruta_completa = os.path.join(direccion_proyecto, direccion,ruta_guardado)
-        foto.save(ruta_completa)
-        return ruta_guardado
-
-
-def validar_imagen_completa(file, max_mb=5, min_w=300, min_h=300):
-    # 1. Validar que sea imagen real
-    try:
-        img = Image.open(file)
-        img.verify()
-    except:
-        return ["El archivo no es una imagen válida", True]
-    file.seek(0)  # reset
-    # 2. Validar peso
-    file.seek(0, 2)
-    size = file.tell()
-    file.seek(0)
-    if size > max_mb * 1024 * 1024:
-        return [f"La imagen pesa más de {max_mb} MB", True]
-    # 3. Validar dimensiones
-    img = Image.open(file)
-    w, h = img.size
-    file.seek(0)
-    if w < min_w or h < min_h:
-        return [f"La imagen debe ser mínimo {min_w}x{min_h} px", True]
-    return [None, False]
-    
-@app.route("/api/paises_generos")
-def paises():
-    #paises
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('SELECT id_pais, nombre_pais FROM paises ORDER BY id_pais')
-    paises=cursor.fetchall()
-    usuario=session["usuario"]["correo_usuario"]
-    cursor.execute('SELECT id_pais FROM "USUARIOS" WHERE correo_usuario= %s', (usuario,))
-    pais_usuario_id=cursor.fetchone()
-    if pais_usuario_id["id_pais"]==None:
-        pais_usuario_id["id_pais"]=0
-    cursor.execute('SELECT id_pais, nombre_pais FROM paises WHERE id_pais = %s', (pais_usuario_id["id_pais"],))
-    pais_usuario=cursor.fetchone()
-
-    #genero
-    cursor.execute('SELECT id_genero, nombre_genero FROM generos ORDER BY id_genero')
-    generos=cursor.fetchall()
-
-    usuario=session["usuario"]["correo_usuario"]
-    cursor.execute('SELECT id_genero FROM "USUARIOS" WHERE correo_usuario= %s', (usuario,))
-    genero_usuario_id=cursor.fetchone()
-    if genero_usuario_id["id_genero"]==None:
-        genero_usuario_id["id_genero"]=0
-
-    cursor.execute('SELECT id_genero, nombre_genero FROM generos WHERE id_genero = %s', (genero_usuario_id["id_genero"],))
-    genero_usuario=cursor.fetchone()
-
-    lista_mandar={
-        "genero_usuario": genero_usuario,
-        "generos": generos,
-        "pais_usuario": pais_usuario,
-        "paises":paises
-    }
-    return jsonify(lista_mandar)
-
-
-@app.route("/actulizar_info", methods=["GET","POST"])
-def actualizar_info():
-    if request.method=="POST":
-        db=conectar()
-        cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        usuario=session["usuario"]["correo_usuario"]
-        nombre_usuario=request.form["nombre_usuario"]
-        pais_usuario=request.form.get("pais")
-        genero_usuario=request.form.get("genero")
-        descripcion_usuario=request.form["descripcion"]
-        cursor.execute('UPDATE "USUARIOS" SET nombre_usuario = %s, id_pais = %s, id_genero = %s, descripcion_personal = %s WHERE correo_usuario = %s', (nombre_usuario,pais_usuario,genero_usuario,descripcion_usuario, usuario))
-        db.commit()
-        db.close()
-        cursor.close()
-        actualizar_sesion(usuario)
-        flash("Cambios guardados", "success cambiar_datos")
-        return redirect(request.referrer)
-    return "error"
-        
-
-def actualizar_sesion(correo):
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
-    usuario_ = cursor.fetchone()
-    usuario_ = foto_indefinida_genero_pais(usuario_)
-    session.pop("correo_usuario", None)
-    session['usuario']=usuario_
-    db.close()
-    cursor.close()
-
-def foto_indefinida_genero_pais(usuario):
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    if usuario["foto_perfil_usuario"] == None:
-        ruta_guardado="predefinido.jpg"
-        cursor.execute('UPDATE "USUARIOS" SET foto_perfil_usuario = %s WHERE correo_usuario = %s', (ruta_guardado, usuario["correo_usuario"]))
-    if usuario["id_genero"] == None:
-        id_genero=0
-        cursor.execute('UPDATE "USUARIOS" SET id_genero = %s WHERE correo_usuario = %s', (id_genero, usuario["correo_usuario"]))
-    if usuario["id_pais"] == None:
-        id_pais=0
-        cursor.execute('UPDATE "USUARIOS" SET id_pais = %s WHERE correo_usuario = %s', (id_pais, usuario["correo_usuario"]))
-    db.commit()
-    cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (usuario["correo_usuario"],))
-    usuario_ = cursor.fetchone()
-    cursor.close()
-    db.close()
-    return usuario_
-
-
-@app.route("/crear_saga", methods=["POST"])
-def crear_saga():
-    if request.method != "POST":
-        return "ruta no valida >:("
-    nombre_saga=request.form['nombre_saga']
-    descripcion_saga=request.form["descripcion_saga"]
-    correo_usuario=session["usuario"]["correo_usuario"]
-    imagen=request.files["foto_saga"]
-    id_saga=f"""-inicio-{correo_usuario}-{nombre_saga.replace(" ", "_")}"""
-    if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen.filename == "":
-        return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT nombre_saga, id_saga FROM saga WHERE correo_usuario = %s ",(correo_usuario,))
-    nombre=cursor.fetchall()
-    for nom in nombre:
-        if nom["nombre_saga"].replace(" ", "") == nombre_saga.replace("", " ") or nom["id_saga"]==id_saga:
-            return jsonify({"mensaje": "ya existe una saga con ese nombre", "tipo": "danger"})
-    comprobar_img = validar_imagen_completa(imagen)
-    if comprobar_img[1]:
-        return jsonify({"mensaje": f"{comprobar_img[0]}", "tipo": "danger"})
-    imagen_saga=guardar_fotos(imagen, r"Fotos\fotos_sagas", id_saga)
-    cursor.execute("INSERT INTO saga (id_saga, nombre_saga, descripcion_saga, correo_usuario, imagen_saga) VALUES (%s,%s,%s,%s,%s)",(id_saga, nombre_saga, descripcion_saga, correo_usuario, imagen_saga))
-    db.commit()
-    db.close()
-    cursor.close()
-    sagas_creadas(session["usuario"]["correo_usuario"])
-    return jsonify({"mensaje": "Saga Creada", "tipo":"success"})
-
-@app.route("/sagas_creadas/<usuario>", methods=["POST", "GET"])
-def sagas_creadas(usuario):
-    if request.method != "POST":
-        return "error"
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT * FROM saga WHERE correo_usuario = %s ", (usuario,))
-    sagas=cursor.fetchall()
-    cursor.close()
-    db.close()
-    return jsonify(sagas)
-
+@app.route("/inicio")
+@necesita("usuario", lambda: session.get("usuario")!=None)
+def  inicio():
+    actualizar_sesion(session["usuario"]["correo_usuario"])
+    return render_template("pagina/inicio.html")
+   
 @app.route("/Fotos/perfil/<filename>")
 def perfil_img(filename):
     if "usuario" not in session:
         abort(403)
     return send_from_directory("Fotos/perfil", filename)
+
 @app.route("/Fotos/fotos_sagas/<filename>")
 def fotos_saga(filename):
     if "usuario" not in session:
         abort(403)
     return send_from_directory("Fotos/fotos_sagas", filename)
 
+@app.route("/iniciar_sesion", methods=["GET", "POST"])
+def iniciar_sesion():
+    if request.method=="POST":
+        print("Intentando iniciar sesion")
+        form = request.get_json()
+        correo=form["correo_usuario"]
+        contraseña=form["contraseña_usuario"]
+        contraseña_encriptada=f"{correo}{contraseña}"
+        print("Datos recibidos, verificando en la base de datos")
+        with conectar() as db:
+            with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+                usuario=dato_en_db(correo, "correo_usuario")
+                if not usuario:
+                    return jsonify({"mensaje":"Correo no registrado", "tipo":"warning"})
+                if not check_password_hash(usuario[0]["contraseña_usuario"], contraseña_encriptada):
+                    return jsonify({"mensaje":"Contraseña incorrecta", "tipo":"danger"})
+                if not verificar_ip(correo):
+                    guardar_temporalmente_datos({"correo_usuario": correo})
+                    guardar_funcion_proveniente("iniciar_sesion_dispositivo_nuevo")
+                    print("Dispositivo nuevo, enviando correo de validacion")
+                    return enviar_correo(correo)
+                return iniciar_sesion_dispositivo_nuevo(correo)
+    return render_template("llenar_datos/iniciar_sesion.html")
+
+@app.route("/codigo_verificacion_cambiar_contrasena", methods=["GET", "POST"])
+def codigo_verificacion_cambiar_contraseña():
+    if request.method=="POST":
+        form = request.get_json()
+        correo=form["correo_para_codigo_usuario"]
+        email=validar_email(correo)
+        if not email:
+            return jsonify({"mensaje":"Correo no valido", "tipo":"danger"})
+        usuario=dato_en_db(email, "correo_usuario")
+        if not usuario:
+            return jsonify({"mensaje":"Correo no registrado", "tipo":"warning"})
+        guardar_temporalmente_datos({"correo_usuario": correo})
+        guardar_funcion_proveniente("cambiar_contraseña_comprobador")
+        return enviar_correo(correo)
+    return render_template("llenar_datos/codigo_verificacion_cambiar_contraseña.html")
+
+@app.route("/cambiar_contraseña", methods=["GET", "POST"])
+@necesita("verificar tu usuario", lambda: session.get("cambiar_contraseña_usuario"))
+def cambiar_contraseña():
+    if request.method=="POST":
+        form = request.get_json()
+        correo=session["datos_temporales"]["correo_usuario"]
+        contraseña_nueva=form["contraseña_usuario_nueva"]
+        contraseña_nueva_confirmacion=form["contraseña_usuario_nueva_confirmacion"]
+        if contraseña_nueva != contraseña_nueva_confirmacion:
+            return jsonify({"mensaje":"Las contraseñas nuevas no coinciden", "tipo":"danger"})
+        if not comprobar_contraseña(contraseña_nueva):
+            return jsonify({"mensaje":"Ponga una contraseña mas segura (8 caracteres, 3 mayusculas, 3 minusculas, 2 numeros)", "tipo":"danger"})
+        contraseña_nueva_encriptada=encriptar(f"{correo}{contraseña_nueva}")
+        actualizar_datos("USUARIOS", {"contraseña_usuario": contraseña_nueva_encriptada}, {"correo_usuario": correo})
+        session.pop("cambiar_contraseña_usuario")
+        flash("Contraseña cambiada exitosamente", "success")
+        return redirect(url_for("iniciar_sesion"))
+    return render_template("llenar_datos/cambiar_contraseña.html")
+
+@app.route("/api/paises_generos")
+@necesita("usuario", lambda: session.get("usuario")!=None)
+def paises_generos():
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT id_pais, nombre_pais FROM paises ORDER BY id_pais')
+            paises=cursor.fetchall()
+            cursor.execute('SELECT id_genero, nombre_genero FROM generos ORDER BY id_genero')
+            generos=cursor.fetchall()
+            usuario=session["usuario"]
+            datos_indefinidos(usuario)
+            actualizar_sesion(usuario["correo_usuario"])
+            pais_usuario=dato_en_db(usuario["id_pais"], "id_pais", "paises")
+            genero_usuario=dato_en_db(usuario["id_genero"], "id_genero", "generos")
+            lista_mandar={
+                "genero_usuario": genero_usuario[0],
+                "generos": generos,
+                "pais_usuario": pais_usuario[0],
+                "paises":paises
+            }
+            return jsonify(lista_mandar)
+        
+@app.route("/perfil", methods=["POST", "GET"])
+@necesita("usuario", lambda: session.get("usuario")!=None)
+def perfil():
+    if request.method=="POST":
+        form = request.get_json()
+        nombre_usuario=form["nombre_usuario"]
+        pais_usuario=form["pais"]
+        genero_usuario=form["genero"]
+        print(nombre_usuario, pais_usuario, genero_usuario)
+        descripcion_usuario=form["descripcion"]
+        if dato_en_db(nombre_usuario, 'nombre_usuario') and nombre_usuario != session["usuario"]["nombre_usuario"]:
+            return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
+        datos_indefinidos(session["usuario"])
+        actualizar_datos("USUARIOS", {"nombre_usuario": nombre_usuario, "id_pais": pais_usuario, "id_genero": genero_usuario, "descripcion_personal": descripcion_usuario}, {"correo_usuario": session["usuario"]["correo_usuario"]})
+        actualizar_sesion(session["usuario"]["correo_usuario"])
+        flash("Datos actualizados", "success")
+        return redirect(request.referrer)
+    return render_template("pagina/perfil.html")
+        
+@app.route("/guardar_foto_perfil", methods=["POST"])
+def guardar_foto_perfil():
+    if request.method=="POST":
+        print(dict(request.files))
+        imagen=request.files['imagen']
+        mensaje, resultado = validar_imagen_completa(imagen)
+        if resultado:
+            print("aqui")
+            return jsonify({"mensaje": mensaje, "tipo": "danger"})
+        nombre_archivo, ruta=ruta_guardado(session["usuario"]["codigo_usuario"], "_perfil", "Fotos/perfil")
+        imagen.save(ruta)
+        actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": session["usuario"]["correo_usuario"]})
+        return redirect(request.referrer)
+
+       
 
 
-@app.route("/crear_historias", methods=["POST"])
-def crear_historias():
-    if request.method != "POST":
-        return "Ruta no valida >: ("
-    info = request.get_json()
-    usuario=session["usuario"]["correo_usuario"]
-    nombre_historia=info["nombre_historia"]
-    descripcion_historia=info["descripcion_historia"]
-    saga_historia=info["saga_historia"]
-    visibilidad_historia = info["visibilidad_historia"]
-    html_historia=info["html_historia"]
-    time_historia = datetime.datetime.now()
-    id_historia = f"""-inicio-{usuario}-{saga_historia}-{nombre_historia}"""
-    ruta_guardar = guardar_escritos(html_historia, f"historias/{usuario}/{saga_historia}", nombre_historia)
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("INSERT INTO historias (id_historia, nombre_historia, descripcion_historia, visibilidad_historia, contenido_historia, id_saga, fecha_actualizacion) VALUES (%s,%s,%s,%s,%s,%s, %s)", (id_historia, nombre_historia, descripcion_historia, visibilidad_historia, ruta_guardar, saga_historia, time_historia))
-    db.commit()
-    cursor.close()
-    db.close()
-    return jsonify({"menajse":"algo"})
-    
-
-@app.route("/historias_creadas_bd", methods=["POST"])
-def historias_creadas_bd():
-    if request.method != "POST":
-        return "Ruta no valida >: ("
-    info = request.get_json()
-    nombre_historia=info["nombre_historia"]
-    saga=info["saga_historia"]
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("SELECT nombre_historia FROM historias WHERE id_saga = %s", (saga,))
-    historia=cursor.fetchall()
-    for his in historia:
-        if his["nombre_historia"].replace(" ", "") == nombre_historia.replace(" ", ""):
-            return jsonify({"historia_repetida": True})
-    return jsonify({"historia_repetida": False})
 
 
-def guardar_escritos(escrito, ruta, nombre):
-    ruta_guardar=os.path.join(ruta, f"{nombre}.txt")
-    os.makedirs(ruta, exist_ok=True)
-    with open(ruta_guardar, "w", encoding="utf-8") as f:
-        f.write(f"{escrito}")
-    return ruta_guardar
-    
 
 
-def genero_pais(usuario):
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('SELECT nombre_genero FROM generos WHERE id_genero = %s', (usuario["id_genero"],))
-    genero=cursor.fetchone()
-    cursor.execute('SELECT nombre_pais FROM paises WHERE id_pais = %s', (usuario["id_pais"],))
-    pais=cursor.fetchone()
-    cursor.close()
-    db.close()
-    return genero["nombre_genero"], pais["nombre_pais"]
 
 
-@app.route("/inicio/<usuario_correo>")
-@necesita_sesion
-def usuario(usuario_correo):
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute('SELECT * FROM "USUARIOS" WHERE correo_usuario = %s', (usuario_correo,))
-    usuario=cursor.fetchone()
-    if usuario == None:
-        return abort(404)
-    usuario=foto_indefinida_genero_pais(usuario)
-    genero, pais = genero_pais(usuario)
-    return render_template("pagina/usuario.html", usuario=usuario, genero=genero, pais=pais)
 
-@app.route("/cerrar_sesion", methods=["GET", "POST"])
-def cerrar_sesion():
-    session.clear()
-    print(session)
-    return redirect(url_for("index"))
 
-@app.route("/sagas_recomendadas")
-def sagas_recomensadas():
-    db=conectar() 
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute("""SELECT * FROM saga WHERE correo_usuario <> %s """,(session["usuario"]["correo_usuario"],))
-    sagas=cursor.fetchmany(18)
-    return jsonify(sagas)
 
-@app.route("/inicio/<usuario>/<saga>")
-def historias_saga(usuario, saga):
-    db=conectar()
-    cursor=db.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cursor.execute(""" SELECT * FROM saga WHERE correo_usuario = %s """, (usuario,))
-    sagas=cursor.fetchall()
-    nombre_saga = saga.replace("_"," ")
-    for sag in sagas:
-        if sag["nombre_saga"]==nombre_saga:
-            id_saga = request.path
-            id_saga= id_saga.replace("/", "-")
-            print(id_saga)
-            cursor.execute(""" SELECT * FROM historias WHERE id_saga = %s AND visibilidad_historia = %s """, (id_saga, True))
-            historias = cursor.fetchall()
-            editar = usuario == session["usuario"]["correo_usuario"]
-            return ingresar(historias, editar, sag)
-    return abort(404)
 
-def ingresar(historias, editar, saga):
-    print(historias, editar, saga)
-    if editar:
-        return render_template("pagina/saga_editar.html", historias=historias, saga=saga)
-    return render_template("pagina/saga.html", historias=historias, saga=saga)
+
+
+
+
+
+@app.route("/crear_historia", methods=["GET","POST"])
+def crear_historia():
+    if request.method=="POST":
+        form = request.get_json()
+        nombre_historia=form["nombre_historia"].strip()
+        descripcion_historia=form["descripcion_historia"].strip()
+        saga_historia=form["saga_historia"]
+        historia=Json(form["historia"])
+        texto_historia=form["texto_historia"]
+        visivilidad_historia=form["visibilidad_historia"] 
+        fecha_actualizacion=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        id_historia=f"""-historia-{session["usuario"]["codigo_usuario"]}-{nombre_historia.strip()}"""
+        
+        
+        id_usuario_saga=dato_en_db(None, {"codigo_usuario": session["usuario"]["codigo_usuario"], "id_saga": saga_historia}, "saga")
+        if not id_usuario_saga and not saga_historia.strip() == "":
+            print("no tienes acceso a esta saga")
+            return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "danger"})
+        if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
+            print("Llena todos los datos")
+            return jsonify({"mensaje":"Llena todos los datos","tipo": "danger"})
+        if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia} , "historias"):
+            return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "danger"})
+        if len(texto_historia.replace(" ", ""))<1000:
+            return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "danger"})
+        insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"]})
+        flash("Historia creada", "success")
+        return redirect(url_for("inicio"))
+    return render_template("pagina/crear_historias.html")
+
+
+
+
+@app.route("/crear_saga", methods=["POST"])
+def crear_saga():
+    nombre_saga=request.form["nombre_saga"].strip()
+    descripcion_saga=request.form["descripcion_saga"].strip()
+    imagen_saga=request.files["foto_saga"]
+    id_saga=f"""-inicio-{session["usuario"]["codigo_usuario"]}-{nombre_saga.strip()}"""
+    if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen_saga.filename == "":
+        return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
+    sagas_con_mismo_nombre=dato_en_db(None, {"nombre_saga": nombre_saga, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "saga")
+    if sagas_con_mismo_nombre:
+        return jsonify({"mensaje": "Ya existe una saga con ese nombre", "tipo": "danger"})
+    mensaje, resultado = validar_imagen_completa(imagen_saga)
+    if resultado:
+        return jsonify({"mensaje": mensaje, "tipo": "danger"})
+    imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
+    imagen_saga.save(imagen_saga_ruta)
+    ruta_carpeta_saga=f"sagas/{session['usuario']['codigo_usuario']}"
+    crear_carpeta(id_saga, ruta_carpeta_saga)
+    insertar_db("saga", {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]})
+    return jsonify({"mensaje": "Saga creada", "tipo": "success"})
+
+
+def crear_carpeta(nombre, direccion):
+    os.makedirs(os.path.join(direccion, nombre))
+
+def insertar_db(tabla: str, datos: dict):
+    with conectar() as db:
+        with db.cursor() as cursor:
+            comando=f"""INSERT INTO "{tabla}" ("""
+            datos_insertar=[]
+            datos_str=""
+            valores=""") VALUES ("""
+            for clave in datos.keys():
+                datos_str+=f"{clave}, "
+                datos_insertar.append(datos[clave])
+                valores+="%s, "
+            datos_str=datos_str[0:-2]
+            valores=valores[0:-2]
+            valores+=")"
+            comando+=datos_str
+            comando+=valores
+            cursor.execute(comando, tuple(datos_insertar))
+            db.commit()
+
+
+@app.route("/sagas_creadas/<usuario>", methods=["POST"])
+def sagas_creadas(usuario):
+    if request.method=="POST":
+        sagas_usuario=dato_en_db(usuario, "codigo_usuario", "saga")
+        return jsonify(sagas_usuario)
+
+            
+
+
+
+            
+
+                
+           
+            
+
+
 
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=True) 

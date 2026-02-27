@@ -1,17 +1,7 @@
+import { enviarInfoServer } from "./function_generales.js";
+
 document.addEventListener("DOMContentLoaded", async function() {
     paisesLlenar();
-    const MenuCfotoCerrado = sessionStorage.getItem("menuCambiarFotoCerrado")
-    const MenuUcerrado = sessionStorage.getItem("menuUsuarioCerrado")
-    if (MenuCfotoCerrado == "false") {
-        document.querySelector("#foto_mostrar").showModal()
-    } else {
-        document.querySelector("#foto_mostrar").close()
-    }
-    if (MenuUcerrado == "false") {
-        document.querySelector("#ingresar_info_usuario").classList.remove("ocultar")
-    } else {
-        document.querySelector("#ingresar_info_usuario").classList.add("ocultar")
-    }
 })
 async function paisesLlenar() {
     const res = await fetch("/api/paises_generos");
@@ -52,37 +42,57 @@ async function paisesLlenar() {
         opcion.classList.add("ingresar")
         listag.appendChild(opcion);
     });
-    const botonFila = document.getElementById("boton1");
-    const boton = document.createElement("button");
+    const boton = document.getElementById("boton_guardar_datos");
     boton.textContent = "Editar"
     boton.type = "submit"
-    boton.classList.add("boton")
-    boton.classList.add("editar")
-    botonFila.appendChild(boton)
+    boton.name = "Editar"
+    
 }
 
-const menu_info = document.querySelector("#ingresar_info_usuario")
-const boton_cerrar = document.querySelector("#cerrar_ventana")
-const boton_abrir = document.querySelector("#foto_perfil_caja")
-boton_cerrar.addEventListener("click", () => {
-    menu_info.classList.add("ocultar")
-    sessionStorage.setItem("menuUsuarioCerrado", "true")
-});
-boton_abrir.addEventListener("click", () => {
-    menu_info.classList.remove("ocultar")
-    sessionStorage.setItem("menuUsuarioCerrado", "false")
+const datos_usuario = document.getElementById("informacion_del_usuario")
+datos_usuario.addEventListener("submit", async (e) => {
+    const nombre_usuario = document.getElementById("nombre_usuario").value
+    const pais = document.getElementById("pais").value
+    const genero = document.getElementById("genero").value
+    const descripcion = document.getElementById("Descripcion").value
+    const datos = {
+        "nombre_usuario": nombre_usuario,
+        "pais": pais,
+        "genero": genero,
+        "descripcion": descripcion}
+    enviarInfoServer(e, datos, "/perfil", "json_mensaje_datos")
 })
-const boton_cambiar_foto = document.querySelector("#foto_perfil_cambiar")
-const menu_cambiar_foto = document.querySelector("#foto_mostrar")
-const cerrar_ventana_foto = document.querySelector("#cerrar_ventana_editar_foto")
 
-boton_cambiar_foto.addEventListener("click", () => {
-    menu_cambiar_foto.showModal()
-    sessionStorage.setItem("menuCambiarFotoCerrado", "false")
+const editarFotoPerfilBoton = document.getElementById("editar_foto_perfil_boton")
+const cuadroEditarFotoPerfil = document.getElementById("cambiar_foto_perfil_container")
+const cerrarcuadroEditarFotoPerfil = document.getElementById("cerrar")
+const fondoOscuro = document.querySelector(".fondo_oscuro")
+editarFotoPerfilBoton.addEventListener("click", () => {
+    cuadroEditarFotoPerfil.classList.remove("oculto")
+    fondoOscuro.classList.remove("oculto")
 })
-cerrar_ventana_foto.addEventListener("click", () => {
-    menu_cambiar_foto.close()
-    sessionStorage.setItem("menuCambiarFotoCerrado", "true")
+cerrarcuadroEditarFotoPerfil.addEventListener("click", () => {
+    cuadroEditarFotoPerfil.classList.add("oculto")
+    fondoOscuro.classList.add("oculto")
+})
+
+const foto_perfil_cambiar_previsualizar = document.getElementById("cambiar_foto_perfil_img")
+const foto_perfil_cambiar_input = document.getElementById("foto_perfil_input")
+foto_perfil_cambiar_input.addEventListener('change', function() {
+    const foto = this.files[0]
+    if (foto) {
+        foto_perfil_cambiar_previsualizar.src = URL.createObjectURL(foto)
+    }
+})
+
+const foto_perfil_cambiar_form = document.getElementById("formulario_cambiar_foto_perfil")
+foto_perfil_cambiar_form.addEventListener("submit", async (e) => {
+    e.preventDefault()
+    const foto = foto_perfil_cambiar_input.files[0]
+    const datos = new FormData()
+    datos.append("imagen", foto)
+
+    enviarInfoServer(e, null, "/guardar_foto_perfil" ,"json_mensaje_cambiar_foto_perfil",null,null ,datos)
 })
 
 

@@ -1,39 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% include "head.html" %}
-    <title>inicio</title>
-</head>
-<body>
-    <div class="contenido d-flex flex-column inicio_secciones">
-        {% include "pagina/boton_crear_historia.html" %}
-        {% include "pagina/header.html" %}
-        <div class="seccion_inicio">
-            <div class="carrucel_sagas_recomendadas ">
-                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-                    <div class="carousel-inner carrucel_sagas" id="carousel_inner"></div>
+{% extends "layouts/estructura.html"%}
+
+{% block title %}TeleRin{% endblock title %}
+
+{% block header %}
+<input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
+<a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
+
+{% endblock header %}
+
+{% block main %} 
+<main id="inicio" class="main_con_menu_lateral">
+    {% include "layouts/menu_lateral.html" %}
+    <div>
+        
+        <section style="height: 80vh">
+            <h5 style="margin: 30px; font-size: 20px;">Historias Recomendadas</h5>
+            <div class="historias">
+                <div class="historiaCard">
+                    <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/9db5/live/48fd9010-c1c1-11ee-9519-97453607d43e.jpg.webp">
+                    <div>
+                        <h2>El Arbol De La Vida</h2>
+                        <p>La historia de un arbol que se encuentras mas alla de la imaginacion</p>
+                    </div>
                 </div>
-                
-                <div class="carousel-controls-bottom">
-                    <button class="carousel-control-prev"
-                        type="button"
-                        data-bs-target="#carouselExampleControls"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon"></span>
-                    </button>
-                
-                    <button class="carousel-control-next"
-                        type="button"
-                        data-bs-target="#carouselExampleControls"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon"></span>
-                    </button>
-                </div> 
-            </div>
-        </div>
+                <div class="historiaCard">
+                    <img src="https://www.taisa-designer.com/wp-content/uploads/2019/09/anton-darius-thesollers-xYIuqpHD2oQ-unsplash.jpg">
+                    <div>
+                        <h2>Las flores de nuestro camino</h2>
+                        <p>Una historia de amor y vida</p>
+                    </div>
+                </div>
+                <div class="historiaCard">
+                    <img src="https://quo.eldiario.es/wp-content/uploads/2019/10/7-impactantes-imagenes-de-animales-salvajes-en-libertad.jpg.webp">
+                    <div>
+                        <h2>Leon Suelto</h2>
+                        <p>Un león se escapo del zoologico y tiene hambre</p>
+                    </div>
+                </div>
+                <div class="historiaCard">
+                    <img src="https://www.net948.com/wp-content/uploads/2023/01/Marca-personal-2.jpg">
+                    <div>
+                        <h2>Remodela tu casa en 30 dias</h2>
+                        <p>Una guia de construccion con pocos materiales</p>
+                    </div>
+                </div>
+            <div>
+        </section>
+
     </div>
-    {% include "pagina/footer_pagina.html" %}
-</body>
-{% include 'scripts.html' %}
-<script src="{{ url_for('static', filename='JS/function_inicio.js') }}"></script>
-</html>
+</main>
+{% endblock main %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='JS/function_menu_lateral.js') }}"></script>
+{% endblock scripts %}

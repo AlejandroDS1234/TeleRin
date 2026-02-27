@@ -1,0 +1,75 @@
+{% extends "layouts/estructura.html"%}
+
+{% block title %}TeleRin{% endblock title %}
+
+{% block css %}
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+{% endblock css %}
+
+{% block header %}
+<input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
+<a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
+{% endblock header %}
+
+{% block main %} 
+<main id="crear_historia" class="main_con_menu_lateral" data-usuario-correo="{{ session['usuario']['codigo_usuario'] }}">
+    {% include "layouts/menu_lateral.html" %}
+    <div class="crear_historia_container">
+        <form id="crear_historia_form">
+            <div class="columna">
+                <h2>Crear Historia</h2>
+                <div class="datos_historia">
+                    <input class="input input_con_fondo letra_claras" style="width: 100%" placeholder="Nombre de la historia" id="nombre_historia" name="nombre_historia" required>
+                    <textarea class="input input_con_fondo letra_claras" style="width: 100%; height: 20% !important; resize: none;" placeholder="Descripcion de la historia" id="descripcion_historia" name="descripcion_historia" required></textarea>
+                    <div class="saga">  
+                        <div>
+                            <label>Saga:</label>   
+                            <input type="hidden" id="id_saga" name="id_saga" required value="" value="">
+                            <div class="dropdown" >
+                                <button style="width: max-content;"class="dropbtn input_con_fondo" name="Selecionar saga" id="boton_seleccionar_saga" type="button">Seleccionar saga </button>
+                                <div class="dropdown-content" id="sagas_pertenece"></div>
+                            </div>
+                        </div>
+                        <button type="button" name="Crear Saga" id="boton_crear_saga" class="boton boton_fondo">Crear Saga</button>
+                    </div>
+                    <label>Visualizacion:</label>
+                    <div>
+                        <label for="publico">Publica:</label>
+                        <input name="visibilidad" id="publico" value="1" type="radio" checked>
+                    </div>
+                    <div>
+                        <label for="privado">Pribada:</label>
+                        <input name="visibilidad" id="privado" value="0" type="radio">
+                    </div>
+                    
+                    
+                </div>
+                <button type="submit" name="Crear Historia" id="boton_crear_historia" class="boton boton_fondo" style="width: 100% !important;">Crear Historia</button>
+                <div id="json_mensaje"></div>
+            </div>
+            <div class="crear_texto texto h-100">
+                <div id="editor" placeholder="Escribe tu historia">
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+<div id="cambiar_foto_perfil_container" class="cambiar_foto_perfil_container oculto">
+    <div class="cerrar"><img id="cerrar" src="{{ url_for('static', filename='iconos/x.png') }}"></div>
+    <a class="foto_perfil" style="height: 60%">
+        <img id="cambiar_foto_perfil_img" src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}">
+    </a>
+    <form id="formulario_cambiar_foto_perfil">
+        <input type="file" name="foto_perfil" id="foto_perfil_input">
+        <button type="submit" id="boton_cambiar_foto_perfil" class="boton boton_fondo" name="Cambiar">Cambiar</button>
+        <div id="json_mensaje_cambiar_foto_perfil"></div>
+    </form>
+</div>
+{% endblock main %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='JS/function_menu_lateral.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='JS/function_crear_historias.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='JS/function_crear_saga.js') }}"></script>
+{% endblock scripts %}

@@ -4,6 +4,6 @@ const formularioCodigoVerifiacion = document.getElementById("formularioCodigoVer
 formularioCodigoVerifiacion.addEventListener("submit", (e)=>{
 
     const codigo = document.getElementById("codigo_usuario").value
-    const direccion_ = `/verificar_codigo/${codigo}`
-    enviarInfoServer(e, false, direccion_, "json_mensaje")
+    const direccion_ = `/validar_codigo`
+    enviarInfoServer(e, {"codigo": codigo}, direccion_, "json_mensaje")
 })

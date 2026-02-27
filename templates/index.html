@@ -1,72 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        {% include "head.html" %}
-        <title>TeleRin</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            
-        </style>
-    </head>
-    <body>
-        <div class="contenido hi">
-            <div class="degradado"></div>
-            <svg id="demo" xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 100 100">
-                <defs>
-                    <clipPath id="theClipPath">
-                        <rect id="theSquare" x="0" y="50" width="100" height="0" fill="red" />
-                    </clipPath>
-                </defs>
-                <line id="target1" x1="0" y1="50" x2="0" y2="50" stroke-width="1" stroke="var(--bordes)" />
-                <line id="target2" x1="0" y1="50" x2="0" y2="50" stroke-width="1" stroke="var(--bordes)" />
-                <g id="clipPathReveal" clip-path="url(#theClipPath)">
-                    <g id="logoGroup" transform="translate(50, 55)">
-                        <!-- Texto -->
-                        <text data-titulo="TeleRin" class="hii" x="15" y="0" text-anchor="end" font-size="18" fill="var(--texto)"></text>
-                        <!-- Imagen a la derecha del texto -->
-                        <image 
-                            id="logoImg"
-                            xlink:href="{{ url_for('static', filename='logo_temporal.jpg')}}"
-                            x="20"
-                            y="-20"
-                            width="28"
-                            height="28"
-                            preserveAspectRatio="xMidYMid slice"
-                        />
-                    </g>
-                </g>
-                <text fill="var(--texto)" id="mensaje_promocional" x="-20" y="80" font-size="5" style="paint-order: stroke;">¿Te sientes mal? , no hay problema, solo escribe un poco</text>
-                <foreignObject
-                    id="enlaces"
-                    x="0"
-                    y="85"
-                    width="100"
-                    height="0">
+{% extends "layouts/estructura.html" %}
 
-                    <div xmlns="http://www.w3.org/1999/xhtml"
-                        style="
-                            width:100%;
-                            height:100%;
-                            display:flex;
-                            flex-direction: column;
-                            justify-content:center;
-                            align-items:center;
-                            gap: 10px;
-                            transform: scale(0.25);
-                            transform-origin:center ;
-                        ">
-                        <a href="{{url_for('iniciar_sesion')}}"><button class="boton" style="min-width: 100px;">Iniciar Sesion</button></a>
-                        <p style="min-width:max-content;">¿no tienes cuenta? <a href="{{url_for('registrar_usuario')}}">Registrate</a></p>
-                    </div>
-                </foreignObject>
+{% block title %}Inicio{% endblock title %}
 
-            </svg>
+{% block header %}
+<a class="boton boton_fondo" href="{{ url_for('registrarse') }}">Registrarse</a>
+<a class="boton boton_fondo" href="{{ url_for('iniciar_sesion') }}">Iniciar Sesión</a>
+{% endblock header %}
 
-        </div>
-        {% include "registrarse/footer_inicio.html" %}
-    </body>
-    <script src="{{ url_for('static', filename='JS/function_index.js') }}" ></script>
-</html>
+
+{% block main %}
+<main id="index">
+    <div class="pantalla_inicio">
+
+    </div>
+    
+</main>
+{% endblock main %}
+
+{% block footer %}
+    <a href="{{url_for('index')}}">Inicio</a>
+    <a href="{{url_for('registrarse')}}">Registrarse</a>
+    <a href="{{url_for('iniciar_sesion')}}">Iniciar Sesion</a>
+{% endblock footer %}
