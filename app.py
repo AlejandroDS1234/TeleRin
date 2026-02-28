@@ -562,7 +562,16 @@ def sagas_creadas(usuario):
             
 
 
+#redireccion para imagen de sagas
+from flask import send_from_directory
 
+@app.route('/Fotos/<path:filename>')
+def fotos(filename):
+    return send_from_directory('Fotos', filename)
+
+@app.route('/sag')
+def sag():
+    return render_template('llenar_datos/crear_saga.html')
 
 if __name__=="__main__":
     app.run(debug=True) 

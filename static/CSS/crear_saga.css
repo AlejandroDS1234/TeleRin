@@ -1,0 +1,131 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.contenedor {
+    display: grid;
+    /* 3 columnas */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    /* 3 filas */
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px;
+    height: 100vh;
+    padding: 0px;
+}
+
+.card {
+    background-color: rgb(24, 121, 153);
+    padding: 20px;
+    border: 1px solid #d590c1;
+    grid-column: 2/8;
+    grid-row: 2/8;
+}
+
+
+/* Posicionamiento en la cuadrícula */
+
+.card {
+    display: grid;
+    /* 3 columnas */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    /* 3 filas */
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 3px;
+    height: auto;
+    width: auto;
+    padding: 0px;
+}
+
+.imagen {
+    grid-column: 1 / 8;
+    /* ocupa columnas 1 a 3 */
+    grid-row: 1 / 9;
+    /* ocupa filas 1 a 3 */
+    width: 100%;
+    /* ocupa todo el ancho de la celda */
+    height: 100%;
+    /* ocupa todo el alto de la celda */
+    object-fit: scale-down;
+    /* mantiene proporción y recorta si es necesario */
+}
+
+#imagen_saga {
+    width: 100%;
+    /* ocupa todo el ancho de la celda */
+    height: 100%;
+    /* ocupa todo el alto de la celda */
+    object-fit: fill;
+    /* estira la imagen para llenar toda la celda */
+}
+
+#titulo_saga {
+    grid-column: 9/12;
+    grid-row: 1;
+    width: 100%;
+    height: 100%;
+}
+
+#info_saga {
+    grid-column: 9/15;
+    grid-row: 3/7;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    row-gap: 20px;
+}
+
+#info_saga input[type="text"],
+#info_saga textarea {
+    background-color: #e3ad6f;
+    /* Fondo del campo */
+    border: 2px solid #ff9d00;
+    /* Borde del campo */
+    padding: 1px 1px;
+    /* Espacio interno */
+    font-size: 1.1rem;
+    /* Tamaño de fuente un poco más grande */
+    color: #000000;
+    /* Color de texto negro */
+    width: 340px;
+    /* Ancho fijo */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    outline: none;
+    /* Quita el contorno azul al enfocar */
+    box-sizing: border-box;
+    /* Padding y borde incluidos en el ancho */
+    transition: border-color 0.3s;
+    /* Transición suave para cambios en el borde */
+    resize: vertical;
+    /* Permite cambiar el tamaño vertical del textarea */
+}
+
+
+/* Cambio de borde al enfocar (input y textarea) */
+
+#info_saga input[type="text"]:focus,
+#info_saga textarea:focus {
+    border-color: #ff7b00;
+    /* Borde más intenso al enfocar */
+}
+
+
+/* Opcional: estilos para el botón */
+
+#info_saga button {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    background-color: #c5865e;
+    /* Color marrón claro */
+    border: none;
+    border-radius: 3px;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#info_saga button:hover {
+    background-color: #ff7b00;
+    /* Color del boton al pasar el mouse sobre el */
+}

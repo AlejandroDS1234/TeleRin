@@ -2,13 +2,12 @@
     margin: 0%;
     padding: 0%;
     box-sizing: border-box;
-
 }
 
-body, html {
+body,
+html {
     width: 100%;
     height: 100%;
-
 }
 
 .contenedor {
@@ -20,7 +19,8 @@ body, html {
 
 .oculto {
     display: none;
-    visibility: hidden;;
+    visibility: hidden;
+    ;
 }
 
 .mensaje {
@@ -33,6 +33,7 @@ body, html {
     font-size: 150%;
     animation: desaparecer 5s linear 3s 1 forwards;
 }
+
 .mensaje_flotante {
     position: fixed;
     top: 20px;
@@ -43,10 +44,10 @@ body, html {
     border: 2px solid var(--color_bordes);
     z-index: 1000;
 }
+
 @keyframes desaparecer {
     50% {
         opacity: 50%;
-        
     }
     100% {
         opacity: 0%;
@@ -54,20 +55,26 @@ body, html {
 }
 
 .mensaje-warning {
-    border-color:#FF0000;
+    border-color: #FF0000;
     color: #FF0000;
 }
+
 .mensaje-success {
-    border-color:#00FF00;
+    border-color: #00FF00;
     color: #00FF00;
 }
+
 .mensaje-danger {
-    border-color:#FF8000;
+    border-color: #FF8000;
     color: #FF8000;
 }
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* HEADER */
+
 .header {
     background: var(--color_layout);
     color: var(--color_letras_claras);
@@ -77,6 +84,7 @@ body, html {
     justify-content: space-between;
     align-items: center;
 }
+
 .logo {
     display: flex;
     align-items: center;
@@ -101,10 +109,15 @@ body, html {
     gap: 5%;
 }
 
+
 /* FIN HEADER */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* FOOTER */
+
 .footer {
     background: var(--color_layout);
     color: var(--color_letras_claras);
@@ -130,18 +143,41 @@ body, html {
     width: 100%;
     border-top: 2px solid var(--color_bordes);
 }
+
+
 /* FIN FOOTER */
 
-/* ------------------------------------------------------------------------ */
-/* SCROLL */
-*::-webkit-scrollbar {width: 10px;}
-*::-webkit-scrollbar-thumb {background-color: var(--color_botones);}
-*::-webkit-scrollbar-thumb:hover {background-color: var(--color_botones_presionado);}
-*::-webkit-scrollbar-track {background: var(--color_borde_botones);}
-/* FIN SCROLL */
 
 /* ------------------------------------------------------------------------ */
+
+
+/* SCROLL */
+
+*::-webkit-scrollbar {
+    width: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--color_botones);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color_botones_presionado);
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--color_borde_botones);
+}
+
+
+/* FIN SCROLL */
+
+
+/* ------------------------------------------------------------------------ */
+
+
 /* BOTONES */
+
 .boton {
     width: max-content;
     max-width: 15vw;
@@ -149,11 +185,12 @@ body, html {
     text-decoration: none;
     height: max-content;
     max-height: 10vh;
-    min-height: 5vh; 
-    border-radius: 20px; 
+    min-height: 5vh;
+    border-radius: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;;
+    justify-content: center;
+    ;
 }
 
 .boton_fondo {
@@ -180,7 +217,6 @@ body, html {
     cursor: pointer;
     color: var(--color_letras_claras);
     text-shadow: 2px 2px 1px var(--color_letras_oscuras);
-
 }
 
 .cargando {
@@ -194,12 +230,17 @@ body, html {
     to {
         background-color: var(--color_botones_presionado);
     }
-
 }
+
+
 /* FIN BOTONES */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* INPUT */
+
 .input {
     height: 8vh;
     max-height: 10vh;
@@ -232,6 +273,7 @@ body, html {
     width: 100%;
     gap: 2%;
 }
+
 .contenedor_contrasena img {
     height: 5vh;
     max-height: 10vh;
@@ -239,6 +281,7 @@ body, html {
     background-color: var(--color_botones);
     border-radius: 20px;
 }
+
 .contenedor_contrasena img:hover {
     background-color: var(--color_botones_presionado);
     cursor: pointer;
@@ -261,9 +304,13 @@ body, html {
     transition: width 0.5s ease;
     border-radius: 50px;
 }
+
+
 /* FIN INPUT */
 
+
 /* CARDS */
+
 .cardvertical {
     aspect-ratio: 3/1;
     display: flex;
@@ -284,28 +331,35 @@ body, html {
 }
 
 
-
 /* FIN CARDS */
 
 
-
 /* ------------------------------------------------------------------------ */
+
+
 /* INDEX.html */
+
 #index {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+
 /* FIN INDEX.html */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* INICIAR_SESION.html */
-.ingreso  {
+
+.ingreso {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-rows: repeat(3, 1fr);
 }
+
 .formulario_ingreso {
     background: var(--color_contraste);
     grid-column: 2/3;
@@ -329,43 +383,61 @@ body, html {
     display: flex;
     flex-direction: column;
     gap: 10%;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
 }
+
+
 /* FIN INICIAR SESION */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* REGISTRARSE.html */
+
 #Registrarse .formulario_ingreso {
     min-height: 95vh;
 }
+
+
 /* FIN REGISTRARSE */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* CORREO CAMBIAR CONTRASEÑA */
+
 #Correo_Codigo_Verificacion .formulario_ingreso h2 {
     font-size: 2em;
 }
+
+
 /* FIN CORREO CAMBIAR CONTRASEÑA */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* MENU LATERAL */
+
 .main_con_menu_lateral {
     display: grid;
-    grid-template-columns: 10vh 1fr 
+    grid-template-columns: 10vh 1fr
 }
 
 #menu_lateral {
     background: var(--color_contraste);
     padding: 5%;
 }
+
 #menu_lateral ul {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 5%;
 }
-
 
 #menu_lateral li {
     border-bottom: 2px solid var(--color_bordes);
@@ -382,19 +454,23 @@ body, html {
     fill: var(--color_letras_claras)
 }
 
-
 #menu_lateral svg:hover {
     fill: var(--color_contraste_claro);
     stroke: var(--color_letras_claras);
 }
+
 #menu_lateral li:hover {
     border-bottom: 3px solid var(--color_letras_claras);
     padding: 0;
 }
 
+
 /* FIN MENU LATERAL */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* INICIO.html */
 
 .foto_perfil {
@@ -411,10 +487,15 @@ body, html {
     border: 3px solid var(--color_bordes)
 }
 
+
 /* FIN INICIO */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* PERFIL */
+
 .perfil_container {
     display: grid;
     grid-template-rows: 60vh auto auto auto;
@@ -432,6 +513,7 @@ body, html {
     border-radius: 20px;
     gap: 2%;
 }
+
 .foto_perfil_en_perfil {
     grid-column: 1/2;
     position: relative;
@@ -440,16 +522,19 @@ body, html {
     align-items: center;
     z-index: 3;
 }
+
 .foto_perfil_en_perfil img {
     width: 100%;
     height: 100%;
     position: absolute;
     z-index: 2;
 }
+
 .foto_perfil_en_perfil svg:hover {
     cursor: pointer;
     opacity: 0.9;
 }
+
 .foto_perfil_en_perfil svg {
     width: 50%;
     height: 50%;
@@ -458,10 +543,11 @@ body, html {
     transition: opacity 0.5s ease;
     opacity: 0;
 }
+
 .foto_perfil_en_perfil svg:hover {
     cursor: pointer;
-    
 }
+
 .informacion_usuario {
     grid-column: 2/4;
     display: flex;
@@ -471,6 +557,7 @@ body, html {
     padding: 5%;
     height: 100%;
 }
+
 .informacion_usuario .columna {
     display: flex;
     flex-direction: column;
@@ -504,8 +591,12 @@ body, html {
 
 /* FIN PERFIL */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* CAMBIAR FOTO PERFIL */
+
 .fondo_oscuro {
     position: fixed;
     top: 0;
@@ -543,7 +634,6 @@ body, html {
 .cambiar_foto_perfil_container .cerrar img {
     height: 100%;
     width: auto;
-    
 }
 
 .cambiar_foto_perfil_container .cerrar img:hover {
@@ -572,10 +662,16 @@ body, html {
     gap: 2%;
     overflow: hidden;
 }
+
+
 /* FIN CAMBIAR FOTO PERFIL */
 
+
 /* ------------------------------------------------------------------------ */
+
+
 /* CREAR HISTORIAS.html */
+
 .crear_historia_container {
     padding: 2%;
     min-height: 80vh;
@@ -588,8 +684,8 @@ body, html {
 }
 
 .ql-toolbar {
-  background: var(--color_contraste);
-  border: none;
+    background: var(--color_contraste);
+    border: none;
 }
 
 .ql-toolbar button svg {
@@ -619,38 +715,35 @@ body, html {
 }
 
 .dropbtn {
-  color: var(--color_letras_claras);
-  padding: 2%;
-  font-size: 100%;
-  border: none;
-  cursor: pointer;
+    color: var(--color_letras_claras);
+    padding: 2%;
+    font-size: 100%;
+    border: none;
+    cursor: pointer;
 }
 
 .dropdown {
-  position: relative;
+    position: relative;
 }
 
 .dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: var(--color_fondo);
-  min-width: 200px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  max-height: 30vh;
-  overflow-y: scroll;
+    display: none;
+    position: absolute;
+    background-color: var(--color_fondo);
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    max-height: 30vh;
+    overflow-y: scroll;
 }
 
-
 .dropdown-content .saga:hover {
-  background-color: var(--color_contraste_claro);
-  cursor: pointer;
+    background-color: var(--color_contraste_claro);
+    cursor: pointer;
 }
 
 .dropdown:hover .dropdown-content {
-  display: block;
+    display: block;
 }
-
-
 
 #crear_historia_form .columna {
     background: var(--color_layout);
@@ -676,12 +769,10 @@ body, html {
 
 #crear_historia_form .columna .saga {
     display: flex;
-    justify-content:space-between;
+    justify-content: space-between;
     align-items: center;
     gap: 5%;
 }
-
-
 
 #inicio section {
     gap: 10%;
@@ -690,11 +781,11 @@ body, html {
     padding-left: 5%;
     padding-right: 5%;
 }
+
 #inicio section .historias {
     display: flex;
     gap: 5%;
     height: 70vh;
-
 }
 
 .historiaCard {
@@ -717,4 +808,250 @@ body, html {
     border: 3px solid var(--color_bordes);
     border-radius: 20px;
     overflow: hidden;
+}
+
+
+/* -------------------- */
+
+
+/* Contenedor del modal */
+
+
+/* -------------------- */
+
+.modal {
+    display: none;
+    /* Oculta el modal por defecto */
+    position: fixed;
+    /* Fija el modal en la pantalla, aunque se haga scroll */
+    top: 0;
+    /* Empieza desde arriba de la ventana */
+    left: 0;
+    /* Empieza desde la izquierda */
+    width: 100%;
+    /* Ocupa todo el ancho de la pantalla */
+    height: 100%;
+    /* Ocupa toda la altura de la pantalla */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Fondo blanco semitransparente */
+    backdrop-filter: blur(2px);
+    /* Desenfoca ligeramente lo que hay detrás */
+    justify-content: center;
+    /* Centra horizontalmente el contenido del modal */
+    align-items: center;
+    /* Centra verticalmente el contenido del modal */
+    z-index: 999;
+    /* Se asegura que el modal esté encima de otros elementos */
+}
+
+
+/* -------------------- */
+
+
+/* Contenido interno del modal */
+
+
+/* -------------------- */
+
+.modal-contenido {
+    background-color: rgba(255, 255, 255, 0);
+    /* Fondo transparente, la card mantiene su color */
+    padding: 20px;
+    /* Espacio interno alrededor del contenido */
+    border-radius: 8px;
+    /* Bordes redondeados del contenedor interno */
+    max-width: 90%;
+    /* No se salga del 90% del ancho de la pantalla */
+    max-height: 90%;
+    /* No se salga del 90% de la altura de la pantalla */
+    overflow: auto;
+    /* Si el contenido es demasiado grande, permite scroll */
+}
+
+
+/* -------------------- */
+
+
+/* Card interna (ya existente) */
+
+
+/* -------------------- */
+
+.card {
+    background-color: rgb(24, 121, 153);
+    /* Fondo azul de la card */
+    padding: 20px;
+    /* Espacio interno dentro de la card */
+    border: 1px solid #d590c1;
+    /* Borde de la card */
+    grid-column: 2/8;
+    /* Posicionamiento inicial si la card está en grid padre */
+    grid-row: 2/8;
+    /* Posicionamiento inicial si la card está en grid padre */
+    display: grid;
+    /* Convierte la card en un grid interno */
+    grid-template-columns: repeat(16, 1fr);
+    /* 16 columnas iguales dentro de la card */
+    grid-template-rows: repeat(8, 1fr);
+    /* 8 filas iguales dentro de la card */
+    gap: 3px;
+    /* Espacio entre filas y columnas dentro de la card */
+    height: auto;
+    /* La altura se adapta al contenido */
+    width: auto;
+    /* El ancho se adapta al contenido */
+    padding: 0px;
+    /* Padding interno se ajusta a 0 para el grid */
+}
+
+
+/* -------------------- */
+
+
+/* Imagen dentro de la card */
+
+
+/* -------------------- */
+
+.imagen {
+    grid-column: 1 / 8;
+    /* Ocupa columnas 1 a 7 */
+    grid-row: 1 / 9;
+    /* Ocupa filas 1 a 8 */
+    width: 100%;
+    /* Ocupa todo el ancho de la celda */
+    height: 100%;
+    /* Ocupa todo el alto de la celda */
+    object-fit: scale-down;
+    /* La imagen mantiene proporción y se ajusta a la celda */
+}
+
+#imagen_saga {
+    width: 100%;
+    /* Ocupa todo el ancho de la celda */
+    height: 100%;
+    /* Ocupa todo el alto de la celda */
+    object-fit: fill;
+    /* Se estira para llenar toda la celda, puede deformarse */
+}
+
+
+/* -------------------- */
+
+
+/* Título dentro de la card */
+
+
+/* -------------------- */
+
+#titulo_saga {
+    grid-column: 9/12;
+    /* Posición en columnas 9 a 11 */
+    grid-row: 1;
+    /* Posición en la primera fila */
+    width: 100%;
+    /* Ocupa todo el ancho de la celda */
+    height: 100%;
+    /* Ocupa todo el alto de la celda */
+}
+
+
+/* -------------------- */
+
+
+/* Formulario dentro de la card */
+
+
+/* -------------------- */
+
+#info_saga {
+    grid-column: 9/15;
+    /* Ocupa columnas 9 a 14 */
+    grid-row: 3/7;
+    /* Ocupa filas 3 a 6 */
+    width: 100%;
+    /* Ocupa todo el ancho de la celda asignada */
+    height: 100%;
+    /* Ocupa toda la altura de la celda asignada */
+    display: grid;
+    /* Convierte el formulario en grid interno */
+    row-gap: 20px;
+    /* Espacio vertical entre los campos del formulario */
+}
+
+
+/* -------------------- */
+
+
+/* Estilo de inputs y textarea del formulario */
+
+
+/* -------------------- */
+
+#info_saga input[type="text"],
+#info_saga textarea {
+    background-color: #e3ad6f;
+    /* Fondo del campo */
+    border: 2px solid #ff9d00;
+    /* Borde del campo */
+    padding: 1px 1px;
+    /* Espacio interno dentro del input */
+    font-size: 1.1rem;
+    /* Tamaño de fuente */
+    color: #000000;
+    /* Color del texto */
+    width: 340px;
+    /* Ancho fijo de cada campo */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    outline: none;
+    /* Quita contorno azul al enfocar */
+    box-sizing: border-box;
+    /* Padding y borde incluidos en el ancho */
+    transition: border-color 0.3s;
+    /* Animación suave para el borde al enfocar */
+    resize: vertical;
+    /* Permite cambiar el tamaño vertical del textarea */
+}
+
+
+/* Cambiar borde al enfocar input o textarea */
+
+#info_saga input[type="text"]:focus,
+#info_saga textarea:focus {
+    border-color: #ff7b00;
+    /* Borde más intenso al enfocar */
+}
+
+
+/* -------------------- */
+
+
+/* Botón del formulario */
+
+
+/* -------------------- */
+
+#info_saga button {
+    padding: 10px 20px;
+    /* Espacio interno del botón */
+    font-size: 1.1rem;
+    /* Tamaño de fuente del texto del botón */
+    background-color: #c5865e;
+    /* Color marrón claro */
+    border: none;
+    /* Sin borde */
+    border-radius: 3px;
+    /* Bordes ligeramente redondeados */
+    color: rgb(0, 0, 0);
+    /* Color del texto negro */
+    cursor: pointer;
+    /* Cursor cambia a mano al pasar sobre el botón */
+    transition: background-color 0.3s;
+    /* Animación para cambio de color al pasar mouse */
+}
+
+#info_saga button:hover {
+    background-color: #ff7b00;
+    /* Color del botón al pasar el mouse */
 }

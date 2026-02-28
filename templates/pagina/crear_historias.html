@@ -66,6 +66,30 @@
         <div id="json_mensaje_cambiar_foto_perfil"></div>
     </form>
 </div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-contenido">
+    <!-- Aquí va tu card completa -->
+    <div class="card">
+
+      <div class="imagen">
+        <img id="imagen_saga" src="{{ url_for('fotos', filename='perfil/defu.webp') }}" alt="Perfil">
+      </div>
+
+      <h2 id="titulo_saga">Crear saga</h2>
+
+      <form id="info_saga">
+          <input id="saga_name" type="text" placeholder="Nombre de la saga">
+          <textarea id="saga_descrip" placeholder="Descripción de la saga"></textarea>
+
+          <button type="submit">crear</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
 {% endblock main %}
 
 {% block scripts %}
