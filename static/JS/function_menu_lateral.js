@@ -3,9 +3,6 @@ let pagina = document.getElementsByTagName("main")[0].id
 let menu_lateral = document.getElementById("menu_lateral")
 let liS = Array.from(menu_lateral.getElementsByTagName("li"))
 
-console.log(typeof(liS))
-console.log(liS)
-
 liS.forEach(li => {
     let liPagina = li.id
     if (liPagina == pagina) {

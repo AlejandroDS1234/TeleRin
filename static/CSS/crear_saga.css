@@ -76,6 +76,7 @@ body {
 }
 
 #info_saga input[type="text"],
+#info_saga input[type="file"],
 #info_saga textarea {
     background-color: #e3ad6f;
     /* Fondo del campo */

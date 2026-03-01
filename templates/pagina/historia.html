@@ -1,0 +1,34 @@
+{% extends "layouts/estructura.html" %}
+
+{% block title %}Inicio{% endblock title %}
+
+{% block css %}
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+{% endblock css %}
+
+{% block header %}
+<input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
+<a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
+{% endblock header %}
+
+
+{% block main %}
+<main id="historia">
+    <section id="informacion_historia">
+        <h2>{{ historia["nombre_historia"] }}</h2>
+        <p>{{ historia["descripcion_historia"] }}</p>
+    </section>
+    <section id="contenido_historia">
+        <div id="leer" data-contenido='{{ historia["contenido_historia"] | tojson | safe }}'></div>
+    </section>
+    <section id="comentarios_historia"> comentarios</section>
+</main>
+{% endblock main %}
+
+{% block footer %}
+{% endblock footer %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='JS/function_historia.js') }}"></script>
+{% endblock scripts %}

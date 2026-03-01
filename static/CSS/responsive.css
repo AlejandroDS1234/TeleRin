@@ -1,7 +1,0 @@
-@media (max-width: 500px) {
-    .contenedor {
-        min-height: 100vh;
-        height: 100vh;
-        background-color: blue;
-    }
-}

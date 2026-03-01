@@ -1,32 +1,24 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="{{ url_for('static', filename='CSS/crear_saga.css') }}">
-    </head>
-    <body>
-        <div class="contenedor">
-        
-        <div class="card">
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-contenido">
+    <!-- Aquí va tu card completa -->
+    <div class="card">
 
-            <div class="imagen">
-            <img id="imagen_saga" src="{{ url_for('fotos', filename='perfil/defu.webp') }}" alt="Perfil">
-            </div>
+      <div class="imagen">
+        <img id="imagen_saga" src="{{ url_for('fotos_saga', filename='predefinido.jpg') }}" alt="Perfil">
+      </div>
 
-            <h2 id="titulo_saga">Crear saga</h2>
+      <h2 id="titulo_saga">Crear saga</h2>
 
-            <form id="info_saga">
-                <input id="saga_name" type="text" placeholder="Nombre de la saga">
-                <textarea id="saga_descrip" placeholder="Descripción de la saga"></textarea>
+      <form id="info_saga" entype="multipart/form-data">
+          <input type="file" id="imagen_saga_input" name="imagen_saga" accept="image/*">
+          <input id="saga_name" type="text" placeholder="Nombre de la saga">
+          <textarea id="saga_descrip" placeholder="Descripción de la saga"></textarea>
 
-                <button type="submit">crear</button>
-            </form>
+          <button type="submit">crear</button>
+          <div id="json_mensaje_saga"></div>
+      </form>
 
-        </div>
-
-        </div>
-    </body>
-</html>
+    </div>
+  </div>
+</div> 

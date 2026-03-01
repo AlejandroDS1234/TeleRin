@@ -204,23 +204,24 @@ def dato_en_db(dato: str | None, nombre_dato: str | dict, tabla: str = "USUARIOS
             resultado=cursor.fetchall()
             return resultado
 
-def obtener_ip():
-    ip_local = socket.gethostbyname(socket.gethostname())
-    user_agent = request.headers.get("User-Agent", "")
-    lenguaje=request.headers.get("Accept-Lenguage", "")
-    encoding=request.headers.get("Accept-Encoding", "")
-    dispositivo=f"{ip_local}--{user_agent}--{lenguaje}--{encoding}"
-    return dispositivo
-
-def verificar_ip(correo: str):
-    dispositivo=obtener_ip()
+def insertar_db(tabla: str, datos: dict):
     with conectar() as db:
-        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
-            ip=cursor.fetchone()
-            if check_password_hash(ip["ip_usuario"], dispositivo):
-                return True
-    return False
+        with db.cursor() as cursor:
+            comando=f"""INSERT INTO "{tabla}" ("""
+            datos_insertar=[]
+            datos_str=""
+            valores=""") VALUES ("""
+            for clave in datos.keys():
+                datos_str+=f"{clave}, "
+                datos_insertar.append(datos[clave])
+                valores+="%s, "
+            datos_str=datos_str[0:-2]
+            valores=valores[0:-2]
+            valores+=")"
+            comando+=datos_str
+            comando+=valores
+            cursor.execute(comando, tuple(datos_insertar))
+            db.commit()
 
 def actualizar_datos(tabla: str, datos: dict, condicion: dict):
     with conectar() as db:
@@ -242,6 +243,24 @@ def actualizar_datos(tabla: str, datos: dict, condicion: dict):
             comando+=datos_str
             cursor.execute(comando, tuple(datos_actualizar))
             db.commit()
+
+def obtener_ip():
+    ip_local = socket.gethostbyname(socket.gethostname())
+    user_agent = request.headers.get("User-Agent", "")
+    lenguaje=request.headers.get("Accept-Lenguage", "")
+    encoding=request.headers.get("Accept-Encoding", "")
+    dispositivo=f"{ip_local}--{user_agent}--{lenguaje}--{encoding}"
+    return dispositivo
+
+def verificar_ip(correo: str):
+    dispositivo=obtener_ip()
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+            ip=cursor.fetchone()
+            if check_password_hash(ip["ip_usuario"], dispositivo):
+                return True
+    return False
             
 #funciones en el diccionario
 @registrar_funcion("registro")
@@ -272,7 +291,7 @@ def cambiar_contraseña_comprobador(_=None):
 #rutas
 @app.route("/")
 def index():
-    return render_template("llenar_datos/iniciar_sesion.html")
+    return render_template("index.html")
    
 @app.route("/registrarse", methods=["GET", "POST"])
 def registrarse():
@@ -438,7 +457,6 @@ def perfil():
 @app.route("/guardar_foto_perfil", methods=["POST"])
 def guardar_foto_perfil():
     if request.method=="POST":
-        print(dict(request.files))
         imagen=request.files['imagen']
         mensaje, resultado = validar_imagen_completa(imagen)
         if resultado:
@@ -448,24 +466,6 @@ def guardar_foto_perfil():
         imagen.save(ruta)
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": session["usuario"]["correo_usuario"]})
         return redirect(request.referrer)
-
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @app.route("/crear_historia", methods=["GET","POST"])
 def crear_historia():
@@ -478,27 +478,22 @@ def crear_historia():
         texto_historia=form["texto_historia"]
         visivilidad_historia=form["visibilidad_historia"] 
         fecha_actualizacion=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        id_historia=f"""-historia-{session["usuario"]["codigo_usuario"]}-{nombre_historia.strip()}"""
-        
-        
+        id_historia=f"""-historia-{session["usuario"]["codigo_usuario"]}-{saga_historia}-{nombre_historia.strip()}"""
         id_usuario_saga=dato_en_db(None, {"codigo_usuario": session["usuario"]["codigo_usuario"], "id_saga": saga_historia}, "saga")
         if not id_usuario_saga and not saga_historia.strip() == "":
-            print("no tienes acceso a esta saga")
             return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "danger"})
         if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
-            print("Llena todos los datos")
             return jsonify({"mensaje":"Llena todos los datos","tipo": "danger"})
         if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia} , "historias"):
             return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "danger"})
         if len(texto_historia.replace(" ", ""))<1000:
             return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "danger"})
+        if len(descripcion_historia)>1000:
+            return jsonify({"mensaje": "La descripcion de la historia es muy larga","tipo": "danger"})
         insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"]})
         flash("Historia creada", "success")
         return redirect(url_for("inicio"))
     return render_template("pagina/crear_historias.html")
-
-
-
 
 @app.route("/crear_saga", methods=["POST"])
 def crear_saga():
@@ -516,34 +511,8 @@ def crear_saga():
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)
-    ruta_carpeta_saga=f"sagas/{session['usuario']['codigo_usuario']}"
-    crear_carpeta(id_saga, ruta_carpeta_saga)
     insertar_db("saga", {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]})
     return jsonify({"mensaje": "Saga creada", "tipo": "success"})
-
-
-def crear_carpeta(nombre, direccion):
-    os.makedirs(os.path.join(direccion, nombre))
-
-def insertar_db(tabla: str, datos: dict):
-    with conectar() as db:
-        with db.cursor() as cursor:
-            comando=f"""INSERT INTO "{tabla}" ("""
-            datos_insertar=[]
-            datos_str=""
-            valores=""") VALUES ("""
-            for clave in datos.keys():
-                datos_str+=f"{clave}, "
-                datos_insertar.append(datos[clave])
-                valores+="%s, "
-            datos_str=datos_str[0:-2]
-            valores=valores[0:-2]
-            valores+=")"
-            comando+=datos_str
-            comando+=valores
-            cursor.execute(comando, tuple(datos_insertar))
-            db.commit()
-
 
 @app.route("/sagas_creadas/<usuario>", methods=["POST"])
 def sagas_creadas(usuario):
@@ -551,27 +520,74 @@ def sagas_creadas(usuario):
         sagas_usuario=dato_en_db(usuario, "codigo_usuario", "saga")
         return jsonify(sagas_usuario)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route("/historia/<id_historia>")
+def historia(id_historia):
+    historia=dato_en_db(id_historia, "id_historia", "historias")
+    if not historia:
+        abort(404)
+    return render_template("pagina/historia.html", historia=historia[0])
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
             
-
-
-
-            
-
-                
-           
-            
-
-
-#redireccion para imagen de sagas
-from flask import send_from_directory
-
-@app.route('/Fotos/<path:filename>')
-def fotos(filename):
-    return send_from_directory('Fotos', filename)
-
-@app.route('/sag')
-def sag():
-    return render_template('llenar_datos/crear_saga.html')
-
 if __name__=="__main__":
     app.run(debug=True) 

@@ -1055,3 +1055,42 @@ html {
     background-color: #ff7b00;
     /* Color del botón al pasar el mouse */
 }
+
+
+
+
+
+/* INICIO HISTORIA.html */
+
+#historia {
+    display:grid;
+    grid-template-rows: 20vh auto auto;
+}
+
+#informacion_historia {
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 5%;
+}
+
+
+#contenido_historia {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 1%;
+    border-top: 3px solid var(--color_bordes);
+    border-bottom: 3px solid var(--color_bordes);
+}
+
+#comentarios_historia {
+    min-height: 20vh;
+    padding: 5%;
+}
+
+#leer {
+    width: 80vw;
+}
+
+/* FIN HISTORIAS */
