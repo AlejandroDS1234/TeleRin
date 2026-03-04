@@ -519,33 +519,31 @@ def sagas_creadas(usuario):
     if request.method=="POST":
         sagas_usuario=dato_en_db(usuario, "codigo_usuario", "saga")
         return jsonify(sagas_usuario)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
+@app.route("/calificar_historia", methods=["POST"])
+def calificar_historia():
+    form = request.get_json()
+    id_historia = form.get("id_historia")
+    calificacion = form.get("calificacion")
+    id_usuario = session["usuario"]["codigo_usuario"]
+    historia = dato_en_db(id_historia, "id_historia", "historias")
+    if not historia:
+        return jsonify({"mensaje": "Historia no encontrada", "tipo": "danger"})
+    if calificacion not in ["1", "2", "3"]:
+        return jsonify({"mensaje": "Calificación no válida", "tipo": "danger"})
+    if dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": id_usuario}, "calificacion_historia"):
+        actualizar_datos("calificacion_historia", {"calificacion": calificacion}, {"id_historia": id_historia, "codigo_usuario": id_usuario})
+        return jsonify({"mensaje": "Gracias :)", "tipo": "success"})
+    insertar_db("calificacion_historia", {"id_historia": id_historia, "calificacion": calificacion, "codigo_usuario": id_usuario})
+    return jsonify({"mensaje": "Gracias :)", "tipo": "success"})
 
 @app.route("/historia/<id_historia>")
 def historia(id_historia):
     historia=dato_en_db(id_historia, "id_historia", "historias")
     if not historia:
         abort(404)
+    if historia[0]["visibilidad_historia"] == 0:
+        abort(403)
     return render_template("pagina/historia.html", historia=historia[0])
          
          
@@ -574,7 +572,13 @@ def historia(id_historia):
          
          
          
-         
+@app.route("/saga/<id_saga>")
+def saga(id_saga):
+    saga=dato_en_db(id_saga, "id_saga", "saga")
+    if not saga:
+        abort(404)
+    historias=dato_en_db(None, {"id_saga": id_saga, "visibilidad_historia": 1}, "historias")
+    return render_template("pagina/saga.html", saga=saga[0], historias=historias)
          
          
          

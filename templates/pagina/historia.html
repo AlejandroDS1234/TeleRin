@@ -1,6 +1,6 @@
 {% extends "layouts/estructura.html" %}
 
-{% block title %}Inicio{% endblock title %}
+{% block title %}{{ historia["nombre_historia"] }}{% endblock title %}
 
 {% block css %}
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
@@ -14,15 +14,25 @@
 
 
 {% block main %}
-<main id="historia">
-    <section id="informacion_historia">
-        <h2>{{ historia["nombre_historia"] }}</h2>
-        <p>{{ historia["descripcion_historia"] }}</p>
-    </section>
-    <section id="contenido_historia">
-        <div id="leer" data-contenido='{{ historia["contenido_historia"] | tojson | safe }}'></div>
-    </section>
-    <section id="comentarios_historia"> comentarios</section>
+<main id="historia" class="main_con_menu_lateral">
+    {% include "layouts/menu_lateral.html" %}
+    <div class="historia_container">
+        <section id="informacion_historia">
+            <h2>{{ historia["nombre_historia"] }}</h2>
+            <p>{{ historia["descripcion_historia"] }}</p>
+            <form id="calificacion_historia" data-id-historia="{{ historia['id_historia'] }}">
+                <input type="radio" name="calificacion" id="bueno" value="1">
+                <input type="radio" name="calificacion" id="regular" value="2">
+                <input type="radio" name="calificacion" id="malo" value="3">
+                <button type="submit" class="boton boton_fondo" name="calificar">Calificar</button>
+                <div id="json_mensaje"></div>
+            </form>
+        </section>
+        <section id="contenido_historia">
+            <div id="leer" data-contenido='{{ historia["contenido_historia"] | tojson | safe }}'></div>
+        </section>
+        <section id="comentarios_historia"> comentarios</section>
+    </div>
 </main>
 {% endblock main %}
 
@@ -31,4 +41,4 @@
 
 {% block scripts %}
 <script type="module" src="{{ url_for('static', filename='JS/function_historia.js') }}"></script>
-{% endblock scripts %}
+{% endblock scripts %} 

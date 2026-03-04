@@ -1062,15 +1062,16 @@ html {
 
 /* INICIO HISTORIA.html */
 
-#historia {
+.historia_container {
     display:grid;
     grid-template-rows: 20vh auto auto;
 }
 
 #informacion_historia {
-    padding-left: 5%;
-    padding-right: 5%;
-    padding-top: 5%;
+    display: flex;
+    justify-content: center;
+    padding: 2%;
+    flex-direction: column;
 }
 
 
@@ -1093,4 +1094,14 @@ html {
     width: 80vw;
 }
 
+
+#calificacion_historia {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+#bueno {
+    background-image: url('./static/iconos/happy.svg');
+}
 /* FIN HISTORIAS */
