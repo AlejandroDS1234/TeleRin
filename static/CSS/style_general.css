@@ -502,7 +502,7 @@ html {
     padding: 5%;
 }
 
-#informacion {
+.informacion {
     grid-column: 1/2;
     grid-row: 1/2;
     background: var(--color_contraste);
@@ -1105,3 +1105,40 @@ html {
     background-image: url('./static/iconos/happy.svg');
 }
 /* FIN HISTORIAS */
+
+
+/* SAGA.html */
+.saga_info {
+    border-radius: 0;
+    font-size: 2em;
+    align-self:initial;
+}
+
+.saga_container {
+    display: grid;
+    grid-template-rows: 60vh 1fr;
+    gap: 5%;
+    padding: 5%;
+}
+
+.saga_foto img {
+    border-radius: 20px;
+}
+
+.saga_info small {
+    font-size: .5em;
+}
+
+.informacion_saga_texto {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.informacion_saga_texto div {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* FIN SAGA.html */

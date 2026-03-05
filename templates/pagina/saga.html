@@ -5,14 +5,17 @@
 {% block main %}
 <main id="saga" class="main_con_menu_lateral">
     {% include "layouts/menu_lateral.html" %}
-    <div>
-        <section class="saga_info">
-            <img src="{{ url_for('fotos_sagas', filename=saga['foto_saga']) }}">
-            <div>
-                <h1>{{ saga['nombre_saga'] }}</h1>
+    <div class="saga_container">
+        <section class="informacion saga_info">
+            <div class="foto_perfil saga_foto">
+                <img src="{{ url_for('fotos_saga', filename=saga['imagen_saga']) }}">
+            </div>
+            <div class="informacion_saga_texto">
+                <div>
+                    <h1>{{ saga['nombre_saga'] }}</h1>
+                    <small>Autor: {{ autor['nombre_usuario'] }}</small>
+                </div>
                 <p>{{ saga['descripcion_saga'] }}</p>
-                <br>
-                <small>Autor: {{ saga['nombre_usuario'] }}</small>
             </div>
         </section>
         <section>

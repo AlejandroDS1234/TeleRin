@@ -509,6 +509,8 @@ def crear_saga():
     mensaje, resultado = validar_imagen_completa(imagen_saga)
     if resultado:
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
+    if len(descripcion_saga.split(" "))>60:
+        return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)
     insertar_db("saga", {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]})
@@ -576,9 +578,13 @@ def historia(id_historia):
 def saga(id_saga):
     saga=dato_en_db(id_saga, "id_saga", "saga")
     if not saga:
+        print("Saga no encontrada")
+        print(id_saga)
         abort(404)
-    historias=dato_en_db(None, {"id_saga": id_saga, "visibilidad_historia": 1}, "historias")
-    return render_template("pagina/saga.html", saga=saga[0], historias=historias)
+    historias=dato_en_db(None, {"id_saga": id_saga, "visibilidad_historia": True}, "historias")
+    autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
+    print(saga[0]["imagen_saga"])
+    return render_template("pagina/saga.html", saga=saga[0], historias=historias, autor=autor[0])
          
          
          
@@ -594,4 +600,4 @@ def saga(id_saga):
          
             
 if __name__=="__main__":
-    app.run(debug=True) 
+    app.run(debug=True, port=4210, host="0.0.0.0") 
