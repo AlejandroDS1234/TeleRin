@@ -1,12 +1,16 @@
 :root {
-    --color_layout: linear-gradient(-90deg, rgba(118, 54, 27, 1) 0%, rgba(196, 133, 92, 1) 95%, rgba(163, 84, 52, 1) 100%);
+    --color1: rgb(255, 94, 0);
+    --color2: rgb(255, 123, 0);
+    --color3: rgb(255, 170, 60);
+    /*estos 3 colores son para el degrade del svg de inicio por que estos no admiten linear-gradient*/
+    --color_layout: linear-gradient(-90deg, var(--color1) 0%, var(--color2) 50%, var(--color3) 100%);
     --color_letras_claras: #eae1d7;
     --color_letras_oscuras: #000;
-    --color_fondo: #faf4ee;
-    --color_borde_botones: #c5734c;
-    --color_botones: #e7a67d;
-    --color_botones_presionado: #8d4c3c;
+    --color_fondo: #ffffe7;
+    --color_borde_botones: #8a13ff;
+    --color_botones: #1388ff;
+    --color_botones_presionado: #8a13ff;
     --color_bordes: #2D0F04;
-    --color_contraste: linear-gradient(123deg, rgba(31, 58, 95, 1) 0%, rgba(36, 89, 163, 1) 50%);
-    --color_contraste_claro: rgba(36, 89, 163, 1);
+    --color_contraste: #1388ff;
+    --color_contraste_claro: #1388ff;
 }

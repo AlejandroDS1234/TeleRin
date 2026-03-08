@@ -1,0 +1,41 @@
+services:
+  telerin:
+    build: .
+    container_name: telerin
+    ports:
+      - "4210:4210"
+    volumes:
+      - .:/TELERIN
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: TeleRin
+    depends_on:
+      - db
+
+  db:
+    image: postgres:18
+    container_name: database
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: TeleRin
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql
+  
+volumes:
+  postgres_data:
+
+
+# ejecutar por primera vez: docker compose up
+
+#iniciar despues de la primera vez: docker compose start
+
+
+# actualizar codigo
+
+#1 docker compose
+      

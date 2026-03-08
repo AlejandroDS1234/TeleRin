@@ -16,6 +16,7 @@ from PIL import Image
 from functools import wraps
 import datetime 
 
+print("Iniciando aplicación...")
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
@@ -34,7 +35,6 @@ def necesita(nombre, validacion):
         @wraps(func)
         def wrapper(*args, **kwargs):
             if not validacion():    
-                print(request.referrer)
                 flash(f"Necesitas {nombre} para acceder", "warning")
                 return redirect(request.referrer or "/")
             return func(*args, **kwargs)
@@ -45,12 +45,15 @@ def necesita(nombre, validacion):
 def conectar():
     try:
         db = ps.connect(
-            host="localhost",
+            host="db",
             port="5432",
-            user="postgres",
-            password="123456",
-            database="TeleRin"
+            user=os.getenv("POSTGRES_USER"),
+            password=os.getenv("POSTGRES_PASSWORD"),
+            database=os.getenv("POSTGRES_DB")
         )
+        if db is None:
+            flash("Error interno, vuelva mas tarde", "danger")
+            return redirect(url_for("index"))
         return db
     except:
         print("Error al conectar")
@@ -179,7 +182,6 @@ def enviar_correo_validacion(correo):
 def enviar_correo(correo):
     codigo= enviar_correo_validacion(correo)
     if codigo==False:
-        print("Error to send email")
         return jsonify({"mensaje":"Error al enviar el correo de validacion", "tipo":"danger"})
         
     session["codigo_validacion"]=encriptar(codigo)
@@ -357,12 +359,10 @@ def fotos_saga(filename):
 @app.route("/iniciar_sesion", methods=["GET", "POST"])
 def iniciar_sesion():
     if request.method=="POST":
-        print("Intentando iniciar sesion")
         form = request.get_json()
         correo=form["correo_usuario"]
         contraseña=form["contraseña_usuario"]
         contraseña_encriptada=f"{correo}{contraseña}"
-        print("Datos recibidos, verificando en la base de datos")
         with conectar() as db:
             with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
                 usuario=dato_en_db(correo, "correo_usuario")
@@ -373,7 +373,6 @@ def iniciar_sesion():
                 if not verificar_ip(correo):
                     guardar_temporalmente_datos({"correo_usuario": correo})
                     guardar_funcion_proveniente("iniciar_sesion_dispositivo_nuevo")
-                    print("Dispositivo nuevo, enviando correo de validacion")
                     return enviar_correo(correo)
                 return iniciar_sesion_dispositivo_nuevo(correo)
     return render_template("llenar_datos/iniciar_sesion.html")
@@ -443,7 +442,6 @@ def perfil():
         nombre_usuario=form["nombre_usuario"]
         pais_usuario=form["pais"]
         genero_usuario=form["genero"]
-        print(nombre_usuario, pais_usuario, genero_usuario)
         descripcion_usuario=form["descripcion"]
         if dato_en_db(nombre_usuario, 'nombre_usuario') and nombre_usuario != session["usuario"]["nombre_usuario"]:
             return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
@@ -460,7 +458,6 @@ def guardar_foto_perfil():
         imagen=request.files['imagen']
         mensaje, resultado = validar_imagen_completa(imagen)
         if resultado:
-            print("aqui")
             return jsonify({"mensaje": mensaje, "tipo": "danger"})
         nombre_archivo, ruta=ruta_guardado(session["usuario"]["codigo_usuario"], "_perfil", "Fotos/perfil")
         imagen.save(ruta)
