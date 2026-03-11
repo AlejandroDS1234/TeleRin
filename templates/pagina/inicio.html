@@ -2,6 +2,10 @@
 
 {% block title %}TeleRin{% endblock title %}
 
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_inicio.css') }}">
+{% endblock css %}
+
 {% block header %}
 <input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
 <a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
@@ -14,37 +18,6 @@
     <div>
         
         <section style="height: 80vh">
-            <h5 style="margin: 30px; font-size: 20px;">Historias Recomendadas</h5>
-            <div class="historias">
-                <div class="historiaCard">
-                    <img src="https://ichef.bbci.co.uk/ace/ws/800/cpsprodpb/9db5/live/48fd9010-c1c1-11ee-9519-97453607d43e.jpg.webp">
-                    <div>
-                        <h2>El Arbol De La Vida</h2>
-                        <p>La historia de un arbol que se encuentras mas alla de la imaginacion</p>
-                    </div>
-                </div>
-                <div class="historiaCard">
-                    <img src="https://www.taisa-designer.com/wp-content/uploads/2019/09/anton-darius-thesollers-xYIuqpHD2oQ-unsplash.jpg">
-                    <div>
-                        <h2>Las flores de nuestro camino</h2>
-                        <p>Una historia de amor y vida</p>
-                    </div>
-                </div>
-                <div class="historiaCard">
-                    <img src="https://quo.eldiario.es/wp-content/uploads/2019/10/7-impactantes-imagenes-de-animales-salvajes-en-libertad.jpg.webp">
-                    <div>
-                        <h2>Leon Suelto</h2>
-                        <p>Un león se escapo del zoologico y tiene hambre</p>
-                    </div>
-                </div>
-                <div class="historiaCard">
-                    <img src="https://www.net948.com/wp-content/uploads/2023/01/Marca-personal-2.jpg">
-                    <div>
-                        <h2>Remodela tu casa en 30 dias</h2>
-                        <p>Una guia de construccion con pocos materiales</p>
-                    </div>
-                </div>
-            <div>
         </section>
 
     </div>

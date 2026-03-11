@@ -2,6 +2,11 @@
 
 {% block title %}Codigo De Verificacion{% endblock title %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_ingresar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_correo_cambiar_contraseña.css') }}">
+{% endblock css %}
+
 {% block header %}
 <a class="boton boton_fondo" href="{{ url_for('registrarse') }}" name="Registrarse">Registrarse</a>
 <a class="boton boton_fondo" href="{{ url_for('iniciar_sesion') }}" name="Iniciar Sesion">Iniciar Sesión</a>

@@ -2,10 +2,13 @@
 
 {% block title %}TeleRin{% endblock title %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_perfil.css') }}">
+{% endblock css %}
+
 {% block header %}
 <input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
 <a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
-
 {% endblock header %}
 
 {% block main %} 
@@ -22,19 +25,21 @@
             </a>
 
             <form class="informacion_usuario" id="informacion_del_usuario">
-                <div class="columna">
-                    <h4>Editar Datos</h4>
-                    <input class="input input_sin_fondo letra_claras" name="nombre_usuario" id="nombre_usuario" placeholder="Nombre Usuario" style="width: 100%" value="{{ session['usuario']['nombre_usuario'] }}">
-                    <div> 
-                        <select class="input input_sin_fondo letra_claras" id="pais" name="pais" style="width: 50%"> </select>
-                        <select class="input input_sin_fondo letra_claras" id="genero" name="genero" style="width: 50%"></select>
+                <h4>Editar Datos</h4>
+                <div class="contenedor_datos">
+                    <div class="columna">
+                        <input class="input input_sin_fondo letra_claras" name="nombre_usuario" id="nombre_usuario" placeholder="Nombre Usuario" style="width: 100%" value="{{ session['usuario']['nombre_usuario'] }}">
+                        <div> 
+                            <select class="input input_sin_fondo letra_claras" id="pais" name="pais" style="width: 50%"> </select>
+                            <select class="input input_sin_fondo letra_claras" id="genero" name="genero" style="width: 50%"></select>
+                        </div>
+                        <button id="boton_guardar_datos" class="boton boton_fondo" style="width: 100%">Editar</button>
                     </div>
-                    <button id="boton_guardar_datos" class="boton boton_fondo" style="width: 100%">Editar</button>
-                </div>
-                <div class="columna">
-                    <textarea style="margin-top: 17%" class="input input_sin_fondo letra_claras" name="descripcion" id="Descripcion" placeholder="descripcion">{{ session['usuario']['descripcion_personal'] }}</textarea>
-        
-                    <div id="json_mensaje_datos"></div>
+                    <div class="columna">
+                        <textarea class="input input_sin_fondo letra_claras" name="descripcion" id="Descripcion" placeholder="descripcion">{{ session['usuario']['descripcion_personal'] }}</textarea>
+            
+                        <div id="json_mensaje_datos"></div>
+                    </div>
                 </div>
             </form>
         </section>

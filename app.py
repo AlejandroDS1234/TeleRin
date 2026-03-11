@@ -453,6 +453,7 @@ def perfil():
     return render_template("pagina/perfil.html")
         
 @app.route("/guardar_foto_perfil", methods=["POST"])
+@necesita("usuario", lambda: session.get("usuario")!=None)
 def guardar_foto_perfil():
     if request.method=="POST":
         imagen=request.files['imagen']
@@ -465,6 +466,7 @@ def guardar_foto_perfil():
         return redirect(request.referrer)
 
 @app.route("/crear_historia", methods=["GET","POST"])
+@necesita("usuario", lambda: session.get("usuario")!=None)
 def crear_historia():
     if request.method=="POST":
         form = request.get_json()
@@ -493,6 +495,7 @@ def crear_historia():
     return render_template("pagina/crear_historias.html")
 
 @app.route("/crear_saga", methods=["POST"])
+@necesita("usuario", lambda: session.get("usuario")!=None)
 def crear_saga():
     nombre_saga=request.form["nombre_saga"].strip()
     descripcion_saga=request.form["descripcion_saga"].strip()
@@ -520,6 +523,7 @@ def sagas_creadas(usuario):
         return jsonify(sagas_usuario)
     
 @app.route("/calificar_historia", methods=["POST"])
+@necesita("usuario", lambda: session.get("usuario")!=None)
 def calificar_historia():
     form = request.get_json()
     id_historia = form.get("id_historia")
@@ -572,12 +576,13 @@ def historia(id_historia):
          
          
 @app.route("/saga/<id_saga>")
+@necesita("usuario", lambda: session.get("usuario")!=None)
 def saga(id_saga):
     saga=dato_en_db(id_saga, "id_saga", "saga")
     if not saga:
         print("Saga no encontrada")
         print(id_saga)
-        abort(404)
+        abort(404) 
     historias=dato_en_db(None, {"id_saga": id_saga, "visibilidad_historia": True}, "historias")
     autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
     print(saga[0]["imagen_saga"])

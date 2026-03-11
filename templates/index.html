@@ -2,6 +2,10 @@
 
 {% block title %}Inicio{% endblock title %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_index.css') }}">
+{% endblock css %}
+
 {% block header %}
 <a class="boton boton_fondo" href="{{ url_for('registrarse') }}">Registrarse</a>
 <a class="boton boton_fondo" href="{{ url_for('iniciar_sesion') }}">Iniciar Sesión</a>

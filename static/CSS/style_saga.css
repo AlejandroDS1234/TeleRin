@@ -1,0 +1,70 @@
+/* SAGA.html */
+.saga_container {
+    display: grid;
+    grid-template-rows: 60vh 1fr;
+    padding: 5%;
+    gap: 5%;
+}
+
+
+
+.saga_info {
+    grid-column: 1/2;
+    grid-row: 1/2;
+    font-size: 2em;
+    align-self:initial;
+    background-color: var(--color_contraste);
+    display: flex;
+    padding: 2%;
+    gap: 2%;
+}
+
+.saga_foto img {
+    border-radius: 20px;
+}
+
+.informacion_saga_texto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.informacion_saga_texto_principal {
+    grid-column: 1/2;
+}
+
+.informacion_saga_texto_principal small {
+    font-size: .5em;
+    color: var(--color_letra_clara)
+}
+
+.informacion_saga_texto_principal div {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.informacion_saga_texto_principal p {
+    margin: 0;
+    font-size: .8em;
+}
+
+
+.libros_de_saga {
+    grid-column: 2/3;
+    display: flex;
+    flex-direction: column;
+    gap: 1%;
+}
+
+#libros_saga_container {
+    border: 3px solid var(--color_bordes);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-radius: 5px;
+    flex: 1;
+}
+
+/* FIN SAGA.html */

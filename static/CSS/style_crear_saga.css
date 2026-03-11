@@ -1,0 +1,244 @@
+/* -------------------- */
+
+
+/* Contenedor del modal */
+
+
+/* -------------------- */
+
+.modal {
+    display: none;
+    /* Oculta el modal por defecto */
+    position: fixed;
+    /* Fija el modal en la pantalla, aunque se haga scroll */
+    top: 0;
+    /* Empieza desde arriba de la ventana */
+    left: 0;
+    /* Empieza desde la izquierda */
+    width: 100%;
+    /* Ocupa todo el ancho de la pantalla */
+    height: 100%;
+    /* Ocupa toda la altura de la pantalla */
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Fondo blanco semitransparente */
+    backdrop-filter: blur(2px);
+    /* Desenfoca ligeramente lo que hay detrás */
+    justify-content: center;
+    /* Centra horizontalmente el contenido del modal */
+    align-items: center;
+    /* Centra verticalmente el contenido del modal */
+    z-index: 999;
+    /* Se asegura que el modal esté encima de otros elementos */
+}
+
+
+/* -------------------- */
+
+
+/* Contenido interno del modal */
+
+
+/* -------------------- */
+
+.modal-contenido {
+    background-color: rgba(255, 255, 255, 0);
+    /* Fondo transparente, la card mantiene su color */
+    padding: 20px;
+    /* Espacio interno alrededor del contenido */
+    border-radius: 8px;
+    /* Bordes redondeados del contenedor interno */
+    max-width: 90%;
+    /* No se salga del 90% del ancho de la pantalla */
+    max-height: 90%;
+    /* No se salga del 90% de la altura de la pantalla */
+    overflow: auto;
+    /* Si el contenido es demasiado grande, permite scroll */
+}
+
+
+/* -------------------- */
+
+
+/* Card interna (ya existente) */
+
+
+/* -------------------- */
+
+.card {
+    background-color: rgb(24, 121, 153);
+    /* Fondo azul de la card */
+    padding: 20px;
+    /* Espacio interno dentro de la card */
+    border: 1px solid #d590c1;
+    /* Borde de la card */
+    grid-column: 2/8;
+    /* Posicionamiento inicial si la card está en grid padre */
+    grid-row: 2/8;
+    /* Posicionamiento inicial si la card está en grid padre */
+    display: grid;
+    /* Convierte la card en un grid interno */
+    grid-template-columns: repeat(16, 1fr);
+    /* 16 columnas iguales dentro de la card */
+    grid-template-rows: repeat(8, 1fr);
+    /* 8 filas iguales dentro de la card */
+    gap: 3px;
+    /* Espacio entre filas y columnas dentro de la card */
+    height: auto;
+    /* La altura se adapta al contenido */
+    width: auto;
+    /* El ancho se adapta al contenido */
+    padding: 0px;
+    /* Padding interno se ajusta a 0 para el grid */
+}
+
+
+/* -------------------- */
+
+
+/* Imagen dentro de la card */
+
+
+/* -------------------- */
+
+.imagen {
+    grid-column: 1 / 8;
+    /* Ocupa columnas 1 a 7 */
+    grid-row: 1 / 9;
+    /* Ocupa filas 1 a 8 */
+    width: 100%;
+    /* Ocupa todo el ancho de la celda */
+    height: 100%;
+    /* Ocupa todo el alto de la celda */
+    object-fit: scale-down;
+    /* La imagen mantiene proporción y se ajusta a la celda */
+}
+
+#imagen_saga {
+    width: 100%;
+    /* Ocupa todo el ancho de la celda */
+    height: 100%;
+    /* Ocupa todo el alto de la celda */
+    object-fit: fill;
+    /* Se estira para llenar toda la celda, puede deformarse */
+}
+
+
+/* -------------------- */
+
+
+/* Título dentro de la card */
+
+
+/* -------------------- */
+
+#titulo_saga {
+    grid-column: 9/12;
+    /* Posición en columnas 9 a 11 */
+    grid-row: 1;
+    /* Posición en la primera fila */
+    width: 100%;
+    /* Ocupa todo el ancho de la celda */
+    height: 100%;
+    /* Ocupa todo el alto de la celda */
+}
+
+
+/* -------------------- */
+
+
+/* Formulario dentro de la card */
+
+
+/* -------------------- */
+
+#info_saga {
+    grid-column: 9/15;
+    /* Ocupa columnas 9 a 14 */
+    grid-row: 3/7;
+    /* Ocupa filas 3 a 6 */
+    width: 100%;
+    /* Ocupa todo el ancho de la celda asignada */
+    height: 100%;
+    /* Ocupa toda la altura de la celda asignada */
+    display: grid;
+    /* Convierte el formulario en grid interno */
+    row-gap: 20px;
+    /* Espacio vertical entre los campos del formulario */
+}
+
+
+/* -------------------- */
+
+
+/* Estilo de inputs y textarea del formulario */
+
+
+/* -------------------- */
+
+#info_saga input[type="text"],
+#info_saga textarea {
+    background-color: #e3ad6f;
+    /* Fondo del campo */
+    border: 2px solid #ff9d00;
+    /* Borde del campo */
+    padding: 1px 1px;
+    /* Espacio interno dentro del input */
+    font-size: 1.1rem;
+    /* Tamaño de fuente */
+    color: #000000;
+    /* Color del texto */
+    width: 340px;
+    /* Ancho fijo de cada campo */
+    border-radius: 10px;
+    /* Bordes redondeados */
+    outline: none;
+    /* Quita contorno azul al enfocar */
+    box-sizing: border-box;
+    /* Padding y borde incluidos en el ancho */
+    transition: border-color 0.3s;
+    /* Animación suave para el borde al enfocar */
+    resize: vertical;
+    /* Permite cambiar el tamaño vertical del textarea */
+}
+
+
+/* Cambiar borde al enfocar input o textarea */
+
+#info_saga input[type="text"]:focus,
+#info_saga textarea:focus {
+    border-color: #ff7b00;
+    /* Borde más intenso al enfocar */
+}
+
+
+/* -------------------- */
+
+
+/* Botón del formulario */
+
+
+/* -------------------- */
+
+#info_saga button {
+    padding: 10px 20px;
+    /* Espacio interno del botón */
+    font-size: 1.1rem;
+    /* Tamaño de fuente del texto del botón */
+    background-color: #c5865e;
+    /* Color marrón claro */
+    border: none;
+    /* Sin borde */
+    border-radius: 3px;
+    /* Bordes ligeramente redondeados */
+    color: rgb(0, 0, 0);
+    /* Color del texto negro */
+    cursor: pointer;
+    /* Cursor cambia a mano al pasar sobre el botón */
+    transition: background-color 0.3s;
+    /* Animación para cambio de color al pasar mouse */
+}
+
+#info_saga button:hover {
+    background-color: #ff7b00;
+    /* Color del botón al pasar el mouse */
+}

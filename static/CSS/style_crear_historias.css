@@ -1,0 +1,139 @@
+/* CREAR HISTORIAS.html */
+
+.crear_historia_container {
+    padding: 2%;
+    min-height: 80vh;
+}
+
+#crear_historia_form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    height: 100%;
+}
+
+.ql-toolbar {
+    background: var(--color_contraste);
+    border: none;
+}
+
+.ql-toolbar button svg {
+    background-color: var(--color_letras_claras);
+    border-radius: 20px;
+}
+
+.ql-picker-label {
+    background-color: var(--color_letras_claras);
+    border-radius: 20px;
+}
+
+.crear_texto {
+    border: 3px solid var(--color_bordes);
+    background-color: var(--color_letras_claras);
+}
+
+.ql-container {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+#editor {
+    height: 100%;
+    border: none;
+}
+
+.dropbtn {
+    color: var(--color_letras_claras);
+    padding: 2%;
+    font-size: 100%;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--color_fondo);
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    max-height: 30vh;
+    overflow-y: scroll;
+}
+
+.dropdown-content .saga:hover {
+    background-color: var(--color_contraste_claro);
+    cursor: pointer;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+#crear_historia_form .columna {
+    background: var(--color_layout);
+    height: 100%;
+    max-height: 80vh;
+    margin-left: 5%;
+    margin-right: 5%;
+    border: 3px solid var(--color_bordes);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5%;
+    padding-top: 5%;
+}
+
+#crear_historia_form .columna .datos_historia {
+    display: flex;
+    gap: 5%;
+    flex-direction: column;
+    margin-bottom: 10%;
+}
+
+#crear_historia_form .columna .saga {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5%;
+}
+
+#inicio section {
+    gap: 10%;
+    height: 80vh;
+    width: 100%;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+#inicio section .historias {
+    display: flex;
+    gap: 5%;
+    height: 70vh;
+}
+
+.historiaCard {
+    height: 80%;
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5%;
+    border: 3px solid var(--color_bordes);
+    background: var(--color_contraste);
+    padding: 2%;
+    border-radius: 20px;
+    color: var(--color_letras_claras);
+}
+
+.historiaCard img {
+    aspect-ratio: 1/1;
+    height: 50%;
+    border: 3px solid var(--color_bordes);
+    border-radius: 20px;
+    overflow: hidden;
+}

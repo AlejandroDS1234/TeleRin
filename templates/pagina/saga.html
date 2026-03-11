@@ -2,25 +2,37 @@
 
 {% block title %}{{ saga['nombre_saga'] }}{% endblock title %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_saga.css') }}">
+{% endblock css %}
+
+{% block header %}
+<input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
+<a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
+{% endblock header %}
+
 {% block main %}
 <main id="saga" class="main_con_menu_lateral">
     {% include "layouts/menu_lateral.html" %}
     <div class="saga_container">
-        <section class="informacion saga_info">
-            <div class="foto_perfil saga_foto">
+        <section class="saga_info">
+            <div class="foto_perfil saga_foto" style="height: 100%;">
                 <img src="{{ url_for('fotos_saga', filename=saga['imagen_saga']) }}">
             </div>
             <div class="informacion_saga_texto">
-                <div>
-                    <h1>{{ saga['nombre_saga'] }}</h1>
-                    <small>Autor: {{ autor['nombre_usuario'] }}</small>
+                <div class="informacion_saga_texto_principal">
+                    <div>
+                        <h2>{{ saga['nombre_saga'] }}</h2>
+                        <small>Autor: {{ autor['nombre_usuario'] }}</small>
+                    </div>
+                    <p>{{ saga['descripcion_saga'] }}</p>
                 </div>
-                <p>{{ saga['descripcion_saga'] }}</p>
-            </div>
-        </section>
-        <section>
-            <div>
-                hola
+                <div class="libros_de_saga">
+                    <h3>Libros de la saga</h3>
+                    <div id="libros_saga_container" class="libros_saga_container">
+
+                    </div>
+                </div>
             </div>
         </section>
     </div>

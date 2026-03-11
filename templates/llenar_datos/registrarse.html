@@ -2,6 +2,11 @@
 
 {% block title %}Registrarse{% endblock title %}
 
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_ingresar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_registrarse.css') }}">
+{% endblock css %}
+
 {% block header %}
 <div style="display: flex; flex-direction: column; align-items: center;">
     <p>¿Ya tienes una cuenta?</p>
