@@ -1,5 +1,10 @@
 import psycopg2
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+import nltk
+from nltk.corpus import stopwords
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 
 def conectar():
@@ -32,6 +37,34 @@ def obtener_historias():
             cursor.execute(comando_obtener_todas_historias)
             historias = cursor.fetchall()
     return historias
+
+
+def palabras_español():
+    nltk.download("stopwords")
+    español=stopwords.words("spanish")
+    return español
+
+df = pd.DataFrame(obtener_historias(), columns=["id_historia", "nombre_historia", "descripcion_historia", "codigo_usuario", "nombre_saga", "hashtags"])
+df["contenido"] = (df["nombre_historia"] + " " + 
+                   df["descripcion_historia"] + " " + 
+                   df["nombre_saga"].fillna("") + " " + 
+                   df["hashtags"].fillna(""))
+
+vectorizar = TfidfVectorizer(stop_words=palabras_español())
+matriz = vectorizar.fit_transform(df["contenido"])
+
+similitud = cosine_similarity(matriz)
+
+def recomendar(id_historia, n=5):
+    idx = df[df["id_historia"] == id_historia].index[0]
+    scores = list(enumerate(similitud[idx]))
+    scores = sorted(scores, key=lambda x: x[1], reverse=True)
+    scores = scores[1:n+1]
+    indices = [i[0] for i in scores]
+    return df.iloc[indices]
+
+print(recomendar("-historia-994474ducua-1", 3))
+
 
 
 

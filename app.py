@@ -603,7 +603,7 @@ def saga(id_saga):
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.fecha_actualizacion, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia WHERE h.id_saga = %s AND h.visibilidad_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion ORDER BY h.fecha_actualizacion DESC""", (id_saga, True))
             historias=cursor.fetchall()
-    print(historias)
+    print(historias[0]["calificacion_p"])
     autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
     return render_template("pagina/saga.html", saga=saga[0], historias=historias, autor=autor[0])
          
