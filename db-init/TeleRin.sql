@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict 0Gh2aNRn4wmPbaY1stRkbmeQ6M4qgvCLLDE3VkkRWoef2amZsAw9AiPUH2Nef53
+\restrict jIuNcwgrj863szxdTNLSChzbSEKPPSiA1NQ8fVrfyqIDRjnsowutlNQfXQlXxlU
 
--- Dumped from database version 18.1
+-- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-03-08 07:56:44
+-- Started on 2026-03-12 10:12:09
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,7 +26,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 219 (class 1259 OID 41027)
+-- TOC entry 219 (class 1259 OID 16385)
 -- Name: USUARIOS; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -46,7 +46,7 @@ CREATE TABLE public."USUARIOS" (
 ALTER TABLE public."USUARIOS" OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 49218)
+-- TOC entry 220 (class 1259 OID 16394)
 -- Name: calificacion_historia; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -60,7 +60,7 @@ CREATE TABLE public.calificacion_historia (
 ALTER TABLE public.calificacion_historia OWNER TO postgres;
 
 --
--- TOC entry 220 (class 1259 OID 41036)
+-- TOC entry 221 (class 1259 OID 16402)
 -- Name: generos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -73,7 +73,72 @@ CREATE TABLE public.generos (
 ALTER TABLE public.generos OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 41043)
+-- TOC entry 225 (class 1259 OID 16470)
+-- Name: hashtags; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.hashtags (
+    nombre_hashtag character varying NOT NULL,
+    id_hashtag integer NOT NULL
+);
+
+
+ALTER TABLE public.hashtags OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 16480)
+-- Name: hashtags_historias; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.hashtags_historias (
+    id_historia character varying NOT NULL,
+    id_hashtag integer NOT NULL
+);
+
+
+ALTER TABLE public.hashtags_historias OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 16487)
+-- Name: hashtags_id_hashtag_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.hashtags_id_hashtag_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.hashtags_id_hashtag_seq OWNER TO postgres;
+
+--
+-- TOC entry 3509 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: hashtags_id_hashtag_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.hashtags_id_hashtag_seq OWNED BY public.hashtags.id_hashtag;
+
+
+--
+-- TOC entry 228 (class 1259 OID 16511)
+-- Name: historial; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.historial (
+    id_historia character varying NOT NULL,
+    tiempo_vista timestamp without time zone NOT NULL,
+    codigo_usuario character varying NOT NULL
+);
+
+
+ALTER TABLE public.historial OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16409)
 -- Name: historias; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -92,7 +157,7 @@ CREATE TABLE public.historias (
 ALTER TABLE public.historias OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 41054)
+-- TOC entry 223 (class 1259 OID 16420)
 -- Name: paises; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -105,7 +170,7 @@ CREATE TABLE public.paises (
 ALTER TABLE public.paises OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 41059)
+-- TOC entry 224 (class 1259 OID 16425)
 -- Name: saga; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -121,32 +186,44 @@ CREATE TABLE public.saga (
 ALTER TABLE public.saga OWNER TO postgres;
 
 --
--- TOC entry 4990 (class 0 OID 41027)
+-- TOC entry 3322 (class 2604 OID 16488)
+-- Name: hashtags id_hashtag; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.hashtags ALTER COLUMN id_hashtag SET DEFAULT nextval('public.hashtags_id_hashtag_seq'::regclass);
+
+
+--
+-- TOC entry 3494 (class 0 OID 16385)
 -- Dependencies: 219
 -- Data for Name: USUARIOS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."USUARIOS" (nombre_usuario, correo_usuario, "contraseña_usuario", id_pais, id_genero, descripcion_personal, foto_perfil_usuario, ip_usuario, codigo_usuario) FROM stdin;
-alejandro	aleducsa@alpumarejopalmira.edu.co	scrypt:32768:8:1$x58Vz4MAnTF2sIND$4f143482ca524651d0bd81122ecc8835507a7861dc5ba16f08a9dccb40bd3e5a194bfa9d90b68937eaa91ff408252b9e2f6050de8dee11260fd06c65cc91b663	37	1	programador	924583aledu_perfil.jpg	scrypt:32768:8:1$tDPxfgpJEDpJq2V5$2d30bf0d163ff543b3a9d0d162a3ebc9816d717a966ac428c2a48149c7aa0fbed935d760d6ee41dd234849084be08cbb24d58d50b64385c5ed67d2a226f1d8fe	924583aledu
 Yesi	yesickrivera@gmail.com	scrypt:32768:8:1$mgfPi1AwZmlLjL4S$fc94fd67e5b212bfe3bd3e5d1c85a5d3607bd403592c906f6b3a94ed4ac4f1b12f418deb467dea9634f744106910b21f8881128f3acc3d7d2117476629cdd98e	0	0	\N	predefinido.jpg	scrypt:32768:8:1$gf1y4v7z0b5FJPEY$ac1fd1bc9d957f71ffaa860a760ad37d17090e36fd8d7f6eaddad6510129bbc8ebf68777afb69bf8d93fddfc25ca576484c37e5595bfa2901ad252fe179bb27f	940371yesic
-isaacKawaiUwU 2.0	ducuarasatizabalalejandro@gmail.com	scrypt:32768:8:1$wd6rx8ojlp1ICMPM$f30630e8f8b2d55732222b2c788ae18827af4db70acb1323ad7c74d461ef07f2c24568fbc17728dfc47f1f9fcf34c80ccf5d722980e7ad660dd67dfc282d8780	7	1	hola1234	994474ducua_perfil.jpg	scrypt:32768:8:1$5SpG5YOtdT5tNl3D$a8a1fae975ad90c0a18594ad011d5fdd9293d244d38d29de59cc7feb113502429639db896156116b05503db3e282b6be83cb94d49b1325cffb104cb021ecfe73	994474ducua
+isaacKawaiUwU 2.0	ducuarasatizabalalejandro@gmail.com	scrypt:32768:8:1$wd6rx8ojlp1ICMPM$f30630e8f8b2d55732222b2c788ae18827af4db70acb1323ad7c74d461ef07f2c24568fbc17728dfc47f1f9fcf34c80ccf5d722980e7ad660dd67dfc282d8780	192	1	hola1234 :)	994474ducua_perfil.jpg	scrypt:32768:8:1$NH6127k2G1V2oE68$f58127711bb1636b58fcd56b896c3732ededb87735a5799ab73adeda17a45236216eeac507f6d996ab9782e04afc8cd524e8b7d826a5d6b8775c8e92a59d6417	994474ducua
+alejandro	aleducsa@alpumarejopalmira.edu.co	scrypt:32768:8:1$nfDWd4ChH9eLPV7T$83d9a6d62fc76d27f1ba44052328f94cc911b46f9b67e35be38d45e5cfddf49ff33a56835c96a95ab899dbc995c7e54ffc512f0ef942dcf22bc024b9f4c264d3	37	1	programador	924583aledu_perfil.jpg	scrypt:32768:8:1$I11nPMAXqpntDtBd$d9fb4b4390212ecb1a70aada84417b2a1f26886f14ee2e762c2e86173011e3c8a941951cd36327c3a74775d2efa9c03dc9c84d1ce14ada79fc8ecb406da42189	924583aledu
 \.
 
 
 --
--- TOC entry 4995 (class 0 OID 49218)
--- Dependencies: 224
+-- TOC entry 3495 (class 0 OID 16394)
+-- Dependencies: 220
 -- Data for Name: calificacion_historia; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.calificacion_historia (codigo_usuario, id_historia, calificacion) FROM stdin;
 994474ducua	-historia-924583aledu-un Historia	1
+994474ducua	-historia-994474ducua-1	2
+994474ducua	-historia-994474ducua-prueba 34	3
+924583aledu	-historia-994474ducua-1	1
+924583aledu	-historia-994474ducua-prueba 34	3
 \.
 
 
 --
--- TOC entry 4991 (class 0 OID 41036)
--- Dependencies: 220
+-- TOC entry 3496 (class 0 OID 16402)
+-- Dependencies: 221
 -- Data for Name: generos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -154,27 +231,65 @@ COPY public.generos (id_genero, nombre_genero) FROM stdin;
 1	Masculino
 2	Femenino
 0	Undefined
+3	hipopotamo
 \.
 
 
 --
--- TOC entry 4992 (class 0 OID 41043)
--- Dependencies: 221
+-- TOC entry 3500 (class 0 OID 16470)
+-- Dependencies: 225
+-- Data for Name: hashtags; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.hashtags (nombre_hashtag, id_hashtag) FROM stdin;
+help	1
+aaaaaaa	2
+adasdasd	3
+\.
+
+
+--
+-- TOC entry 3501 (class 0 OID 16480)
+-- Dependencies: 226
+-- Data for Name: hashtags_historias; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.hashtags_historias (id_historia, id_hashtag) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3503 (class 0 OID 16511)
+-- Dependencies: 228
+-- Data for Name: historial; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.historial (id_historia, tiempo_vista, codigo_usuario) FROM stdin;
+-historia-994474ducua-1	2026-03-12 14:06:33	924583aledu
+-historia-994474ducua-prueba 34	2026-03-12 15:06:37	924583aledu
+\.
+
+
+--
+-- TOC entry 3497 (class 0 OID 16409)
+-- Dependencies: 222
 -- Data for Name: historias; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.historias (nombre_historia, descripcion_historia, visibilidad_historia, id_saga, fecha_actualizacion, id_historia, contenido_historia, codigo_usuario) FROM stdin;
 primer historia de la pagina	asdasdsadasd	t		12:37:35	-historia-994474ducua-primer historia de la pagina	{"ops": [{"insert": "primer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprime"}, {"insert": "r histoariaprimer histoaria", "attributes": {"underline": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"underline": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"underline": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"underline": true}}, {"insert": "\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\np"}, {"insert": "rimer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoariaprimer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoariaprimer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoariaprimer histoaria", "attributes": {"bold": true}}, {"insert": "\\n"}, {"insert": "primer histoaria", "attributes": {"bold": true}}, {"insert": "\\nprimer histoariaprimer histoaria\\n\\n\\nprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\nprimer histoaria\\nprimer histoariaprimer histoaria\\n"}]}	994474ducua
 un Historia	historia de prueba	t		13:40:18	-historia-924583aledu-un Historia	{"ops": [{"insert": "esta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\n es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\n\\n es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\n es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\n es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\nesta es una historia\\n"}]}	924583aledu
-prueba 34	uno dos tras	t	-inicio-994474ducua-la%20noche	22:33:28	-historia-994474ducua-prueba 34	{"ops": [{"insert": "asdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\n"}]}	994474ducua
-1	1234	t	-inicio-994474ducua-la%20noche	10:55:34	-historia-994474ducua-1	{"ops": [{"insert": "asdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\n"}]}	994474ducua
 2	1234	t		11:03:06	-historia-994474ducua-2	{"ops": [{"insert": "\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;\\nALTER TABLE historias\\nDROP CONSTRAINT historias_descripcion_key;v\\n"}]}	994474ducua
+primer historia con hashtag	#help nuestro primer hashtag	t		21:08:43	-historia-994474ducua--primer historia con hashtag	{"ops": [{"insert": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\naaaaaaaaaaaaaaaaaaaaaaaa\\n"}]}	994474ducua
+segunda historia con hashtags	aaaaa #aaaaaaa aaaaaaaa aaaasdasdas #adasdasd asdasdasdasd	t		22:30:49	-historia-994474ducua--segunda historia con hashtags	{"ops": [{"insert": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\n"}]}	994474ducua
+1	1234	t	-inicio-994474ducua-la noche	10:55:34	-historia-994474ducua-1	{"ops": [{"insert": "asdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasddddddddddddddddddasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\nasdddddddddddddddddd\\n"}]}	994474ducua
+prueba 34	uno dos tras	t	-inicio-994474ducua-la noche	22:33:28	-historia-994474ducua-prueba 34	{"ops": [{"insert": "asdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\nasddddddddddddddddddddddddddddddasdddddddddddddddddddddddddddddd\\nasdddddddddddddddddddddddddddddd\\n"}]}	994474ducua
 \.
 
 
 --
--- TOC entry 4993 (class 0 OID 41054)
--- Dependencies: 222
+-- TOC entry 3498 (class 0 OID 16420)
+-- Dependencies: 223
 -- Data for Name: paises; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -379,8 +494,8 @@ COPY public.paises (id_pais, nombre_pais) FROM stdin;
 
 
 --
--- TOC entry 4994 (class 0 OID 41059)
--- Dependencies: 223
+-- TOC entry 3499 (class 0 OID 16425)
+-- Dependencies: 224
 -- Data for Name: saga; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -391,12 +506,21 @@ saitama	994474ducua	-inicio-994474ducua-saitama_saga.jpg	-inicio-994474ducua-sai
 hollow kingh	994474ducua	-inicio-994474ducua-hollow kingh_saga.jpg	-inicio-994474ducua-hollow kingh	silksong
 cuphead	994474ducua	-inicio-994474ducua-cuphead_saga.jpg	-inicio-994474ducua-cuphead	ijoikjk
 ingreso	994474ducua	-inicio-994474ducua-ingreso_saga.jpg	-inicio-994474ducua-ingreso	ijoikjk
-la noche	994474ducua	-inicio-994474ducua-la noche_saga.jpg	-inicio-994474ducua-la noche	historias de noche
+la noche	994474ducua	-inicio-994474ducua-la noche_saga.jpg	-inicio-994474ducua-la noche	historias de noche texto deprueba para ver que tal se ve si el texto aumenta de tamaño
 \.
 
 
 --
--- TOC entry 4830 (class 2606 OID 41070)
+-- TOC entry 3510 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: hashtags_id_hashtag_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.hashtags_id_hashtag_seq', 3, true);
+
+
+--
+-- TOC entry 3324 (class 2606 OID 16436)
 -- Name: USUARIOS USUARIOS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -405,7 +529,7 @@ ALTER TABLE ONLY public."USUARIOS"
 
 
 --
--- TOC entry 4832 (class 2606 OID 41072)
+-- TOC entry 3327 (class 2606 OID 16438)
 -- Name: generos generos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -414,7 +538,16 @@ ALTER TABLE ONLY public.generos
 
 
 --
--- TOC entry 4834 (class 2606 OID 41076)
+-- TOC entry 3337 (class 2606 OID 16496)
+-- Name: hashtags hashtags_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.hashtags
+    ADD CONSTRAINT hashtags_pkey PRIMARY KEY (id_hashtag);
+
+
+--
+-- TOC entry 3329 (class 2606 OID 16440)
 -- Name: historias historias_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -423,7 +556,7 @@ ALTER TABLE ONLY public.historias
 
 
 --
--- TOC entry 4836 (class 2606 OID 41078)
+-- TOC entry 3333 (class 2606 OID 16442)
 -- Name: paises paises_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -432,7 +565,7 @@ ALTER TABLE ONLY public.paises
 
 
 --
--- TOC entry 4838 (class 2606 OID 41080)
+-- TOC entry 3335 (class 2606 OID 16444)
 -- Name: saga saga_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -441,7 +574,39 @@ ALTER TABLE ONLY public.saga
 
 
 --
--- TOC entry 4841 (class 2606 OID 49243)
+-- TOC entry 3330 (class 1259 OID 16497)
+-- Name: idx_id_historia; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_id_historia ON public.historias USING btree (id_historia);
+
+
+--
+-- TOC entry 3325 (class 1259 OID 16499)
+-- Name: idx_id_historia_calificacion; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_id_historia_calificacion ON public.calificacion_historia USING btree (id_historia);
+
+
+--
+-- TOC entry 3331 (class 1259 OID 16498)
+-- Name: idx_id_saga; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_id_saga ON public.historias USING btree (id_saga);
+
+
+--
+-- TOC entry 3338 (class 1259 OID 16510)
+-- Name: idx_nombre_hashtag; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_nombre_hashtag ON public.hashtags USING btree (nombre_hashtag);
+
+
+--
+-- TOC entry 3340 (class 2606 OID 16445)
 -- Name: calificacion_historia codigo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -450,7 +615,16 @@ ALTER TABLE ONLY public.calificacion_historia
 
 
 --
--- TOC entry 4840 (class 2606 OID 41081)
+-- TOC entry 3345 (class 2606 OID 16525)
+-- Name: historial codigo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.historial
+    ADD CONSTRAINT codigo_usuario FOREIGN KEY (codigo_usuario) REFERENCES public."USUARIOS"(codigo_usuario) NOT VALID;
+
+
+--
+-- TOC entry 3342 (class 2606 OID 16450)
 -- Name: saga codigo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -459,7 +633,16 @@ ALTER TABLE ONLY public.saga
 
 
 --
--- TOC entry 4842 (class 2606 OID 49238)
+-- TOC entry 3343 (class 2606 OID 16500)
+-- Name: hashtags_historias id_hashtag; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.hashtags_historias
+    ADD CONSTRAINT id_hashtag FOREIGN KEY (id_hashtag) REFERENCES public.hashtags(id_hashtag) NOT VALID;
+
+
+--
+-- TOC entry 3341 (class 2606 OID 16455)
 -- Name: calificacion_historia id_historia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -468,7 +651,25 @@ ALTER TABLE ONLY public.calificacion_historia
 
 
 --
--- TOC entry 4839 (class 2606 OID 41086)
+-- TOC entry 3344 (class 2606 OID 16505)
+-- Name: hashtags_historias id_historia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.hashtags_historias
+    ADD CONSTRAINT id_historia FOREIGN KEY (id_historia) REFERENCES public.historias(id_historia) NOT VALID;
+
+
+--
+-- TOC entry 3346 (class 2606 OID 16520)
+-- Name: historial id_historia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.historial
+    ADD CONSTRAINT id_historia FOREIGN KEY (id_historia) REFERENCES public.historias(id_historia) NOT VALID;
+
+
+--
+-- TOC entry 3339 (class 2606 OID 16460)
 -- Name: USUARIOS id_pais; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -476,11 +677,11 @@ ALTER TABLE ONLY public."USUARIOS"
     ADD CONSTRAINT id_pais FOREIGN KEY (id_pais) REFERENCES public.paises(id_pais) NOT VALID;
 
 
--- Completed on 2026-03-08 07:56:45
+-- Completed on 2026-03-12 10:12:09
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 0Gh2aNRn4wmPbaY1stRkbmeQ6M4qgvCLLDE3VkkRWoef2amZsAw9AiPUH2Nef53
+\unrestrict jIuNcwgrj863szxdTNLSChzbSEKPPSiA1NQ8fVrfyqIDRjnsowutlNQfXQlXxlU
 

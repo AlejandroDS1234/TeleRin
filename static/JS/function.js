@@ -96,3 +96,13 @@ foto_perfil_cambiar_form.addEventListener("submit", async (e) => {
 })
 
 
+const historias_historial = document.querySelectorAll(".historia_historial")
+historias_historial.forEach(historia => {
+    historia.addEventListener("click", () => {
+        const id_historia = historia.dataset.id
+        window.location.href = `/historia/${id_historia}`
+    })
+})
+
+
+

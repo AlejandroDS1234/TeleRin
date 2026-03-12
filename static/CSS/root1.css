@@ -15,10 +15,12 @@
     --color_bordes: var(--color3);
     --color_contraste: var(--color1);
     --color_contraste_claro: color-mix(in srgb, var(--color2) 40%, white);
-    .input::placeholder {
-        color: var(--color2);
-    }
-    .input {
-        border-radius: 30px;
-    }
+}
+
+.input::placeholder {
+    color: var(--color2);
+}
+
+.input {
+    border-radius: 30px;
 }

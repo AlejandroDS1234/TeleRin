@@ -383,7 +383,7 @@ html {
 /* INICIO FOTO PERFIL */
 .foto_perfil {
     display: inline-block;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1 !important;
     overflow: hidden;
 }
 
