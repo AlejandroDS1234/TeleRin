@@ -275,7 +275,23 @@ def verificar_ip(correo: str):
             if check_password_hash(ip["ip_usuario"], dispositivo):
                 return True
     return False
-            
+
+def guardar_historial(id_historia: str):
+    codigo_usuario=session["usuario"]["codigo_usuario"]
+    tiempo=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if dato_en_db(None, {"codigo_usuario": codigo_usuario, "id_historia": id_historia}, "historial"):
+        actualizar_datos("historial", {"tiempo_vista": tiempo}, {"codigo_usuario": codigo_usuario, "id_historia": id_historia})
+        return
+    insertar_db("historial", {"codigo_usuario": codigo_usuario, "tiempo_vista": tiempo, "id_historia": id_historia})
+
+def historial_usuario():
+    codigo_usuario=session["usuario"]["codigo_usuario"]
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia WHERE hl.codigo_usuario = %s ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
+            historias=cursor.fetchall()
+    return historias
+
 #funciones en el diccionario
 @registrar_funcion("registro")
 def registro(form: dict):
@@ -462,7 +478,7 @@ def perfil():
         actualizar_sesion(session["usuario"]["correo_usuario"])
         flash("Datos actualizados", "success")
         return redirect(request.referrer)
-    return render_template("pagina/perfil.html")
+    return render_template("pagina/perfil.html", historial=historial_usuario())
         
 @app.route("/guardar_foto_perfil", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
@@ -566,6 +582,7 @@ def historia(id_historia):
         abort(404)
     if historia[0]["visibilidad_historia"] == 0:
         abort(403)
+    guardar_historial(id_historia)
     return render_template("pagina/historia.html", historia=historia[0])
          
 @app.route("/saga/<id_saga>")
@@ -591,12 +608,16 @@ def saga(id_saga):
          
          
          
-         
-         
-         
-         
-         
-            
+
+
+    
+    
+    
+    
+
+    
+    
+        
 if __name__=="__main__":
     app.run(debug=True, port=4210, host="0.0.0.0") 
     

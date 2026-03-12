@@ -43,7 +43,21 @@
                 </div>
             </form>
         </section>
-        <section id="publicaciones"></section>
+        <section id="sagas_creadas"></section>
+        <section id="historial">
+            {% if not historial %}
+                <h2>No has visto ninguna historia</h2>
+            {% endif %}
+            {% for historia in historial %}
+                <div class="historia_historial" data-id="{{ historia['id_historia'] }}">
+                    <div class="titulo_historia_historial">
+                        <h3>{{ historia["nombre_historia"] }}</h3>
+                    </div>
+                    <p>{{ historia["descripcion_historia"] }}</p>
+                    <small><i>{{ historia["fecha_actualizacion"] }}</i></small>
+                </div>
+            {% endfor %}
+        </section>
     </div>
 </main>
 <div class="fondo_oscuro oculto"></div>

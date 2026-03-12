@@ -4,6 +4,7 @@
     display: grid;
     grid-template-rows: 60vh auto auto auto;
     padding: 5%;
+    gap: 2%;
 }
 
 .informacion {
@@ -139,3 +140,33 @@
 }
 
 /* FIN CAMBIAR FOTO PERFIL */
+
+/* HISTORIAL */
+
+#historial {
+    grid-row: 3/4;
+    display: flex;
+    gap: 2%;
+    background-color: var(--color_contraste);
+    padding: 2%;
+    border-radius: 20px;
+}
+
+.historia_historial {
+    border: 3px solid var(--color_bordes);
+    border-radius: 20px;
+    padding: 2%;
+    display: flex;
+    flex-direction: column;
+    gap: 1%;
+    height: 40vh;
+    width: 15vw;
+    cursor: pointer;
+}
+
+
+
+.titulo_historia_historial {
+    font-size: 1.5em;
+    border-bottom: 3px solid var(--color_bordes);
+}
