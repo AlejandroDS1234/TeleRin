@@ -3,7 +3,6 @@ Selecciona todas las paletas
 */
 const paletas = document.querySelectorAll(".icono");
 
-
 paletas.forEach(paleta => {
 
     paleta.addEventListener("click", function() {
@@ -42,17 +41,12 @@ paletas.forEach(paleta => {
             col2 = "#eddfb8";
             col3 = "#bbbbbb";
         }
-
-
         /*
         CAMBIAR VARIABLES ROOT
         */
-
         document.documentElement.style.setProperty("--color1", col1);
         document.documentElement.style.setProperty("--color2", col2);
         document.documentElement.style.setProperty("--color3", col3);
-
-
     });
 
 });

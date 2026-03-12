@@ -3,7 +3,8 @@ import { enviarInfoServer } from "./function_generales.js";
 
 
 const quill = new Quill('#editor', {
-    theme: 'snow'
+    theme: 'snow',
+    placeholder: 'Escribe tu historia aquí...'
 });
 const usuario = document.querySelector("#crear_historia").getAttribute("data-usuario-correo")
 cargarSagas("vertical", usuario, "sagas_pertenece")
@@ -41,7 +42,8 @@ seleccionarSaga()
 let descripcionHistoriahtml = document.getElementById("descripcion_historia")
 let descripcionQuill = new Quill('#descripcion_historia', {
     theme: 'snow',
-    modules: { toolbar: false}
+    modules: { toolbar: false},
+    placeholder: 'Descripcion y hashtags...'
 })
 
 descripcionQuill.on("text-change", function(delta, oldDelta, source) {
@@ -53,7 +55,7 @@ descripcionQuill.on("text-change", function(delta, oldDelta, source) {
     descripcionQuill.formatText(
       match.index,
       match[0].length,
-      { color: "var(--color_hashtag)" }
+      { color: "var(--color3)" }
     );
     descripcionQuill.formatText(
       match.index + match[0].length, 1,

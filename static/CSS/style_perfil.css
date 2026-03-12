@@ -177,7 +177,7 @@
 }
 
 .historia_historial:hover .titulo_historia_historial {
-    background-color: var(--color1);
+    background-color: var(--color_botones_presionado);
     border-radius: 8px;
 }
 

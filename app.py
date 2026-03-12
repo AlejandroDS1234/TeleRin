@@ -292,6 +292,17 @@ def historial_usuario():
             historias=cursor.fetchall()
     return historias
 
+def hashtag_db(texto: str, id_historia: str):
+    hashtags=obtener_hashtags(texto)
+    if len(hashtags)<1:
+        return False
+    for hashtag in hashtags:
+        if not dato_en_db(hashtag, "nombre_hashtag", "hashtags"):
+            insertar_db("hashtags", {"nombre_hashtag": hashtag})
+        index_hashtag=dato_en_db(hashtag, "nombre_hashtag", "hashtags")[0]["id_hashtag"]
+        insertar_db("hashtags_historias", {"id_historia": id_historia, "id_hashtag": index_hashtag})
+    return True
+
 #funciones en el diccionario
 @registrar_funcion("registro")
 def registro(form: dict):
@@ -517,14 +528,9 @@ def crear_historia():
             return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
         if len(descripcion_historia)>100:
             return jsonify({"mensaje": "La descripcion de la historia es muy larga","tipo": "warning"})
-        hashtags=obtener_hashtags(descripcion_historia)
-        if len(hashtags)<1:
-            return jsonify({"mensaje": "Debes poner minimo un hashtag ","tipo": "warning"})
-        for hashtag in hashtags:
-            if not dato_en_db(hashtag, "nombre_hashtag", "hashtags"):
-                insertar_db("hashtags", {"nombre_hashtag": hashtag})
-            insertar_db("historias_hashtags", {"id_historia": id_historia, "id_hashtag": hashtag})
         insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"]})
+        if not hashtag_db(descripcion_historia, id_historia):
+                return jsonify({"mensaje": "La historia debe tener al menos un hashtag","tipo": "warning"})
         flash("Historia creada", "success")
         return redirect(url_for("inicio"))
     return render_template("pagina/crear_historias.html")
