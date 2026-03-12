@@ -52,7 +52,6 @@ df["contenido"] = (df["nombre_historia"] + " " +
 
 vectorizar = TfidfVectorizer(stop_words=palabras_español())
 matriz = vectorizar.fit_transform(df["contenido"])
-
 similitud = cosine_similarity(matriz)
 
 def recomendar(id_historia, n=5):
