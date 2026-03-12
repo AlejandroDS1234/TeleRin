@@ -162,11 +162,28 @@
     height: 40vh;
     width: 15vw;
     cursor: pointer;
+    transition: font-size 0.5s ease;
 }
 
+.historia_historial:hover .titulo_historia_historial {
+    background-color: var(--color1);
+    border-radius: 8px;
+}
 
+.historia_historial:hover {
+    font-size: 1.1em;
+}
 
 .titulo_historia_historial {
     font-size: 1.5em;
     border-bottom: 3px solid var(--color_bordes);
+    transition: background-color 0.5s ease, border-radius 0.5s ease;
+}
+
+.descripcion_historia_historial {
+    display: flex;
+    flex-direction: column;
+    gap: 1%;
+    justify-content: space-between;
+    height: 100%;
 }

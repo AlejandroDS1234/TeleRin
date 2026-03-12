@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict RrqaEiGagUAdFxDZkNhrIY2Aehv5FjoRQwl75obF9JczUTXp1A2KiePnPAFuMbg
+\restrict jIuNcwgrj863szxdTNLSChzbSEKPPSiA1NQ8fVrfyqIDRjnsowutlNQfXQlXxlU
 
 -- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-03-12 09:21:58
+-- Started on 2026-03-12 10:12:09
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -266,7 +266,7 @@ COPY public.hashtags_historias (id_historia, id_hashtag) FROM stdin;
 
 COPY public.historial (id_historia, tiempo_vista, codigo_usuario) FROM stdin;
 -historia-994474ducua-1	2026-03-12 14:06:33	924583aledu
--historia-994474ducua-prueba 34	2026-03-12 14:18:42	924583aledu
+-historia-994474ducua-prueba 34	2026-03-12 15:06:37	924583aledu
 \.
 
 
@@ -677,11 +677,11 @@ ALTER TABLE ONLY public."USUARIOS"
     ADD CONSTRAINT id_pais FOREIGN KEY (id_pais) REFERENCES public.paises(id_pais) NOT VALID;
 
 
--- Completed on 2026-03-12 09:21:58
+-- Completed on 2026-03-12 10:12:09
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict RrqaEiGagUAdFxDZkNhrIY2Aehv5FjoRQwl75obF9JczUTXp1A2KiePnPAFuMbg
+\unrestrict jIuNcwgrj863szxdTNLSChzbSEKPPSiA1NQ8fVrfyqIDRjnsowutlNQfXQlXxlU
 
