@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict kbUlVRCEn8nsUNjrO0B510z4AehWJhtAtOeT38aKdSabIR5SUVJcRFUwRgPZkS7
+\restrict qEoYa9VdPJI2vJRPWIAVusbvLXirPo85EDnEsgLwYgNqhhalxhHQbFacUY8SbTo
 
 -- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-03-12 16:12:48
+-- Started on 2026-03-12 17:31:29
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -685,11 +685,11 @@ ALTER TABLE ONLY public."USUARIOS"
     ADD CONSTRAINT id_pais FOREIGN KEY (id_pais) REFERENCES public.paises(id_pais) NOT VALID;
 
 
--- Completed on 2026-03-12 16:12:49
+-- Completed on 2026-03-12 17:31:29
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict kbUlVRCEn8nsUNjrO0B510z4AehWJhtAtOeT38aKdSabIR5SUVJcRFUwRgPZkS7
+\unrestrict qEoYa9VdPJI2vJRPWIAVusbvLXirPo85EDnEsgLwYgNqhhalxhHQbFacUY8SbTo
 
