@@ -118,6 +118,16 @@ def validar_imagen_completa(file, max_mb=5, min_w=300, min_h=300):
         return f"La imagen debe ser mínimo {min_w}x{min_h} px", True
     return None, False   
 
+def obtener_hashtags(texto: str):
+    texto = texto.lower()
+    hashtags = re.findall(r"#\w+", texto)
+    hashtagsLista = []
+    for hashtag in hashtags:
+        hash = hashtag[1:]
+        if hash not in hashtagsLista:
+            hashtagsLista.append(hash)
+    return hashtagsLista
+
 #funciones del sistema
 def actualizar_sesion(correo: str):
     with conectar() as db:
@@ -497,6 +507,7 @@ def crear_historia():
         for hashtag in hashtags:
             if not dato_en_db(hashtag, "nombre_hashtag", "hashtags"):
                 insertar_db("hashtags", {"nombre_hashtag": hashtag})
+            insertar_db("historias_hashtags", {"id_historia": id_historia, "id_hashtag": hashtag})
         insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"]})
         flash("Historia creada", "success")
         return redirect(url_for("inicio"))
@@ -557,40 +568,6 @@ def historia(id_historia):
         abort(403)
     return render_template("pagina/historia.html", historia=historia[0])
          
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-def obtener_hashtags(texto: str):
-    texto = texto.lower()
-    hashtags = re.findall(r"#\w+", texto)
-    hashtagsLista = []
-    for hashtag in hashtags:
-        hash = hashtag[1:]
-        if hash not in hashtagsLista:
-            hashtagsLista.append(hash)
-    return hashtagsLista
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
-         
 @app.route("/saga/<id_saga>")
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def saga(id_saga):
@@ -599,7 +576,11 @@ def saga(id_saga):
         print("Saga no encontrada")
         print(id_saga)
         abort(404) 
-    historias=dato_en_db(None, {"id_saga": id_saga, "visibilidad_historia": True}, "historias")
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.fecha_actualizacion, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia WHERE h.id_saga = %s AND h.visibilidad_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion ORDER BY h.fecha_actualizacion DESC""", (id_saga, True))
+            historias=cursor.fetchall()
+    print(historias)
     autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
     return render_template("pagina/saga.html", saga=saga[0], historias=historias, autor=autor[0])
          

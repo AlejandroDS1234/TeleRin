@@ -68,7 +68,6 @@
     display: flex;
     flex-direction: column;
     overflow-y: scroll;
-    overflow-x: hidden;
     border-radius: 5px;
     flex: 1;
     padding: 1%;
@@ -79,11 +78,11 @@
     background: var(--color3);
     border: 2px solid var(--color_bordes);
     border-radius: 8px;
-    padding: 2%;
     cursor: pointer;
     display: flex;
-    gap: 2%;
+    justify-content: space-between;
     transition: border-radius .3s, background-color .3s;
+    padding: 0 2% 0 2%;
 }
 
 .libro_saga:hover {
@@ -91,4 +90,31 @@
     border-radius: 20px;
 }
 
+.info_libro {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.info_libro small {
+    font-size: .5em;
+    color: var(--color_letra_clara);
+}
+
+.calificacion {
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1%
+}
+.personas {
+    display: flex;
+    gap: 1%;
+    align-items: center;
+}
+#estrellas {
+    display: flex;
+    align-items: center;
+}
 /* FIN SAGA.html */
