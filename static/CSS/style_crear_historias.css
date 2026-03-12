@@ -29,6 +29,7 @@
 .crear_texto {
     border: 3px solid var(--color_bordes);
     background-color: var(--color_letras_claras);
+    max-width: 60vw;
 }
 
 .ql-container {
@@ -39,6 +40,7 @@
 
 #editor {
     height: 100%;
+    max-width: 100%;
     border: none;
 }
 
@@ -136,4 +138,10 @@
     border: 3px solid var(--color_bordes);
     border-radius: 20px;
     overflow: hidden;
+}
+.descripcion_historia{
+    width: 25vw;
+    height: 20%;
+    resize: none;
+    
 }

@@ -15,6 +15,8 @@ import socket
 from PIL import Image
 from functools import wraps
 import datetime 
+import re
+
 
 print("Iniciando aplicación...")
 
@@ -480,15 +482,21 @@ def crear_historia():
         id_historia=f"""-historia-{session["usuario"]["codigo_usuario"]}-{saga_historia}-{nombre_historia.strip()}"""
         id_usuario_saga=dato_en_db(None, {"codigo_usuario": session["usuario"]["codigo_usuario"], "id_saga": saga_historia}, "saga")
         if not id_usuario_saga and not saga_historia.strip() == "":
-            return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "danger"})
+            return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "warning"})
         if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
-            return jsonify({"mensaje":"Llena todos los datos","tipo": "danger"})
+            return jsonify({"mensaje":"Llena todos los datos","tipo": "warning"})
         if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia} , "historias"):
-            return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "danger"})
+            return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "warning"})
         if len(texto_historia.replace(" ", ""))<1000:
-            return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "danger"})
-        if len(descripcion_historia)>1000:
-            return jsonify({"mensaje": "La descripcion de la historia es muy larga","tipo": "danger"})
+            return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
+        if len(descripcion_historia)>100:
+            return jsonify({"mensaje": "La descripcion de la historia es muy larga","tipo": "warning"})
+        hashtags=obtener_hashtags(descripcion_historia)
+        if len(hashtags)<1:
+            return jsonify({"mensaje": "Debes poner minimo un hashtag ","tipo": "warning"})
+        for hashtag in hashtags:
+            if not dato_en_db(hashtag, "nombre_hashtag", "hashtags"):
+                insertar_db("hashtags", {"nombre_hashtag": hashtag})
         insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"]})
         flash("Historia creada", "success")
         return redirect(url_for("inicio"))
@@ -562,7 +570,15 @@ def historia(id_historia):
          
          
          
-         
+def obtener_hashtags(texto: str):
+    texto = texto.lower()
+    hashtags = re.findall(r"#\w+", texto)
+    hashtagsLista = []
+    for hashtag in hashtags:
+        hash = hashtag[1:]
+        if hash not in hashtagsLista:
+            hashtagsLista.append(hash)
+    return hashtagsLista
          
          
          
@@ -585,7 +601,6 @@ def saga(id_saga):
         abort(404) 
     historias=dato_en_db(None, {"id_saga": id_saga, "visibilidad_historia": True}, "historias")
     autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
-    print(saga[0]["imagen_saga"])
     return render_template("pagina/saga.html", saga=saga[0], historias=historias, autor=autor[0])
          
          
@@ -603,3 +618,4 @@ def saga(id_saga):
             
 if __name__=="__main__":
     app.run(debug=True, port=4210, host="0.0.0.0") 
+    

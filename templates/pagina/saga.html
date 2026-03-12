@@ -30,7 +30,14 @@
                 <div class="libros_de_saga">
                     <h3>Libros de la saga</h3>
                     <div id="libros_saga_container" class="libros_saga_container">
-
+                        {% if not historias %}
+                            <p>No hay historias en esta saga</p>
+                        {% endif %}
+                        {% for libro in historias %}
+                            <div class="libro_saga" data-id="{{ libro['id_historia'] }}">
+                                <h4>{{ libro['nombre_historia'] }}</h4>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

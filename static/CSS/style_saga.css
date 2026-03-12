@@ -5,7 +5,7 @@
     padding: 5%;
     gap: 5%;
 }
-
+ 
 
 
 .saga_info {
@@ -24,7 +24,7 @@
 }
 
 .informacion_saga_texto {
-    display: grid;
+    display: grid; 
     grid-template-columns: 1fr 1fr;
 }
 
@@ -65,6 +65,24 @@
     overflow-x: hidden;
     border-radius: 5px;
     flex: 1;
+    padding: 1%;
+    gap: 1%;
+}
+
+.libro_saga {
+    background: var(--color3);
+    border: 2px solid var(--color_bordes);
+    border-radius: 8px;
+    padding: 2%;
+    cursor: pointer;
+    display: flex;
+    gap: 2%;
+    transition: border-radius .3s, background-color .3s;
+}
+
+.libro_saga:hover {
+    background-color: var(--color1);
+    border-radius: 20px;
 }
 
 /* FIN SAGA.html */

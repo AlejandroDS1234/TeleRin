@@ -38,11 +38,36 @@ function seleccionarSaga() {
 }
 seleccionarSaga()
 
+let descripcionHistoriahtml = document.getElementById("descripcion_historia")
+let descripcionQuill = new Quill('#descripcion_historia', {
+    theme: 'snow',
+    modules: { toolbar: false}
+})
+
+descripcionQuill.on("text-change", function(delta, oldDelta, source) {
+  if (source !== "user") return;
+  const descripciontext = descripcionQuill.getText();
+  const regex = /#\w+/g;
+  let match;
+  while ((match = regex.exec(descripciontext)) !== null) {
+    descripcionQuill.formatText(
+      match.index,
+      match[0].length,
+      { color: "var(--color_hashtag)" }
+    );
+    descripcionQuill.formatText(
+      match.index + match[0].length, 1,
+      { color: "var(--color_texto)" }
+    );
+  }
+});
+
+
 const formulario = document.querySelector("#crear_historia_form")
 formulario.addEventListener("submit", async (e)=>{
     e.preventDefault()
     const nombreHistoria = document.getElementById("nombre_historia").value
-    const descripcionHistoria = document.getElementById("descripcion_historia").value
+    const descripcionHistoria = descripcionQuill.getText()
     const sagaHistoria = document.getElementById("id_saga").value
     const textoHistoria = quill.getText()
     const Historia = quill.getContents()

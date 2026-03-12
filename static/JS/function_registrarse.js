@@ -18,11 +18,6 @@ contraseñaUsuario.addEventListener("input", (e)=>{
     cambiarTamañoBarraContraseña(e.target, barra)
 })
 
-
-
-
-
-
 const botonMostrarContraseña = document.getElementById("mostrar_contraseña")
 botonMostrarContraseña.addEventListener("click", ()=>{
     mostrarContraseña(botonMostrarContraseña, contraseñaUsuario)
