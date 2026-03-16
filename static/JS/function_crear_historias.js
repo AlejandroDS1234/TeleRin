@@ -39,7 +39,6 @@ function seleccionarSaga() {
 }
 seleccionarSaga()
 
-let descripcionHistoriahtml = document.getElementById("descripcion_historia")
 let descripcionQuill = new Quill('#descripcion_historia', {
     theme: 'snow',
     modules: { toolbar: false},

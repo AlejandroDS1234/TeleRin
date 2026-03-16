@@ -5,7 +5,7 @@ const abrir = document.getElementById("boton_crear_saga");
 
 // Abrir modal al presionar botón
 abrir.onclick = () => {
-    modal.style.display = "flex";
+    modal.style.display = "flex"; 
 };
 
 // Cerrar modal al hacer click fuera del contenido
@@ -25,6 +25,35 @@ input.addEventListener("change", () => {
         imagen.src = URL.createObjectURL(foto)
     }
 })
+
+//descripcion_saga
+const descripcionQuill = new Quill('#saga_descrip', {
+    theme: 'snow',
+    modules: { toolbar: false},
+    placeholder: 'Descripcion y hashtags...'
+})
+
+descripcionQuill.on("text-change", function(delta, oldDelta, source) {
+  if (source !== "user") return;
+  const descripciontext = descripcionQuill.getText();
+  const regex = /#\w+/g;
+  let match;
+  while ((match = regex.exec(descripciontext)) !== null) {
+    descripcionQuill.formatText(
+      match.index,
+      match[0].length,
+      { color: "var(--color3)" }
+    );
+    descripcionQuill.formatText(
+      match.index + match[0].length, 1,
+      { color: "var(--color_texto)" }
+    );
+  }
+});
+
+
+
+
 
 const formulario = document.getElementById("info_saga")
 formulario.addEventListener("submit", async (e) => {

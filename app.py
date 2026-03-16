@@ -38,7 +38,8 @@ def necesita(nombre, validacion):
         def wrapper(*args, **kwargs):
             if not validacion():    
                 flash(f"Necesitas {nombre} para acceder", "warning")
-                return redirect(request.referrer or "/")
+                session["intentos"]= session.get("intentos", 0)+1
+                if 
             return func(*args, **kwargs)
         return wrapper
     return decorador

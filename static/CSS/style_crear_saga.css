@@ -56,7 +56,7 @@
 }
 
 
-/* -------------------- */
+/* -------------------- */ 
 
 
 /* Card interna (ya existente) */
@@ -176,7 +176,7 @@
 /* -------------------- */
 
 #info_saga input[type="text"],
-#info_saga textarea {
+#info_saga #saga_descrip {
     background-color: #e3ad6f;
     /* Fondo del campo */
     border: 2px solid #ff9d00;
