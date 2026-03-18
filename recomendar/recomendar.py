@@ -62,7 +62,9 @@ def recomendar(id_historia, n=5):
     indices = [i[0] for i in scores]
     return df.iloc[indices]
 
-print(recomendar("-historia-994474ducua-1", 3))
+
+
+print(recomendar("-historia-994474ducua-1", 10))
 
 
 

@@ -55,6 +55,7 @@ export async function enviarInfoServer(e, info, direccion, mensajeArea, funcion=
     const res = await fetch(direccion, config)
     
     if (res.redirected) {
+        console.log(res.url)
         window.location.href = res.url
     } else {
         const mensajeRecibido = await res.json()

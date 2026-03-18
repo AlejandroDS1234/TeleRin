@@ -9,7 +9,6 @@
 {% block header %}
 <input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
 <a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
-
 {% endblock header %}
 
 {% block main %} 
@@ -22,7 +21,7 @@
         </section>
 
     </div>
-</main>
+</main> 
 
 
 {% endblock main %}

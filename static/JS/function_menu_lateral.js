@@ -15,36 +15,3 @@ liS.forEach(li => {
     
 });
 
-
-
-const modal = document.getElementById("modalPersonalizar");
-const abrir = document.getElementById("abrirModal");
-const cerrar = document.querySelector(".cerrar");
-
-/* abrir modal */
-
-abrir.addEventListener("click", () => {
-
-    modal.style.display = "flex";
-
-});
-
-/* cerrar con X */
-
-cerrar.addEventListener("click", () => {
-
-    modal.style.display = "none";
-
-});
-
-/* cerrar haciendo click afuera */
-
-window.addEventListener("click", (e) => {
-
-    if (e.target === modal) {
-
-        modal.style.display = "none";
-
-    }
-
-});

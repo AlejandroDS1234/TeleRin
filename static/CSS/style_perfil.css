@@ -93,6 +93,7 @@
 
 .informacion_usuario h4 {
     font-size: 2em;
+    color: var(--color_texto);
 }
 
 .contenedor_inputs {
@@ -151,6 +152,7 @@
     background-color: var(--color_contraste);
     padding: 2%;
     border-radius: 20px;
+    color: var(--color_texto);
 }
 
 .historial_container {
@@ -163,7 +165,6 @@
 
 .historia_historial {
     border: 3px solid var(--color_bordes);
-    background-color: ;
     border-radius: 20px;
     padding: 2%;
     display: flex;
@@ -174,6 +175,7 @@
     width: 15vw;
     cursor: pointer;
     transition: font-size 0.5s ease;
+    color: var(--color_texto);
 }
 
 .historia_historial:hover .titulo_historia_historial {

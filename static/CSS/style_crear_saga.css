@@ -6,7 +6,7 @@
 
 /* -------------------- */
 
-.modal {
+.modall {
     display: none;
     /* Oculta el modal por defecto */
     position: fixed;
@@ -40,7 +40,7 @@
 
 /* -------------------- */
 
-.modal-contenido {
+.modall-contenido {
     background-color: rgba(255, 255, 255, 0);
     /* Fondo transparente, la card mantiene su color */
     padding: 20px;
@@ -64,7 +64,7 @@
 
 /* -------------------- */
 
-.card {
+.cardd {
     background-color: rgb(24, 121, 153);
     /* Fondo azul de la card */
     padding: 20px;

@@ -17,18 +17,18 @@
 }
 
 .ql-toolbar button svg {
-    background-color: var(--color_letras_claras);
+    background-color: var(--color2);
     border-radius: 20px;
 }
 
 .ql-picker-label {
-    background-color: var(--color_letras_claras);
+    background-color: var(--color2);
     border-radius: 20px;
 }
 
 .crear_texto {
     border: 3px solid var(--color_bordes);
-    background-color: var(--color_letras_claras);
+    background-color: var(--color2);
     max-width: 60vw;
 }
 
@@ -42,10 +42,12 @@
     height: 100%;
     max-width: 100%;
     border: none;
+    background-color: transparent;
+    color: var(--color_texto_fondo)
 }
 
 .dropbtn {
-    color: var(--color_letras_claras);
+    color: var(--color2);
     padding: 2%;
     font-size: 100%;
     border: none;
@@ -54,12 +56,13 @@
 
 .dropdown {
     position: relative;
+    color: var(--color_texto_fondo);
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: var(--color_fondo);
+    background-color: var(--color2); 
     min-width: 200px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     max-height: 30vh;
@@ -88,6 +91,7 @@
     align-items: center;
     gap: 5%;
     padding-top: 5%;
+    color: var(--color_texto)
 }
 
 #crear_historia_form .columna .datos_historia {
@@ -129,7 +133,7 @@
     background: var(--color_contraste);
     padding: 2%;
     border-radius: 20px;
-    color: var(--color_letras_claras);
+    color: var(--color_texto);
 }
 
 .historiaCard img {
