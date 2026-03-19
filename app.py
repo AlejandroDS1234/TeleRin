@@ -135,9 +135,11 @@ def obtener_hashtags(texto: str):
 def actualizar_sesion(correo: str):
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT u.*, p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM public."USUARIOS" u JOIN paletas p ON p.id_paleta = u.id_paleta WHERE u.correo_usuario = %s', (correo,))
+            cursor.execute('SELECT u.*, p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM public."USUARIOS" u LEFT JOIN paletas p ON p.id_paleta = u.id_paleta WHERE u.correo_usuario = %s', (correo,))
             usuario=cursor.fetchone()
             datos_indefinidos(usuario)
+            cursor.execute('SELECT u.*, p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM public."USUARIOS" u LEFT JOIN paletas p ON p.id_paleta = u.id_paleta WHERE u.correo_usuario = %s', (correo,))
+            usuario=cursor.fetchone()
             session["usuario"]=usuario
            
 def guardar_ip(correo: str):
@@ -166,7 +168,7 @@ def datos_indefinidos(usuario: dict):
         id_pais=0
         actualizar_datos("USUARIOS", {"id_pais": id_pais}, {"correo_usuario": usuario["correo_usuario"]})
     if usuario["id_paleta"] == None:
-        actualizar_datos("USUARIOS", {"paleta": "123456"}, {"correo_usuario": usuario["correo_usuario"]})
+        actualizar_datos("USUARIOS", {"id_paleta": "1"}, {"correo_usuario": usuario["correo_usuario"]})
    
 def enviar_correo_validacion(correo):
     emisor="telerincontac@gmail.com"
@@ -200,7 +202,6 @@ def enviar_correo(correo):
     codigo= enviar_correo_validacion(correo)
     if codigo==False:
         return jsonify({"mensaje":"Error al enviar el correo de validacion", "tipo":"danger"})
-        
     session["codigo_validacion"]=encriptar(codigo)
     return redirect(url_for("ingresar_codigo_validacion"))
 
