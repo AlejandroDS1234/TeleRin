@@ -56,6 +56,8 @@ def obtener_historial(id_usuario: str):
             historial = cursor.fetchall()
     return historial
 
+def obtener_sagas()
+
 
     
 

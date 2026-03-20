@@ -5,6 +5,11 @@
     transition: background-color 0.5s ease-in-out;
 }
 
+option {
+    color: var(--color_texto_fondo);
+    background-color: var(--color2);
+}
+
 body,
 html {
     width: 100%;

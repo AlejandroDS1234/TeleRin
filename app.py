@@ -16,12 +16,13 @@ from PIL import Image
 from functools import wraps
 import datetime 
 import re
-
+from flask_cors import CORS
 
 print("Iniciando aplicación...")
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
+
 
 
 #decoradores
@@ -298,7 +299,7 @@ def historial_usuario():
             historias=cursor.fetchall()
     return historias
 
-def hashtag_db(texto: str, id_historia: str):
+def hashtag_db(texto: str, id: str, tabla_campo: str):
     hashtags=obtener_hashtags(texto)
     if len(hashtags)<1:
         return False
@@ -306,7 +307,7 @@ def hashtag_db(texto: str, id_historia: str):
         if not dato_en_db(hashtag, "nombre_hashtag", "hashtags"):
             insertar_db("hashtags", {"nombre_hashtag": hashtag})
         index_hashtag=dato_en_db(hashtag, "nombre_hashtag", "hashtags")[0]["id_hashtag"]
-        insertar_db("hashtags_historias", {"id_historia": id_historia, "id_hashtag": index_hashtag})
+        insertar_db(tabla_campo["tabla"], {tabla_campo["campo"]: id, "id_hashtag": index_hashtag})
     return True
 
 #funciones en el diccionario
@@ -535,8 +536,7 @@ def crear_historia():
         if len(descripcion_historia)>100:
             return jsonify({"mensaje": "La descripcion de la historia es muy larga","tipo": "warning"})
         insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"]})
-        if not hashtag_db(descripcion_historia, id_historia):
-                return jsonify({"mensaje": "La historia debe tener al menos un hashtag","tipo": "warning"})
+        hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
         flash("Historia creada", "success")
         return redirect(url_for("inicio"))
     return render_template("pagina/crear_historias.html")
@@ -561,6 +561,7 @@ def crear_saga():
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)
     insertar_db("saga", {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]})
+    hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})
     return jsonify({"mensaje": "Saga creada", "tipo": "success"})
 
 @app.route("/sagas_creadas/<usuario>", methods=["POST"])
@@ -660,8 +661,8 @@ def es_color_claro(color: str):
     return luminancia > 186  # claro
 
          
-def paleta_en_base(paleta: dict):
-    paleta = dato_en_db(None, {"color1": paleta["color1"], "color2": paleta["color2"], "color3": paleta["color3"]}, "paletas")
+def paleta_en_base(paleta: dict, codigo_usuario: str):
+    paleta = dato_en_db(None, {"color1": paleta["color1"], "color2": paleta["color2"], "color3": paleta["color3"], "codigo_usuario": codigo_usuario}, "paletas")
     if not paleta:
         return False
     return paleta[0]["id_paleta"]
@@ -683,10 +684,10 @@ def guardar_paleta_personalizada():
         color_texto = "#FFFFFF"
     if not es_color_claro(color2):
         color_texto_fondo = "#FFFFFF"
-    id_paleta = paleta_en_base({"color1": color1, "color2": color2, "color3": color3})
+    id_paleta = paleta_en_base({"color1": color1, "color2": color2, "color3": color3}, session["usuario"]["codigo_usuario"])
     if not id_paleta:
         id_paleta = random.randint(100000,999999)
-        insertar_db("paletas", {"color1": color1, "color2": color2, "color3": color3, "color_letra": color_texto, "color_letra_fondo": color_texto_fondo,"id_paleta": id_paleta})
+        insertar_db("paletas", {"color1": color1, "color2": color2, "color3": color3, "color_letra": color_texto, "color_letra_fondo": color_texto_fondo,"id_paleta": id_paleta, "codigo_usuario": session["usuario"]["codigo_usuario"]})
     actualizar_datos("USUARIOS", {"id_paleta": id_paleta}, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
     actualizar_sesion(session["usuario"]["correo_usuario"])
     return redirect(request.referrer)
@@ -707,7 +708,10 @@ def guardar_paleta():
          
 @app.route("/paletas", methods=["POST"])
 def paletas():
-    paletas = dato_en_db(1, 1, "paletas")
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT * FROM paletas WHERE codigo_usuario = %s OR codigo_usuario IS NULL', (session["usuario"]["codigo_usuario"],))
+            paletas=cursor.fetchall()
     return jsonify(paletas)
 
 

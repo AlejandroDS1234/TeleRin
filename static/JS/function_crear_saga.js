@@ -52,7 +52,7 @@ descripcionQuill.on("text-change", function(delta, oldDelta, source) {
 });
 
 
-
+ 
 
 
 const formulario = document.getElementById("info_saga")
@@ -60,12 +60,13 @@ formulario.addEventListener("submit", async (e) => {
     e.preventDefault()
     const datos = new FormData()
     const nombre = document.getElementById("saga_name").value
-    const descripcion = document.getElementById("saga_descrip").value
+    const descripcion = descripcionQuill.getText()
     const imagen = document.getElementById("imagen_saga_input").files[0]
+    console.log(imagen)
     datos.append("nombre_saga", nombre)
     datos.append("descripcion_saga", descripcion)
-    datos.append("foto_saga", imagen)
-    console.log(datos)
+    imagen ? datos.append("foto_saga", imagen): datos.append("foto_saga", 0)  
+    console.log(datos["foto_saga"])
     enviarInfoServer(e, null, "/crear_saga", "json_mensaje_saga", null, null, datos)
     
 
