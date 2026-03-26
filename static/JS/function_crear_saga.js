@@ -62,11 +62,9 @@ formulario.addEventListener("submit", async (e) => {
     const nombre = document.getElementById("saga_name").value
     const descripcion = descripcionQuill.getText()
     const imagen = document.getElementById("imagen_saga_input").files[0]
-    console.log(imagen)
     datos.append("nombre_saga", nombre)
     datos.append("descripcion_saga", descripcion)
-    imagen ? datos.append("foto_saga", imagen): datos.append("foto_saga", 0)  
-    console.log(datos["foto_saga"])
+    imagen ? datos.append("foto_saga", imagen): null  
     enviarInfoServer(e, null, "/crear_saga", "json_mensaje_saga", null, null, datos)
     
 

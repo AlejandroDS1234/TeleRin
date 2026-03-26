@@ -1,7 +1,7 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
   padding: 2rem;
+  margin: 0 auto;
+  max-width: 1280px;
   text-align: center;
 }
 
@@ -39,4 +39,199 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Responsive layout para TeleRin */
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #222;
+  background: #f7f8fc;
+}
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  text-align: left;
+}
+.contenedor {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  gap: 1rem;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+.header,
+.footer {
+  padding: 0.75rem 1rem;
+  background: #0a6aa1;
+  color: white;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: auto;
+  width: 100%;
+  padding: 0.75rem;
+}
+.logo img {
+  height: 2.25rem;
+  width: auto;
+}
+.logo h1 {
+  margin: 0;
+  font-size: 1.45rem;
+  letter-spacing: 0.03em;
+}
+.opciones {
+  min-width: 120px;
+  height: 2.5rem;
+}
+.contenido_footer {
+  padding: 0.75rem;
+}
+#fecha_actualizacion {
+  text-align: right;
+  color: #e2f0fb;
+  font-size: 0.9rem;
+}
+#menu_lateral {
+  width: 100%;
+  background: #ffffff;
+  margin: 0;
+  border: 1px solid #d4d9e1;
+  border-radius: 12px;
+}
+#menu_lateral ul {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.5rem;
+}
+#menu_lateral li {
+  flex: 1 1 auto;
+  text-align: center;
+  padding: 0.2rem;
+}
+#menu_lateral a {
+  display: inline-flex;
+  width: 100%;
+  height: 2.5rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s ease;
+}
+#menu_lateral a:hover {
+  background: #eef6ff;
+}
+#menu_lateral svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  fill: currentColor;
+}
+.mensaje_flotante {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  min-width: 220px;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  background: rgba(13, 110, 253, 0.93);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  z-index: 1000;
+  font-size: 0.95rem;
+}
+@media (min-width: 768px) {
+  #root {
+    padding: 1.5rem 2rem;
+  }
+  .contenedor {
+    grid-template-columns: 240px 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header header"
+      "menu main";
+    min-height: 100vh;
+  }
+  .header {
+    grid-area: header;
+    border-bottom: 1px solid #dbe5f2;
+  }
+  #menu_lateral {
+    grid-area: menu;
+    margin: 0;
+    border: 0;
+    border-right: 1px solid #e3e9f3;
+    height: calc(100vh - 90px);
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+  }
+  .footer {
+    grid-area: 1 / 1 / 3 / 3;
+    margin-top: auto;
+    border-top: 1px solid #dbe5f2;
+  }
+  .contenedor > *:not(.header):not(.footer):not(#menu_lateral) {
+    grid-area: main;
+  }
+}
+@media (max-width: 767px) {
+  #root {
+    padding: 0;
+    margin: 0;
+    max-width: none;
+  }
+  .contenedor {
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 100vh;
+    width: 100vw;
+  }
+  .header,
+  .footer {
+    border-radius: 0;
+  }
+  .header {
+    flex-wrap: wrap;
+  }
+  .logo h1 {
+    font-size: 1.25rem;
+  }
+  #menu_lateral ul {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  #menu_lateral li {
+    flex: 1 0 22%;
+  }
+  .mensaje_flotante {
+    width: calc(100% - 2rem);
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
 }

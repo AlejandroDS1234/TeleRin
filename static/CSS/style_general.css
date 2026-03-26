@@ -10,23 +10,23 @@ option {
     background-color: var(--color2);
 }
 
-body,
-html {
+body,html {
     width: 100%;
     height: 100%;
 }
 
 .contenedor {
     min-height: 110vh;
+    height: max-content;
     display: grid;
     grid-template-rows: auto 1fr auto;
+    grid-template-columns: 1fr;
     background-color: var(--color_fondo);
 }
 
 .oculto {
     display: none;
     visibility: hidden;
-    ;
 }
 
 .mensaje {

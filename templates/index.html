@@ -14,7 +14,7 @@
 {% block main %}
 <main id="index">
     <!--contenedor de el lienzo rive-->
-    <div id="morris_container">
+    <div id="morris_container" style="bacground-color: var(--color2);">
         <canvas id="canvas" width="500" height="500"></canvas>
 
         <script src="https://unpkg.com/@rive-app/canvas"></script>
@@ -39,7 +39,7 @@
 
     <!-- Contenedor que guardará la forma de la ola -->
     <div class="wave">
-        <svg viewBox="23 36 100 130" preserveAspectRatio="none">
+        <svg  viewBox="23 36 100 130" preserveAspectRatio="none">
             <defs>
                 <linearGradient id="layoutGradient" x1="100%" y1="0%" x2="0%" y2="0%">
                     <stop offset="0%" stop-color="var(--color1)" />
@@ -50,10 +50,12 @@
             <path
             fill="url(#layoutGradient)"
             d="M20.591069,34.551117 109.23737,33.504113 C46.845165,104.29711 172.06085,96.153525 99.465334,174.15158 l-77.47826,0.69801 z"/>
+            <foreignObject x="25" y="60" width="60" height="100">
+                <div class="wave-text" xmlns="http://www.w3.org/1999/xhtml">
+                Publica eso que te daría pena leer en voz alta.
+                </div>
+            </foreignObject>
         </svg>
-        <div class="wave-text">
-            Publica eso que te daría pena leer en voz alta
-        </div>
     </div>
 </main>
 {% endblock main %}

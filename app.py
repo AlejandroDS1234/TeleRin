@@ -17,13 +17,45 @@ from functools import wraps
 import datetime 
 import re
 from flask_cors import CORS
+from langdetect import detect
 
 print("Iniciando aplicación...")
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
+CORS(app)
 
-
+idiomas_soportados = {
+        'ar': 'arabic',
+        'az': 'azerbaijani',
+        'eu': 'basque',
+        'bn': 'bengali',
+        'ca': 'catalan',
+        'zh': 'chinese',
+        'da': 'danish',
+        'nl': 'dutch',
+        'en': 'english',
+        'fi': 'finnish',
+        'fr': 'french',
+        'de': 'german',
+        'el': 'greek',
+        'he': 'hebrew',
+        'hi': 'hindi',
+        'hu': 'hungarian',
+        'id': 'indonesian',
+        'it': 'italian',
+        'kk': 'kazakh',
+        'ne': 'nepali',
+        'no': 'norwegian',
+        'pt': 'portuguese',
+        'ro': 'romanian',
+        'ru': 'russian',
+        'sl': 'slovene',
+        'es': 'spanish',
+        'sv': 'swedish',
+        'tg': 'tajik',
+        'tr': 'turkish'
+    }
 
 #decoradores
 funciones={}
@@ -132,6 +164,24 @@ def obtener_hashtags(texto: str):
             hashtagsLista.append(hash)
     return hashtagsLista
 
+def validar_hex(color: str):
+    return bool(re.fullmatch(r"#([0-9a-fA-F]{6})", color))
+
+def hex_a_rgb(color: str):
+    color = color.lstrip("#")
+    return tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+
+def es_color_claro(color: str):
+    r, g, b = hex_a_rgb(color)
+    luminancia = (0.299*r + 0.587*g + 0.114*b)
+    return luminancia > 186  # claro
+ 
+def paleta_en_base(paleta: dict, codigo_usuario: str):
+    paleta = dato_en_db(None, {"color1": paleta["color1"], "color2": paleta["color2"], "color3": paleta["color3"], "codigo_usuario": codigo_usuario}, "paletas")
+    if not paleta:
+        return False
+    return paleta[0]["id_paleta"]
+
 #funciones del sistema
 def actualizar_sesion(correo: str):
     with conectar() as db:
@@ -170,6 +220,10 @@ def datos_indefinidos(usuario: dict):
         actualizar_datos("USUARIOS", {"id_pais": id_pais}, {"correo_usuario": usuario["correo_usuario"]})
     if usuario["id_paleta"] == None:
         actualizar_datos("USUARIOS", {"id_paleta": "1"}, {"correo_usuario": usuario["correo_usuario"]})
+    if usuario["idioma_usuario"] == None:
+        idioma = request.accept_languages.best_match(idiomas_soportados.keys())
+        idioma_usuario = idiomas_soportados.get(idioma, "es")
+        actualizar_datos("USUARIOS", {"idioma_usuario": idioma_usuario}, {"correo_usuario": usuario["correo_usuario"]})
    
 def enviar_correo_validacion(correo):
     emisor="telerincontac@gmail.com"
@@ -535,7 +589,8 @@ def crear_historia():
             return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
         if len(descripcion_historia)>100:
             return jsonify({"mensaje": "La descripcion de la historia es muy larga","tipo": "warning"})
-        insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"]})
+        idioma = detectar_idioma(texto_historia)
+        insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"], "idioma": idioma})
         hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
         flash("Historia creada", "success")
         return redirect(url_for("inicio"))
@@ -546,7 +601,7 @@ def crear_historia():
 def crear_saga():
     nombre_saga=request.form["nombre_saga"].strip()
     descripcion_saga=request.form["descripcion_saga"].strip()
-    imagen_saga=request.files["foto_saga"]
+    imagen_saga=request.files.get("foto_saga", None)
     id_saga=f"""-inicio-{session["usuario"]["codigo_usuario"]}-{nombre_saga.strip()}"""
     if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen_saga.filename == "":
         return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
@@ -614,62 +669,6 @@ def saga(id_saga):
     autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
     return render_template("pagina/saga.html", saga=saga[0], historias=historias, autor=autor[0])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def validar_hex(color: str):
-    return bool(re.fullmatch(r"#([0-9a-fA-F]{6})", color))
-
-
-def hex_a_rgb(color: str):
-    color = color.lstrip("#")
-    return tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
-
-
-def es_color_claro(color: str):
-    r, g, b = hex_a_rgb(color)
-    luminancia = (0.299*r + 0.587*g + 0.114*b)
-    return luminancia > 186  # claro
-
-         
-def paleta_en_base(paleta: dict, codigo_usuario: str):
-    paleta = dato_en_db(None, {"color1": paleta["color1"], "color2": paleta["color2"], "color3": paleta["color3"], "codigo_usuario": codigo_usuario}, "paletas")
-    if not paleta:
-        return False
-    return paleta[0]["id_paleta"]
-
-    
-             
-
 @app.route("/guardar_paleta_personalizada", methods=["POST"])
 def guardar_paleta_personalizada():
     form = request.get_json()
@@ -692,7 +691,6 @@ def guardar_paleta_personalizada():
     actualizar_sesion(session["usuario"]["correo_usuario"])
     return redirect(request.referrer)
     
-    
 @app.route("/guardar_paleta", methods=["POST"])
 def guardar_paleta():
     form = request.get_json()
@@ -704,8 +702,6 @@ def guardar_paleta():
     actualizar_sesion(session["usuario"]["correo_usuario"])
     return redirect(request.referrer)
 
-         
-         
 @app.route("/paletas", methods=["POST"])
 def paletas():
     with conectar() as db:
@@ -714,9 +710,9 @@ def paletas():
             paletas=cursor.fetchall()
     return jsonify(paletas)
 
-
-
-                 
+def detectar_idioma(texto):
+    idioma = detect(texto)
+    return idiomas_soportados.get(idioma, 'spanish')
+      
 if __name__=="__main__":
     app.run(debug=True, port=4210, host="0.0.0.0") 
-    

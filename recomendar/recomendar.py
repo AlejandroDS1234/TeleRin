@@ -1,10 +1,7 @@
 import psycopg2
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-import nltk
-from nltk.corpus import stopwords
 from sklearn.metrics.pairwise import cosine_similarity
-
+from sentence_transformers import SentenceTransformer
 
 
 def conectar():
@@ -23,7 +20,7 @@ def conectar():
 
 
 def obtener_historias():
-    comando_obtener_todas_historias = """SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, h.codigo_usuario, s.nombre_saga , STRING_AGG(ht.nombre_hashtag, ' ') AS hashtags
+    comando_obtener_todas_historias = """SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, h.codigo_usuario, h.idioma, s.nombre_saga , STRING_AGG(ht.nombre_hashtag, ' ') AS hashtags
     FROM historias h
     LEFT JOIN hashtags_historias hh
     ON hh.id_historia = h.id_historia
@@ -38,21 +35,29 @@ def obtener_historias():
             historias = cursor.fetchall()
     return historias
 
+modelo = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 
-def palabras_español():
-    nltk.download("stopwords")
-    español=stopwords.words("spanish")
-    return español
 
-df = pd.DataFrame(obtener_historias(), columns=["id_historia", "nombre_historia", "descripcion_historia", "codigo_usuario", "nombre_saga", "hashtags"])
+df = pd.DataFrame(obtener_historias(),
+                      columns=["id_historia",
+                               "nombre_historia",
+                               "descripcion_historia",
+                               "codigo_usuario",
+                               "idioma",
+                               "nombre_saga",
+                               "hashtags"])
+
 df["contenido"] = (df["nombre_historia"] + " " + 
-                   df["descripcion_historia"] + " " + 
-                   df["nombre_saga"].fillna("") + " " + 
-                   df["hashtags"].fillna(""))
+                df["descripcion_historia"] + " " + 
+                df["nombre_saga"].fillna("") + " " +
+                df["idioma"] + " " +
+                df["hashtags"].fillna(""))
 
-vectorizar = TfidfVectorizer(stop_words=palabras_español())
-matriz = vectorizar.fit_transform(df["contenido"])
+matriz = modelo.encode(df["contenido"].tolist())
+print(matriz)
+
 similitud = cosine_similarity(matriz)
+print(similitud)
 
 def recomendar(id_historia, n=5):
     idx = df[df["id_historia"] == id_historia].index[0]
@@ -61,7 +66,6 @@ def recomendar(id_historia, n=5):
     scores = scores[1:n+1]
     indices = [i[0] for i in scores]
     return df.iloc[indices]
-
 
 
 print(recomendar("-historia-994474ducua-1", 10))
