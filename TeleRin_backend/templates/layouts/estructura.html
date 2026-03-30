@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_general.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='CSS/root1.css') }}">
+        <link rel="icon" href="{{ url_for('static', filename='logo.svg') }}" type="image/svg+xml">
+        <style>
+            :root {
+                --color1: {{ session.get('usuario', {'color1': '#187999'}).get('color1') }};
+                --color2: {{ session.get('usuario', {'color2': '#ffffe7'}).get('color2') }};
+                --color3: {{ session.get('usuario', {'color3': '#e3ad6f'}).get('color3') }};
+                --color_texto: {{ session.get('usuario', {'color_letra': '#000000'}).get('color_letra') }};
+                --color_texto_fondo: {{ session.get('usuario', {'color_letra_fondo': '#000000'}).get('color_letra_fondo') }};
+ 
+            }
+        </style>
+        {% block css %}
+        {% endblock %}
+    </head>
+    <body>
+        <div class="contenedor">
+
+            <header class="header">
+                <div class="logo" style="width: max-content; height: 90%;">
+                    <img src="{{ url_for('static', filename='logoSinTexto.svg') }}">
+                    <h1>TeleRin</h1>
+                </div>
+                <div class="opciones">
+                    {% block header %}{% endblock %}
+                </div>
+            </header>
+            {% block main %}{% endblock %}
+            <footer class="footer">
+                <div class="contenido_footer">
+                    {% block footer %}{% endblock %}
+                </div>
+                <div id="fecha_actualizacion"></div>
+            </footer>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="mensaje_flotante mensaje-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </body>
+    <script type="module" src="{{ url_for('static', filename='JS/function_generales.js') }}"></script>
+    {% block scripts %}
+    {% endblock %}
+</html>

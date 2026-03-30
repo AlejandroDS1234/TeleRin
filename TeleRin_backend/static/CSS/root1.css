@@ -1,0 +1,23 @@
+:root {
+    --color1_1: color-mix(in srgb, var(--color1) 80%, black);
+    --color1_2: var(--color1) 50%, color-mix(in srgb, var(--color1) 95%, white);
+    /*estos 3 colores son para el degrade del svg de inicio por que estos no admiten linear-gradient*/
+    --color_layout: linear-gradient(-90deg, var(--color1_2) 0%, var(--color1) 50%, var(--color1_1) 100%);
+    --color_letras_claras: var(#00FF00);
+    --color_letras_oscuras: var(--color2);
+    --color_fondo: var(--color2);
+    --color_borde_botones: var(--color3);
+    --color_botones: var(--color3);
+    --color_botones_presionado: color-mix(in srgb, var(--color3) 90%, black);
+    --color_bordes: var(--color3);
+    --color_contraste: var(--color1);
+    --color_contraste_claro: color-mix(in srgb, var(--color2) 40%, white);
+}
+
+.input::placeholder {
+    color: var(--color_texto);
+}
+
+.input {
+    border-radius: 30px;
+}

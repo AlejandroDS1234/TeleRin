@@ -1,0 +1,40 @@
+{% extends "layouts/estructura.html" %}
+
+{% block title %}Codigo De Verificacion{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_ingresar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_correo_cambiar_contraseña.css') }}">
+{% endblock css %}
+
+{% block header %}
+<a class="boton boton_fondo" href="{{ url_for('registrarse') }}" name="Registrarse">Registrarse</a>
+<a class="boton boton_fondo" href="{{ url_for('iniciar_sesion') }}" name="Iniciar Sesion">Iniciar Sesión</a>
+{% endblock header %}
+
+
+{% block main %}
+<main id="Correo_Codigo_Verificacion" class="ingreso">
+    <form id="formularioCorreoCodigoVerifiacion" class="formulario_ingreso">
+        <h2>Enviar Codigo De Verificacion</h2>
+        
+        <div class="contenedor_inputs" style="width: 80%;">
+            <label for="correo_para_codigo_usuario" >Ingrese el correo para verificacion:</label>
+            <input autocomplete="off" class="input input_sin_fondo letra_claras" name="correo_para_codigo_usuario" id="correo_para_codigo_usuario" type="email" required placeholder="Correo Electronico" style="width: 100%;">
+            <button class="boton boton_fondo" type="submit" name="Iniciar Sesión">Iniciar Sesión</button>
+            <div id="json_mensaje"></div>
+        </div>
+    </form>
+</main>
+{% endblock main %}
+
+{% block footer %}
+    <a href="{{url_for('index')}}">Inicio</a>
+    <a href="{{url_for('registrarse')}}">Registrarse</a>
+    <a href="{{url_for('iniciar_sesion')}}">Iniciar Sesion</a>
+{% endblock footer %}
+
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='JS/function_correo_para_codigo.js') }}"></script>
+{% endblock scripts %}

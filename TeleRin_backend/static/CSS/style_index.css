@@ -1,0 +1,126 @@
+/* INDEX.html */
+
+#index {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: blue;
+    height: max-content;
+}
+
+
+/* FIN INDEX.html */
+
+
+/*control de el svg de inicio*/
+
+.wave {
+    position: relative;
+    /* referencia para posicionar elementos encima */
+    width: 100%;
+    height: 100%;
+    /* Hace que el contenedor ocupe todo el ancho disponible
+       de la sección o del elemento padre */
+}
+
+.wave svg {
+    width: 50%;
+    /* El SVG se estira para ocupar todo el ancho
+       del contenedor .wave */
+    height: 70%;
+    /* Hace que el SVG use todo el alto disponible
+       del contenedor */
+    display: block;
+    /* Los SVG por defecto se comportan como elementos inline
+       (como el texto). Esto puede generar pequeños espacios
+       debajo del elemento.
+       Con display:block eliminamos ese espacio y el SVG
+       se comporta como un bloque normal. */
+}
+
+.wave {
+    fill: var(--color_layout);
+}
+
+.wave-text {
+    /* lo mueve al centro horizontal */
+    color: white;
+    font-size: 20%;
+    font-weight: bold;
+}
+
+
+/*configuracion de rive*/
+
+#canvas {
+    background: transparent;
+    /*vuelve transparente el lienzo canvas*/
+}
+
+#morris_container {
+    background-color:blueviolet;
+}
+
+#canvas {
+    width: 500px;
+    height: 500px;
+    /*define los parametros del lienzo sin alterar su animacion*/
+    position: absolute;
+    /* permite colocarlo encima del svg */
+    top: 50%;
+    /* baja el texto a la mitad */
+    left: 60%;
+    /* lo mueve al centro horizontal */
+}
+
+
+/*
+Burbuja de diálogo del asistente.
+Este elemento muestra el texto que dice Morris.
+*/
+
+#morris_dialogo {
+    /*
+    absolute permite posicionar la burbuja relativa
+    al contenedor (#morris_container).
+    */
+    position: absolute;
+    /*
+    Coloca la burbuja encima del personaje.
+    El valor se ajusta según el tamaño del canvas.
+    */
+    bottom: 380px;
+    /*
+    Alinea la burbuja con el lado derecho del contenedor.
+    */
+    right: 15%;
+    /*
+    Color de fondo de la burbuja.
+    Puede cambiarse para adaptarse al diseño del sitio.
+    */
+    background: var(--color_contraste);
+    /*
+    Espacio interno para que el texto no quede pegado
+    a los bordes de la burbuja.
+    */
+    padding: 10px 15px;
+    /*
+    Bordes redondeados para apariencia tipo
+    chat o globo de diálogo.
+    */
+    border-radius: 15px;
+    /*
+    Tamaño del texto dentro de la burbuja.
+    */
+    font-size: 30px;
+    /*
+    Sombra suave para separar visualmente la burbuja
+    del fondo de la página.
+    */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    /*
+    Limita el ancho máximo del texto
+    para que la burbuja no se vuelva demasiado larga.
+    */
+    max-width: 240px;
+}

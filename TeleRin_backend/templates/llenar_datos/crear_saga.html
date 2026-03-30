@@ -1,0 +1,25 @@
+<!-- Modal -->
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_crear_saga.css') }}">
+<div id="modal" class="modall">
+  <div class="modall-contenido">
+    <!-- Aquí va tu card completa -->
+    <div class="cardd">
+
+      <div class="imagen">
+        <img id="imagen_saga" src="{{ url_for('fotos_saga', filename='predefinido.jpg') }}" alt="Perfil">
+      </div>
+
+      <h2 id="titulo_saga">Crear saga</h2>
+
+      <form id="info_saga" entype="multipart/form-data">
+          <input type="file" id="imagen_saga_input" name="imagen_saga" accept="image/*">
+          <input id="saga_name" type="text" placeholder="Nombre de la saga">
+          <div id="saga_descrip"></div>
+
+          <button type="submit">crear</button>
+          <div id="json_mensaje_saga"></div>
+      </form>
+
+    </div>
+  </div> 
+</div> 

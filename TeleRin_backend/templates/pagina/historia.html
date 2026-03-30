@@ -1,0 +1,48 @@
+{% extends "layouts/estructura.html" %}
+
+{% block title %}{{ historia["nombre_historia"] }}{% endblock title %}
+
+{% block css %}
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_historia.css') }}">
+<link href="https://cdn.jsdelivr.net" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+{% endblock css %}
+
+{% block header %}
+<input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
+<a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
+{% endblock header %}
+
+
+{% block main %}
+<main id="historia" class="main_con_menu_lateral">
+    {% include "layouts/menu_lateral.html" %}
+    <div class="historia_container">
+        <section id="informacion_historia">
+            <h2>{{ historia["nombre_historia"] }}</h2>
+            <p>{{ historia["descripcion_historia"] }}</p>
+            <form id="calificacion_historia" data-id-historia="{{ historia['id_historia'] }}">
+                <input type="radio" name="calificacion" id="bueno" value="1">
+                <input type="radio" name="calificacion" id="regular" value="2">
+                <input type="radio" name="calificacion" id="malo" value="3">
+                <button type="submit" class="boton boton_fondo" name="calificar">Calificar</button>
+                <div id="json_mensaje"></div>
+            </form>
+        </section>
+        <section id="contenido_historia">
+            <div id="leer" data-contenido='{{ historia["contenido_historia"] | tojson | safe }}'></div>
+        </section>
+        <section id="comentarios_historia"> comentarios</section>
+    </div>
+</main>
+{% endblock main %}
+
+{% block footer %}
+{% endblock footer %}
+ 
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='JS/function_menu_lateral.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='JS/function_historia.js') }}"></script>
+{% endblock scripts %} 

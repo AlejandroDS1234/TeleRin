@@ -1,0 +1,45 @@
+{% extends "layouts/estructura.html" %}
+
+{% block title %}Cambiar Contraseña{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_ingresar.css') }}">
+{% endblock css %}
+
+{% block header %}
+<a class="boton boton_fondo" href="{{ url_for('registrarse') }}" name="Registrarse">Registrarse</a>
+<a class="boton boton_fondo" href="{{ url_for('iniciar_sesion') }}" name="Iniciar Sesion">Iniciar Sesión</a>
+{% endblock header %}
+
+
+{% block main %}
+<main id="Cambiar_Contraseña" class="ingreso">
+    <form id="formulario_cambiar_contraseña" class="formulario_ingreso">
+        <h2>Cambiar Contraseña</h2>
+        <div class="contenedor_inputs" style="width: 80%;">
+            <label for="correo_para_codigo_usuario" >Ingrese el codigo de verificacion:</label>
+            <input autocomplete="off" class="input input_sin_fondo letra_claras" name="contraseña_usuario_nueva" type="password" required placeholder="Nueva Contraseña" maxlength="255" minlength="8" style="width: 100%;">
+            <input autocomplete="off" class="input input_sin_fondo letra_claras" name="contraseña_usuario_nueva_confirmacion" type="password" required placeholder="Confirmar Nueva Contraseña" maxlength="255" minlength="8" style="width: 100%;">
+            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <p style="font-size: 1em; margin-bottom: 0;">Contraseña segura</p>
+                <div class="contraseña_segura">
+                    <div class="barra"></div>
+                </div>
+            </div>
+            <button class="boton boton_fondo" type="submit" name="Cambiar Contraseña">Cambiar Contraseña</button>
+            <div id="json_mensaje"></div>
+        </div>
+    </form>
+</main>
+{% endblock main %}
+
+{% block footer %}
+    <a href="{{url_for('index')}}">Inicio</a>
+    <a href="{{url_for('registrarse')}}">Registrarse</a>
+    <a href="{{url_for('iniciar_sesion')}}">Iniciar Sesion</a>
+{% endblock footer %}
+
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='JS/function_cambiar_contraseña.js') }}"></script>
+{% endblock scripts %}

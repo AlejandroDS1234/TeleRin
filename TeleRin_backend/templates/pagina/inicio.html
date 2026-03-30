@@ -1,0 +1,32 @@
+{% extends "layouts/estructura.html"%}
+
+{% block title %}TeleRin{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_inicio.css') }}">
+{% endblock css %}
+
+{% block header %}
+<input class="input input_con_fondo letra_claras" placeholder="Buscar" style="width: 20vw;">
+<a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
+{% endblock header %}
+
+{% block main %} 
+<main id="inicio" class="main_con_menu_lateral">
+    {% include "layouts/menu_lateral.html" %}
+    <div>
+        
+        <section style="height: 80vh">
+            asdsdddddddddd 
+        </section>
+
+    </div>
+</main> 
+
+
+{% endblock main %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='JS/function_inicio.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='JS/function_menu_lateral.js') }}"></script>
+{% endblock scripts %}

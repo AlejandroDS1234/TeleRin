@@ -1,0 +1,35 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/style_personalizar.css') }}">
+<div id="modalPersonalizar" class="modal">
+
+        <div class="modal-contenido personalizar">
+
+                <span class="cerrar" id="cerrarModal">&times;</span>
+                <h2>Personalizar</h2>
+                <form class="card" id="paletas">
+                        <h2>Selecciona una paleta de color</h2> 
+                        <div class="iconos" id="iconos" data-id="000"></div>
+                        <button type="submit" name="Elegir" class="boton boton_fondo">Elegir</button>
+                        <div id="json_paleta_elegir"></div>
+                </form>
+                <div class="card" id="crear_paleta">
+                        <h2>Crear una paleta de color</h2>
+                        <form id="crear_paleta_personalizada">
+                                <div>
+                                        <label for="color1">Color 1</label>
+                                        <input type="color" id="color1" name="color1" value="{{ session.get('usuario', {'color1': '#187999'}).get('color1') }}">
+                                </div>
+                                <div>
+                                        <label for="color2">Color 2</label>
+                                        <input type="color" id="color2" name="color2" value="{{ session.get('usuario', {'color2': '#ffffe7'}).get('color2') }}">
+                                </div>
+                                <div>
+                                        <label for="color3">Color 3</label>
+                                        <input type="color" id="color3" name="color3" value="{{ session.get('usuario', {'color3': '#e3ad6f'}).get('color3') }}">
+                                </div>
+                                <button type="submit" name="Cambiar" class="boton boton_fondo">Cambiar</button>
+                        </form>
+                        <div id="json_paleta"></div>
+                </div>
+        </div>
+</div>
+<script type="module" src="{{ url_for('static', filename='JS/personalizar.js') }}"></script>

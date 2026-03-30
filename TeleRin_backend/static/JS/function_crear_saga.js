@@ -1,0 +1,71 @@
+import { enviarInfoServer } from "./function_generales.js";
+
+const modal = document.getElementById("modal");
+const abrir = document.getElementById("boton_crear_saga");
+
+// Abrir modal al presionar botón
+abrir.onclick = () => {
+    modal.style.display = "flex"; 
+};
+
+// Cerrar modal al hacer click fuera del contenido
+window.onclick = (e) => { 
+    if (e.target == modal) {
+        modal.style.display = "none";
+    }
+};
+
+
+// al insertar una imagen se coloca en la imagen de al lado
+const imagen = document.getElementById("imagen_saga")
+const input = document.getElementById("imagen_saga_input")
+input.addEventListener("change", () => {
+    const foto = input.files[0]
+    if (foto) {
+        imagen.src = URL.createObjectURL(foto)
+    }
+})
+
+//descripcion_saga
+const descripcionQuill = new Quill('#saga_descrip', {
+    theme: 'snow',
+    modules: { toolbar: false},
+    placeholder: 'Descripcion y hashtags...'
+})
+
+descripcionQuill.on("text-change", function(delta, oldDelta, source) {
+  if (source !== "user") return;
+  const descripciontext = descripcionQuill.getText();
+  const regex = /#\w+/g;
+  let match;
+  while ((match = regex.exec(descripciontext)) !== null) {
+    descripcionQuill.formatText(
+      match.index,
+      match[0].length,
+      { color: "var(--color3)" }
+    );
+    descripcionQuill.formatText(
+      match.index + match[0].length, 1,
+      { color: "var(--color_texto)" }
+    );
+  }
+});
+
+
+ 
+
+
+const formulario = document.getElementById("info_saga")
+formulario.addEventListener("submit", async (e) => {
+    e.preventDefault()
+    const datos = new FormData()
+    const nombre = document.getElementById("saga_name").value
+    const descripcion = descripcionQuill.getText()
+    const imagen = document.getElementById("imagen_saga_input").files[0]
+    datos.append("nombre_saga", nombre)
+    datos.append("descripcion_saga", descripcion)
+    imagen ? datos.append("foto_saga", imagen): null  
+    enviarInfoServer(e, null, "/crear_saga", "json_mensaje_saga", null, null, datos)
+    
+
+})
