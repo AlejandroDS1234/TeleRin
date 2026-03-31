@@ -13,3 +13,17 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: "sloganGrande";
+    src: url("./assets/fonts/handelson-two.otf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "sloganPequeño";
+    src: url("./assets/fonts/FingerPaint-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}

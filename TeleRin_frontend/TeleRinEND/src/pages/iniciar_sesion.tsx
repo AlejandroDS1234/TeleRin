@@ -6,7 +6,7 @@ import botones from '../assets/styles/style.ts'
 
 function Iniciar_sesion_Form() {
     return (
-        <form className="flex flex-col bg-amber-200 p-52">
+        <form className="flex flex-col bg-amber-200 w-full">
             <input placeholder="Correos" />
             <input placeholder="Contraseña" />
             <button className={`${botones.primario}`}>Iniciar Sesión</button>
@@ -16,7 +16,11 @@ function Iniciar_sesion_Form() {
 
 function CallToAction() {
     return (
-        <p>algu</p>
+        <div className="flex flex-col justify-center items-center">
+            <p className="font-[sloganPequeño]">publica eso que</p>
+            <p className="font-[sloganGrande] text-5xl text-center"><p className="text-[#f85001]">TE DARIA</p><p>PENA</p></p>
+            <p className="font-[sloganPequeño]">leer en voz alta</p>
+        </div>
     )
 }
 
@@ -31,7 +35,7 @@ function Iniciar_sesion() {
                     </Link>
                 </>
             } />
-            <main className="grid grid-rows-2 gap-4">
+            <main className="grid grid-rows-2 w-full gap-4">
                 <CallToAction />
                 <Iniciar_sesion_Form />
             </main>
