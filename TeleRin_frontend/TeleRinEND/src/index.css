@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+@font-face {
+    font-family: "fuente";
+    src: url("./assets/fonts/Bukhari Script.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "fuente2";
+    src: url("./assets/fonts/LeagueSpartan-VariableFont_wght.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}

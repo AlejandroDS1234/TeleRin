@@ -186,10 +186,10 @@ def paleta_en_base(paleta: dict, codigo_usuario: str):
 def actualizar_sesion(correo: str):
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT u.*, p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM public."USUARIOS" u LEFT JOIN paletas p ON p.id_paleta = u.id_paleta WHERE u.correo_usuario = %s', (correo,))
+            cursor.execute('SELECT * FROM public."USUARIOS" WHERE correo_usuario = %s', (correo,))
             usuario=cursor.fetchone()
             datos_indefinidos(usuario)
-            cursor.execute('SELECT u.*, p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM public."USUARIOS" u LEFT JOIN paletas p ON p.id_paleta = u.id_paleta WHERE u.correo_usuario = %s', (correo,))
+            cursor.execute('SELECT * FROM public."USUARIOS" WHERE u.correo_usuario = %s', (correo,))
             usuario=cursor.fetchone()
             session["usuario"]=usuario
            
@@ -709,6 +709,15 @@ def paletas():
             cursor.execute('SELECT * FROM paletas WHERE codigo_usuario = %s OR codigo_usuario IS NULL', (session["usuario"]["codigo_usuario"],))
             paletas=cursor.fetchall()
     return jsonify(paletas)
+
+@app.route("/paleta_usuario", methods=["POST"])
+def paleta_usuario():
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM paletas p WHERE p.id_paleta = %s', (session["usuario"]["id_paleta"],))
+            paleta=cursor.fetchone()
+    return jsonify(paleta)
+
 
 def detectar_idioma(texto):
     idioma = detect(texto)
