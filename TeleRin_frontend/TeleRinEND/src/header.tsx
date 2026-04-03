@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 
 
-function Header({ cosas }) {
+function Header() {
     return (
-        <header className="bg-[#f85001] h-16 flex justify-between items-center px-4">
-            <Link to="/" className="font-[fuente] text-4xl">TeleRin</Link>
-            <div className="flex space-x-4">
-                {cosas}
+        <header className="h-25 flex flex-col  items-center">
+            <div className="h-100 flex justify-center sm:justify-between items-end w-full px-[5%]">
+                <Link to="/" className="font-[titulo] font-bold text-7xl">TeleRin</Link>
+            </div>
+            <div className="w-full flex flex-col items-center gap-1">
+                <div className="w-[95%] h-[2px] bg-black "></div>
+                <div className="w-[92%] h-[4px] bg-black "></div>
             </div>
         </header>
     )
