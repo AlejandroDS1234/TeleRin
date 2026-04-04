@@ -59,7 +59,9 @@ function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
 function RutasSinSesion() {
     return (
         <>
-            <Header url="/" />
+            <div className="absolute w-full insert-0 z-30">
+                <Header url="/" />
+            </div>
             <Outlet />
         </>
     )
@@ -68,7 +70,9 @@ function RutasSinSesion() {
 function RutasConSesion() {
     return (
         <>
-            <Header url="/inicio" />
+            <div className="absolute w-full insert-0 z-30">
+                <Header url="/inicio" />
+            </div>
             <Outlet />
         </>
     )
