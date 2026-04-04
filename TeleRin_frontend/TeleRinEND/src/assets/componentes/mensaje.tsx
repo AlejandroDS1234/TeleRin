@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 
-function Mensaje({ mensaje, tipo, id, tiempo = 6000 }: { mensaje: string, tipo: string, id: number, tiempo: number }) {
+function Mensaje({ mensaje, tipo, id, tiempo = 6000, onHide }: { mensaje: string, tipo: string, id: number, tiempo?: number, onHide?: () => void }) {
     //tiempo que se mostrara el mensaje
     const [visible, setVisible] = useState(true);
     useEffect(() => {
         setVisible(true);
         const timer = setTimeout(() => {
             setVisible(false);
+            if (onHide) onHide(); // Llamar callback cuando se oculta
         }, tiempo);
         return () => clearTimeout(timer);
-    }, [id]);
+    }, [id, tiempo, onHide]);
     if (!visible) {
         return null;
     }

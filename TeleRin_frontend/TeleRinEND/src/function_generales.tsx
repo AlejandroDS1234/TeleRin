@@ -1,7 +1,3 @@
-import { useLocation } from "react-router-dom";
-import Mensaje from "./assets/componentes/mensaje";
-import { useEffect } from "react";
-
 export async function enviarInfoServer(url: string, data: any) {
     let tipo = data instanceof FormData;
     let pro = await fetch(url, {
@@ -22,18 +18,49 @@ export function redirigir(navigate: any, datos: any = {}) {
     navigate(datos.redirigir, { state: datos.mensaje_redirigir ? datos.mensaje_redirigir : {} });
 }
 
-function UseMensajeRedirigir() {
-    const location = useLocation();
-    useEffect(() => {
-        if (location.state) {
-            window.history.replaceState({}, document.title);
-        }
-    }, [location]);
+export function cambiarTamañoBarraContraseña(input: string) {
+    const valor = input
+    const lista = valor.split("")
+    let porcentaje = 0
+    if (valor.length < 8) {
+        porcentaje += 25 / 8 * valor.length
+    } else {
+        porcentaje += 25
+    }
+    let listaMayusculas = lista.filter(caracter => /[A-Z]/.test(caracter))
+    let listaMinusculas = lista.filter(caracter => /[a-z]/.test(caracter))
+    let listaNumeros = lista.filter(caracter => /[0-9]/.test(caracter))
+    if (listaMayusculas.length < 3) {
+        porcentaje += 25 / 3 * listaMayusculas.length
+    } else {
+        porcentaje += 25
+    }
 
-    if (!location.state) return null;
+    if (listaMinusculas.length < 3) {
+        porcentaje += 25 / 3 * listaMinusculas.length
+    } else {
+        porcentaje += 25
+    }
 
-    return location.state ? <Mensaje mensaje={location.state.mensaje} tipo={location.state.tipo} id={Date.now()} /> : null;
+    if (listaNumeros.length < 2) {
+        porcentaje += 25 / 2 * listaNumeros.length
+    } else {
+        porcentaje += 25
+    }
+
+    let color = "";
+    if (porcentaje < 25) {
+        color = "#ff4d4d"
+    } else if (porcentaje < 50) {
+        color = "#ffff4d"
+    } else if (porcentaje < 75) {
+        color = "#ff944d"
+    } else if (porcentaje < 100) {
+        color = "#4dff4d"
+    } else {
+        color = "#4dffff"
+    }
+    let width = `${porcentaje}%`
+    return { width, color }
 }
-
-export default UseMensajeRedirigir;
 

@@ -23,7 +23,7 @@ print("Iniciando aplicación...")
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
-CORS(app, supports_credentials=True) 
+CORS(app, supports_credentials=True, origins=["http://localhost:4210"]) 
 
 idiomas_soportados = {
         'ar': 'arabic',
@@ -185,10 +185,14 @@ def actualizar_sesion(correo: str):
             cursor.execute('SELECT * FROM public."USUARIOS" WHERE correo_usuario = %s', (correo,))
             usuario=cursor.fetchone()
             datos_indefinidos(usuario)
-            cursor.execute('SELECT * FROM public."USUARIOS" WHERE u.correo_usuario = %s', (correo,))
+            cursor.execute('SELECT * FROM public."USUARIOS" WHERE correo_usuario = %s', (correo,))
             usuario=cursor.fetchone()
             session["usuario"]=usuario
-           
+
+@app.route("/sesion", methods=["POST"])
+def sesion():
+    return jsonify({"usuario": session.get("usuario")})
+
 def guardar_ip(correo: str):
     dispositivo=obtener_ip()
     with conectar() as db:
@@ -372,19 +376,19 @@ def registro(form: dict):
     insertar_db("USUARIOS",{"nombre_usuario": nombre_us, "correo_usuario": correo_us, "contraseña_usuario": contraseña_encriptada, "codigo_usuario": codigo_us})
     guardar_ip(correo_us)
     actualizar_sesion(correo_us)
-    return redirect(url_for("inicio"))
+    return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Registrado exitosamente", "tipo": "success"}})
         
 @registrar_funcion("iniciar_sesion_dispositivo_nuevo")
 def iniciar_sesion_dispositivo_nuevo(dato: dict | str):
     correo = dato["correo_usuario"] if isinstance(dato, dict) else dato
     guardar_ip(correo)
     actualizar_sesion(correo)
-    return redirect(url_for("inicio"))
+    return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Inicio de sesión exitoso", "tipo": "success"}})
 
 @registrar_funcion("cambiar_contraseña_comprobador")
 def cambiar_contraseña_comprobador(_=None):
     session["cambiar_contraseña_usuario"]=True
-    return redirect(url_for("cambiar_contraseña"))
+    return jsonify({"redirigir": "/cambiar_contraseña", "mensaje_redirigir": {"mensaje": "Cambia tu contraseña", "tipo": "success"}})
 
 #rutas
 @app.route("/registrarse", methods=["POST", "GET"])
@@ -417,7 +421,7 @@ def ingresar_codigo_validacion():
 @necesita("codigo", lambda: session.get("codigo_validacion")!=None)
 def validar_codigo():
     if request.method!="POST":
-        abort(405)
+        abort(405)  
     codigo=request.get_json().get("codigo")
     if check_password_hash(session["codigo_validacion"], f"{session['datos_temporales']['correo_usuario']}{codigo}"):
         session.pop("codigo_validacion")
@@ -432,8 +436,9 @@ def cerrar_sesion():
 @app.route("/inicio")
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def  inicio():
+    print(session["usuario"])
     actualizar_sesion(session["usuario"]["correo_usuario"])
-    return render_template("pagina/inicio.html")
+    return jsonify({"mensaje": "Bienvenido al inicio", "tipo": "success"})
    
 @app.route("/Fotos/perfil/<filename>")
 def perfil_img(filename):
@@ -466,7 +471,7 @@ def iniciar_sesion():
                     guardar_funcion_proveniente("iniciar_sesion_dispositivo_nuevo")
                     return enviar_correo(correo)
                 return iniciar_sesion_dispositivo_nuevo(correo)
-    return render_template("llenar_datos/iniciar_sesion.html")
+    return "Que intentas? 😏"
 
 @app.route("/codigo_verificacion_cambiar_contrasena", methods=["GET", "POST"])
 def codigo_verificacion_cambiar_contraseña():
@@ -482,7 +487,7 @@ def codigo_verificacion_cambiar_contraseña():
         guardar_temporalmente_datos({"correo_usuario": correo})
         guardar_funcion_proveniente("cambiar_contraseña_comprobador")
         return enviar_correo(correo)
-    return render_template("llenar_datos/codigo_verificacion_cambiar_contraseña.html")
+    return "No se que poner 😝"
 
 @app.route("/cambiar_contraseña", methods=["GET", "POST"])
 @necesita("verificar tu usuario", lambda: session.get("cambiar_contraseña_usuario"))
@@ -499,9 +504,8 @@ def cambiar_contraseña():
         contraseña_nueva_encriptada=encriptar(f"{correo}{contraseña_nueva}")
         actualizar_datos("USUARIOS", {"contraseña_usuario": contraseña_nueva_encriptada}, {"correo_usuario": correo})
         session.pop("cambiar_contraseña_usuario")
-        flash("Contraseña cambiada exitosamente", "success")
-        return redirect(url_for("iniciar_sesion"))
-    return render_template("llenar_datos/cambiar_contraseña.html")
+        return jsonify({"redirigir": "/iniciar_sesion", "mensaje_redirigir": {"mensaje": "Contraseña cambiada exitosamente, inicia sesión de nuevo", "tipo": "success"}})
+    return jsonify({"mmm": "No te creo 😑"})
 
 @app.route("/api/paises_generos")
 @necesita("usuario", lambda: session.get("usuario")!=None)
