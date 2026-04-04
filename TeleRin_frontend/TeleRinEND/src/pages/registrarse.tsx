@@ -1,23 +1,45 @@
 import Header from "../header";
-import { LogIn } from 'lucide-react'
-import { Link } from "react-router-dom";
+import { useForm } from 'react-hook-form';
+
+function FormularioRegistro() {
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const onSubmit = (data) => {
+        fetch("http://localhost:5000/registrarse", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+    };
+
+    return (
+        <form className="flex flex-col bg-amber-200 w-full" onSubmit={handleSubmit(onSubmit)}>
+            <input placeholder="Nombre" {...register("nombre_usuario", {
+                required: "El nombre es obligatorio",
+                minLength: {
+                    value: 3,
+                    message: "Mínimo 3 caracteres"
+                }
+            })} />
+            {errors.nombre_usuario && <p>{errors.nombre_usuario.message}</p>}
+            <input placeholder="Correo" {...register("correo_usuario", { required: "El correo es obligatorio" })} />
+            {errors.correo_usuario && <p>{errors.correo_usuario.message}</p>}
+            <input placeholder="Contraseña" {...register("contraseña_usuario", { required: "La contraseña es obligatoria" })} />
+            {errors.contraseña_usuario && <p>{errors.contraseña_usuario.message}</p>}
+            <button>Registrarse</button>
+        </form>
+    )
+}
+
 
 function Registrarse() {
     return (
         <>
-            <Header cosas={
-                <>
-                    <Link to='/iniciar_sesion' className='group flex space-x-3 font-[fuente2] bg-white px-4 py-2 rounded hover:bg-gray-200 transition'>
-                        <p className='hidden sm:block'>Iniciar Sesión</p>
-                        < LogIn className='animate-pulse [animation-duration:2s] group-hover:animate-bounce' />
-                    </Link>
-                </>
-            } />
+            <Header />
             <h1>registrarse</h1>
+            <FormularioRegistro />
         </>
     )
 }
-
 export default Registrarse;
-
-//

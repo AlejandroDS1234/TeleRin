@@ -14,6 +14,14 @@ function Index() {
         <>
             <Header />
             <h2>index</h2>
+            <Link to="/registrarse" className="flex items-center gap-2 text-[#333] hover:text-[#555] transition-colors duration-300">
+                <UserRoundPlus size={24} />
+                Registrarse
+            </Link>
+            <Link to="/iniciar_sesion" className="flex items-center gap-2 text-[#333] hover:text-[#555] transition-colors duration-300">
+                <LogIn size={24} />
+                Iniciar Sesión
+            </Link>
         </>
     )
 }

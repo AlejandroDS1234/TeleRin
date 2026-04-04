@@ -395,7 +395,7 @@ def cambiar_contraseña_comprobador(_=None):
 def index():
     return {"ji":"hi"}
    
-@app.route("/registrarse", methods=["GET", "POST"])
+@app.route("/registrarse", methods=["POST"])
 def registrarse():
     if request.method=="POST":
         form = request.get_json()
@@ -414,8 +414,7 @@ def registrarse():
         guardar_temporalmente_datos(form)
         guardar_funcion_proveniente("registro")
         return enviar_correo(correo_us)
-    elif request.method=="GET":
-        return render_template("llenar_datos/registrarse.html")
+    return "MMMMMMMMMMM sospechoso"
    
 @app.route("/ingresar_codigo_validacion", methods=["GET"])
 def ingresar_codigo_validacion():
@@ -724,4 +723,4 @@ def detectar_idioma(texto):
     return idiomas_soportados.get(idioma, 'spanish')
       
 if __name__=="__main__":
-    app.run(debug=True, port=4210, host="0.0.0.0") 
+    app.run(debug=True, port=1240, host="0.0.0.0") 

@@ -3,7 +3,7 @@ services:
     build: .
     container_name: telerin
     ports:
-      - "4210:4210"
+      - "1240:1240"
     volumes:
       - .:/TELERIN
     environment:
@@ -16,6 +16,19 @@ services:
     stdin_open: true
     tty: true
 
+  frontend:
+    build: ../TeleRin_frontend/TeleRinEND
+    container_name: telerin_frontend
+    ports:
+      - "4210:4210"
+    volumes:
+      - ../TeleRin_frontend/TeleRinEND:/TELERINFRONTEND
+      - /TELERINFRONTEND/node_modules
+    environment:
+      - VITE_API_URL=http://telerin:1240
+    restart: always
+    stdin_open: true
+    tty: true
   db:
     image: postgres:18
     container_name: database
@@ -29,17 +42,14 @@ services:
       - ./db-init:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql
 
-  
 volumes:
   postgres_data:
 
+    # ejecutar por primera vez: docker compose up
 
-# ejecutar por primera vez: docker compose up
-
-#iniciar despues de la primera vez: docker compose start
+    #iniciar despues de la primera vez: docker compose start
 
 
-# actualizar codigo
+    # actualizar codigo
 
-#1 docker compose
-      
+    #1 docker compose
