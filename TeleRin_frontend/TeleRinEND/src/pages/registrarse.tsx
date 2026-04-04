@@ -3,8 +3,9 @@ import Mensaje from "../assets/componentes/mensaje";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { enviarInfoServer, redirigir, cambiarTamañoBarraContraseña } from "../function_generales";
-import { EyeClosed, Eye, Loader } from "lucide-react";
+import { EyeClosed, Eye, Loader, Mail, UserRoundPlus } from "lucide-react";
 import Sobrefondo_registro from "../assets/sobre_fondos_de_menus/sobre_fondo_registro";
+import InputWithIcon from "../assets/componentes/inputWithIcon";
 
 
 function FormularioRegistro() {
@@ -38,11 +39,12 @@ function FormularioRegistro() {
     return (
         <div>
             <form className="flex flex-col bg-[var(--color_principal)] w-full" onSubmit={handleSubmit(onSubmit)}>
-                <input
+                <InputWithIcon
+                    icon={<UserRoundPlus />}
                     autoComplete="off"
                     placeholder="Nombre"
                     className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                    {...register("nombre_usuario", {
+                    register={register("nombre_usuario", {
                         required: "El nombre es obligatorio",
                     })} />
                 {errors.nombre_usuario && (
@@ -50,46 +52,45 @@ function FormularioRegistro() {
                         {errors.nombre_usuario.message}
                     </p>
                 )}
-
-                <input
-                    autoComplete="off"
+                <InputWithIcon
+                    icon={<Mail />}
                     placeholder="Correo"
-                    className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                    {...register("correo_usuario", {
+                    register={register("correo_usuario", {
                         required: "El correo es obligatorio",
                         pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: "El correo no es válido"
                         }
-                    })} />
+                    })}
+                />
                 {errors.correo_usuario && (
                     <p className="text-red-500 text-sm">
                         {errors.correo_usuario.message}
                     </p>
                 )}
 
-                <div className="w-full flex items-center gap-1">
-                    <input
-                        autoComplete="off"
-                        type={mostrarContraseña ? "text" : "password"}
-                        placeholder="Contraseña"
-                        className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                        {...register("contraseña_usuario", {
-                            required: "La contraseña es obligatoria",
-                            minLength: {
-                                value: 8,
-                                message: "La contraseña debe tener al menos 8 caracteres"
-                            },
-                            pattern: {
-                                value: /^(?=(?:.*[A-Z]){3,})(?=(?:.*[a-z]){3,})(?=(?:.*\d){1,}).{8,}$/,
-                                message: "La contraseña debe tener al menos 3 mayúsculas, 3 minúsculas y un número"
-                            },
-                            onChange: (e) => {
-                                handleContraseñaChange(e)
-                            }
-                        })} />
-                    {mostrarContraseña ? <Eye onClick={() => setMostrarContraseña(false)} className="" /> : <EyeClosed onClick={() => setMostrarContraseña(true)} className="" />}
-                </div>
+                <InputWithIcon
+                    icon={mostrarContraseña ? <Eye onClick={() => setMostrarContraseña(false)} className='hover:cursor-pointer animate-pulse' /> : <EyeClosed onClick={() => setMostrarContraseña(true)} className='hover:cursor-pointer animate-pulse' />}
+                    autoComplete="off"
+                    type={mostrarContraseña ? "text" : "password"}
+                    placeholder="Contraseña"
+                    className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    {...register("contraseña_usuario", {
+                        required: "La contraseña es obligatoria",
+                        minLength: {
+                            value: 8,
+                            message: "La contraseña debe tener al menos 8 caracteres"
+                        },
+                        pattern: {
+                            value: /^(?=(?:.*[A-Z]){3,})(?=(?:.*[a-z]){3,})(?=(?:.*\d){1,}).{8,}$/,
+                            message: "La contraseña debe tener al menos 3 mayúsculas, 3 minúsculas y un número"
+                        },
+                        onChange: (e) => {
+                            handleContraseñaChange(e)
+                        }
+                    })} />
+
+
                 <div className="h-4 bg-[var(--color_bordes)] rounded-full flex items-center px-2">
                     <div className="h-2 rounded-full" style={{ width: `${parseInt(contraseñaSegura)}%`, backgroundColor: colorBarra }}></div>
                 </div>
