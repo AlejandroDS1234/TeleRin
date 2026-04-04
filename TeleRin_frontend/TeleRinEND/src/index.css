@@ -34,3 +34,12 @@
     font-weight: normal;
     font-style: normal;
 }
+
+:root {
+    --color_principal: ##f5f1e8;
+    --color_bordes: #000000;
+    --color_texto: #000000;
+    --warning: #FF0000;
+    --success: #00FF00;
+    --danger: #FF8000;
+}

@@ -23,7 +23,7 @@ print("Iniciando aplicación...")
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
-CORS(app) 
+CORS(app, supports_credentials=True) 
 
 idiomas_soportados = {
         'ar': 'arabic',
@@ -65,16 +65,12 @@ def registrar_funcion(nombre):
         return func
     return decorador
 
-def necesita(nombre, validacion):
+def necesita(nombre, validacion, redireccion: str = "/"):
     def decorador(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             if not validacion():    
-                flash(f"Necesitas {nombre} para acceder", "warning")
-                session["intentos"]= session.get("intentos", 0)+1
-                if session["intentos"]>2:
-                    return redirect(url_for("index"))
-                return redirect(request.referrer)
+                return jsonify({"redirigir": redireccion, "mensaje_redirigir": {"mensaje": f"Necesitas {nombre} para acceder", "tipo": "warning"} })
             return func(*args, **kwargs)
         return wrapper
     return decorador
@@ -258,7 +254,7 @@ def enviar_correo(correo):
     if codigo==False:
         return jsonify({"mensaje":"Error al enviar el correo de validacion", "tipo":"danger"})
     session["codigo_validacion"]=encriptar(codigo)
-    return redirect(url_for("ingresar_codigo_validacion"))
+    return jsonify({"redirigir": "/codigo_verificacion", "mensaje_redirigir": {"mensaje": "Codigo de validacion enviado a tu correo", "tipo": "success"}})
 
 def dato_en_db(dato: str | None, nombre_dato: str | dict, tabla: str = "USUARIOS") -> dict | None:
     with conectar() as db:
@@ -389,13 +385,9 @@ def iniciar_sesion_dispositivo_nuevo(dato: dict | str):
 def cambiar_contraseña_comprobador(_=None):
     session["cambiar_contraseña_usuario"]=True
     return redirect(url_for("cambiar_contraseña"))
-   
+
 #rutas
-@app.route("/")
-def index():
-    return {"ji":"hi"}
-   
-@app.route("/registrarse", methods=["POST"])
+@app.route("/registrarse", methods=["POST", "GET"])
 def registrarse():
     if request.method=="POST":
         form = request.get_json()
@@ -415,12 +407,12 @@ def registrarse():
         guardar_funcion_proveniente("registro")
         return enviar_correo(correo_us)
     return "MMMMMMMMMMM sospechoso"
-   
+
 @app.route("/ingresar_codigo_validacion", methods=["GET"])
+@necesita("codigo de validacion", lambda: session.get("codigo_validacion")!=None)
 def ingresar_codigo_validacion():
-    if request.method=="GET":
-        return render_template("llenar_datos/codigo_verificacion.html")
-   
+    return jsonify({"status": True}) 
+
 @app.route("/validar_codigo", methods=["POST"])
 @necesita("codigo", lambda: session.get("codigo_validacion")!=None)
 def validar_codigo():
