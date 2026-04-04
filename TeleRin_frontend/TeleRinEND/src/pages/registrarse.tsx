@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form';
 function FormularioRegistro() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const onSubmit = (data) => {
-        fetch("http://localhost:5000/registrarse", {
+        console.log(data);
+        fetch("http://telerin:1240/registrarse", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -28,6 +29,7 @@ function FormularioRegistro() {
             <input placeholder="Contraseña" {...register("contraseña_usuario", { required: "La contraseña es obligatoria" })} />
             {errors.contraseña_usuario && <p>{errors.contraseña_usuario.message}</p>}
             <button>Registrarse</button>
+            <div>aaaaaaaaaaaaaaaaabbbbbbbbbbbbbb</div>
         </form>
     )
 }

@@ -7,7 +7,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: 4210,
-    host: true
+    host: true,
+    watch: {
+      usePolling: true      // ← Agregar esto
+    }
   },
 
 })
