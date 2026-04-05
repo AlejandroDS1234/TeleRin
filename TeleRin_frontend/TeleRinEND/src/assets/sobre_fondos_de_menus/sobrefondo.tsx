@@ -5,7 +5,7 @@ function Sobrefondo() {
     <img
       src={imagen}
       alt="sobrefondo"
-      className="w-full h-full object-fill lg:object-right pointer-events-none"
+      className="w-full h-full object-cover lg:object-right pointer-events-none"
     />
   );
 }

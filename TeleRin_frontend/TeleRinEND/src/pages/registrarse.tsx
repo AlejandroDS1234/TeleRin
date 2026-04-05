@@ -112,7 +112,7 @@ function FormularioRegistro() {
 
 function Registrarse() {
     return (
-        <>
+        <div>
             <div className="absolute top-0 right-0 h-full w-full lg:w-2/4 z-20">
                 <Sobrefondo_registro />
             </div>
@@ -121,7 +121,7 @@ function Registrarse() {
                     <FormularioRegistro />
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 export default Registrarse;

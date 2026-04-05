@@ -19,11 +19,12 @@ function CallToAction() {
 
 function Index() {
     return (
-        <>
+        <div className="relative min-h-screen">
+
             <div className="absolute inset-0 z-30">
                 <Header />
             </div>
-            {/* 1. SOBREFONDO */}
+
             <div className="absolute top-0 left-0 h-full w-full lg:w-2/3 z-10">
                 <Sobrefondo />
             </div>
@@ -47,8 +48,8 @@ function Index() {
             <div className="absolute top-[65%] left-[45%] h-[25%] aspect-square lg:top-[60%] lg:left-[80%] lg:h-[25%]  z-60">
                 <Boton_mas_de_nosotros />
             </div>
-        </>
-    )
-}
 
+        </div>
+    );
+    }
 export default Index;
