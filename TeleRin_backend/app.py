@@ -345,13 +345,14 @@ def guardar_historial(id_historia: str):
         return
     insertar_db("historial", {"codigo_usuario": codigo_usuario, "tiempo_vista": tiempo, "id_historia": id_historia})
 
+@app.route("/historial_usuario", methods=["POST"])
 def historial_usuario():
     codigo_usuario=session["usuario"]["codigo_usuario"]
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia WHERE hl.codigo_usuario = %s ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
             historias=cursor.fetchall()
-    return historias
+    return jsonify(historias)
 
 def hashtag_db(texto: str, id: str, tabla_campo: str):
     hashtags=obtener_hashtags(texto)
@@ -507,28 +508,32 @@ def cambiar_contraseña():
         return jsonify({"redirigir": "/iniciar_sesion", "mensaje_redirigir": {"mensaje": "Contraseña cambiada exitosamente, inicia sesión de nuevo", "tipo": "success"}})
     return jsonify({"mmm": "No te creo 😑"})
 
-@app.route("/api/paises_generos")
-@necesita("usuario", lambda: session.get("usuario")!=None)
+@app.route("/api/paises")
 def paises_generos():
-    with conectar() as db:
-        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT id_pais, nombre_pais FROM paises ORDER BY id_pais')
-            paises=cursor.fetchall()
-            cursor.execute('SELECT id_genero, nombre_genero FROM generos ORDER BY id_genero')
-            generos=cursor.fetchall()
-            usuario=session["usuario"]
-            datos_indefinidos(usuario)
-            actualizar_sesion(usuario["correo_usuario"])
-            pais_usuario=dato_en_db(usuario["id_pais"], "id_pais", "paises")
-            genero_usuario=dato_en_db(usuario["id_genero"], "id_genero", "generos")
-            lista_mandar={
-                "genero_usuario": genero_usuario[0],
-                "generos": generos,
-                "pais_usuario": pais_usuario[0],
-                "paises":paises
-            }
-            return jsonify(lista_mandar)
-        
+    datos_indefinidos(session["usuario"])
+    actualizar_sesion(session["usuario"]["correo_usuario"])
+    paises=dato_en_db("1", "1", "paises")
+    pais_usuario=dato_en_db(session["usuario"]["id_pais"], "id_pais", "paises")
+    lista={
+        "pais_usuario": pais_usuario[0],
+        "paises":paises
+    }
+    return jsonify(lista)
+
+@app.route("api/generos")
+def api_generos():
+    datos_indefinidos(session["usuario"])
+    actualizar_sesion(sesion["usuario"]["correo_usuario"])
+    generos =dato_en_db("1", "1", "generos")
+    genero_usuario=dato_en_db(session["usuario"]["id_genero"], "id_genero", "generos")
+    lista={
+        "genero_usuario": genero_usuario[0],
+        "generos":generos
+    }
+    return jsonify(lista)
+    
+    
+
 @app.route("/perfil", methods=["POST", "GET"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def perfil():
@@ -545,7 +550,7 @@ def perfil():
         actualizar_sesion(session["usuario"]["correo_usuario"])
         flash("Datos actualizados", "success")
         return redirect(request.referrer)
-    return render_template("pagina/perfil.html", historial=historial_usuario())
+    return jsonify({"mm": "Investigando? :)"})
         
 @app.route("/guardar_foto_perfil", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
@@ -717,6 +722,26 @@ def paleta_usuario():
 def detectar_idioma(texto):
     idioma = detect(texto)
     return idiomas_soportados.get(idioma, 'spanish')
-      
+
+
+
+
+@app.route("/simulacion_recomendar_libros", methods=["POST"])
+def simulacion_recomendar():
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia ,ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia WHERE h.visibilidad_historia = %s AND id_saga = '' GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion ORDER BY calificacion_p DESC LIMIT 20""", (True,))
+            historias=cursor.fetchall()
+            print(historias)
+    return jsonify(historias)
+
+@app.route("/simulacion_recomenda_sagas", methods=["POST"])
+def simulacion_recomendar_sagas():
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s JOIN historias h ON s.id_saga =  h.id_saga AND h.visibilidad_historia = %s GROUP BY s.nombre_saga, s.id_saga LIMIT 20""", (True,))
+            sagas= cursor.fetchall()
+    return jsonify(sagas)
+
 if __name__=="__main__":
     app.run(debug=True, port=1240, host="0.0.0.0") 

@@ -3,6 +3,7 @@ import Sobrefondo from '../assets/sobre_fondos_de_menus/sobrefondo.tsx';
 import Boton_registro from '../assets/botones_componentes/boton_registro.tsx';
 import Boton_inicio_sesion from '../assets/botones_componentes/boton_inicio_sesion.tsx';
 import Boton_mas_de_nosotros from '../assets/botones_componentes/boton_mas_de_nosotros.tsx';
+import Morris from  '../assets/componentes/morris.tsx'
 
 function CallToAction() {
     return (
@@ -47,6 +48,11 @@ function Index() {
             {/* 4. BOTÓN DE MÁS DE NOSOTROS (encima de todo) */}
             <div className="absolute top-[65%] left-[45%] h-[25%] aspect-square lg:top-[60%] lg:left-[80%] lg:h-[25%]  z-60">
                 <Boton_mas_de_nosotros />
+            </div>
+
+            {/* 5. MORRIS (encima de todo) */}
+            <div className="absolute top-[0%] right-[40%] h-[25%] aspect-square lg:top-[20%] lg:left-[40%] lg:h-[25%]  z-60">
+                <Morris />
             </div>
 
         </div>

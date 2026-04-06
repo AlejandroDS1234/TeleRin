@@ -81,7 +81,12 @@ function CodigoVerificacion() {
                         ) : "Validar código"}
                         </button>
 
-                        {res && (
+                       
+
+                    </form>
+                    {/* MENSAJE REDIRECCIÓN */}
+                    <div className="w-full">
+                         {res && (
                         <Mensaje 
                             mensaje={res.mensaje} 
                             tipo={res.tipo} 
@@ -89,10 +94,6 @@ function CodigoVerificacion() {
                             onHide={() => setRes(null)} 
                         />
                         )}
-
-                    </form>
-                    {/* MENSAJE REDIRECCIÓN */}
-                    <div className="w-full">
                         <UseMensajeRedirigir />
                     </div>
                 </div>

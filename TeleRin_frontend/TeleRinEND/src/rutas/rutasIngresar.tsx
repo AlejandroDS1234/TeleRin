@@ -1,86 +1,20 @@
-import Header from '../header.tsx'
 import Index from '../pages/index.tsx'
 import Registrarse from '../pages/registrarse.tsx'
 import Iniciar_sesion from '../pages/iniciar_sesion.tsx'
 import CodigoVerificacion from '../pages/codigo_verificacion.tsx'
 import Inicio from '../pages/inicio.tsx'
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { useState, useEffect } from 'react';
-import { UserProvider } from '../assets/componentes/userContext.tsx'
 import CorreoCambiarContraseña from '../pages/correo_cambiar_contraseña.tsx';
+import Perfil from '../pages/perfil.tsx'
 import CambiarContraseña from '../pages/cambiar_contraseña.tsx'
-
-interface RutaProtegidaProps {
-    verificarUrl: string;
-}
-
-function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [isAuthorized, setIsAuthorized] = useState(true);
-    const [redirectPath, setRedirectPath] = useState("/iniciar_sesion");
-
-    useEffect(() => {
-        const verificarAcceso = async () => {
-            try {
-                const response = await fetch(verificarUrl, { credentials: "include" });
-                console.log(response);
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(data);
-                    if (data.redirigir) {
-                        setIsAuthorized(false);
-                        setRedirectPath(data.redirigir);
-                        console.log(data.redirigir);
-                    }
-                } else {
-                    setIsAuthorized(false);
-                    console.error("Error verificando acceso:", response.status);
-                }
-            } catch (error) {
-                console.error("Error verificando acceso:", error);
-                setIsAuthorized(false);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        verificarAcceso();
-    }, [verificarUrl]);
-
-    if (isLoading) {
-        return <div className="flex justify-center items-center min-h-screen">
-            <div className="text-xl">Verificando acceso...</div>
-        </div>;
-    }
-
-    return isAuthorized ? <Outlet /> : <Navigate to={redirectPath} replace />;
-}
-
-function RutasSinSesion() {
-    return (
-        <>
-            <div className="absolute w-full insert-0 z-30">
-                <Header url="/" />
-            </div>
-            <Outlet />
-        </>
-    )
-}
-
-function RutasConSesion() {
-    return (
-        <>
-            <div className="absolute w-full insert-0 z-30">
-                <Header url="/inicio" />
-            </div>
-            <Outlet />
-        </>
-    )
-}
+import RutasUsuario from './rutasConSesion.tsx';
+import RutaProtegida from './rutaProtegida.tsx';
+import RutasSinSesion from './rutasSinSesion.tsx';
+import { Routes, Route } from "react-router-dom";
 
 
 function RutasIngresar() {
-    return (
+    return ( 
+
         <Routes>
             <Route element={<RutasSinSesion />}>
                 <Route path="/" element={<Index />} />
@@ -96,13 +30,16 @@ function RutasIngresar() {
             </Route>
 
 
-            <Route element={<RutasConSesion />}>
-                <Route element={<UserProvider><RutaProtegida verificarUrl="http://localhost:1240/inicio" /></UserProvider>}>
+            <Route element={<RutasUsuario />}>
+                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/inicio" />}>
                     <Route path="/inicio" element={<Inicio />} />
                 </Route>
+                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/perfil" />}>
+                    <Route path='/perfil' element={<Perfil/>} />
+                </Route>
             </Route>
-        </Routes>)
+        </Routes>
+        )
 }
 
 export default RutasIngresar;
-export { RutaProtegida };

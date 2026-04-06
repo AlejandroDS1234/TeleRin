@@ -4,6 +4,7 @@ import { set, useForm } from 'react-hook-form';
 import { enviarInfoServer, redirigir } from '../function_generales';
 import { Loader,Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Mensaje from '../assets/componentes/mensaje.tsx';
 import Sobrefondo_olvido_contraseña from '../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña.tsx';
 
 function CorreoCambiarContraseña() {
@@ -27,7 +28,7 @@ function CorreoCambiarContraseña() {
 
     return (
         <div>
-            <div className="absolute top-0 right-0 h-full w-full z-20">
+            <div className="absolute button-0 right-0 h-full w-full z-20">
                 <Sobrefondo_olvido_contraseña />
             </div>
             <div className="relative z-30 iteflex ms-center justify-center top-[30vh] lg:w-[30%] lg:left-[35%] lg:top-[26vh]">
@@ -36,7 +37,7 @@ function CorreoCambiarContraseña() {
 
                     {/* INPUT CON ICONO */}
                     <InputWithIcon 
-                        icon={<Mail />}
+                        icon={<BookUser />}
                         placeholder="Correo"
                         register={register("correo_para_codigo_usuario", {
                         required: "El correo es obligatorio",
@@ -67,7 +68,14 @@ function CorreoCambiarContraseña() {
                         </>
                         ) : "Enviar correo de verificación"}
                     </button>
-
+                    {res && (
+                    <Mensaje 
+                        mensaje={res.mensaje} 
+                        tipo={res.tipo} 
+                        id={Date.now()} 
+                        onHide={() => setRes(null)} 
+                        />
+                    )}
                     </form>
                 </div>
             </div>

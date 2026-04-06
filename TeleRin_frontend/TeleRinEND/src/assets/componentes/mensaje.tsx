@@ -25,10 +25,10 @@ function Mensaje({ mensaje, tipo, id, tiempo = 6000, onHide }: { mensaje: string
         }
     };
 
-    return (
+    return ( //hello
         <div
-            className="flex h-15 w-min items-center justify-center border-2">
-            <div className="w-10 border-r-2 h-full" style={{ backgroundColor: getBorderColor() }}></div>
+            className="flex w-max items-stretch justify-center border-2">
+            <div className="w-10 border-r-2 " style={{ backgroundColor: getBorderColor() }}></div>
             <div className="flex flex-col items-center w-max p-4">
                 <div className="w-[95%] h-[3px] bg-[var(--color_bordes)] "></div>
                 <p className="font-bold text-2xl">{mensaje}</p>

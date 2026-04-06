@@ -1,4 +1,4 @@
-import { UserRoundPlus, LogIn, Loader,EyeClosed,Mail } from 'lucide-react'
+import { UserRoundPlus, LogIn, Loader,EyeClosed,Mail, BookUser } from 'lucide-react'
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import { Link, useNavigate } from "react-router-dom";
 import botones from '../assets/styles/style.ts'
@@ -36,7 +36,7 @@ function Iniciar_sesion_Form() {
 
         {/* CORREO */}
         <InputWithIcon 
-            icon={<Mail />}
+            icon={<BookUser />}
             placeholder="Correo"
             register={register("correo_usuario", {
             required: "Ingrese su correo",
@@ -110,7 +110,7 @@ function Iniciar_sesion() {
             <div className="absolute top-0 right-0 h-full w-full z-20">
                 <Sobrefondo_inicio_sesion />
             </div>
-            <div className="relative z-30 iteflex ms-center justify-center top-[30vh] lg:w-[30%] lg:left-[3%] lg:top-[26vh]">
+            <div className="relative z-30 iteflex ms-center justify-center top-[30vh] lg:w-[30%] lg:left-[35%] lg:top-[26vh]">
                 <div className="bg-white/30 backdrop-blur-2xl p-8 rounded-2xl">
                     <UseMensajeRedirigir />
                     <Iniciar_sesion_Form />
