@@ -520,7 +520,7 @@ def paises_generos():
     }
     return jsonify(lista)
 
-@app.route("api/generos")
+@app.route("/api/generos")
 def api_generos():
     datos_indefinidos(session["usuario"])
     actualizar_sesion(sesion["usuario"]["correo_usuario"])
@@ -742,6 +742,14 @@ def simulacion_recomendar_sagas():
             cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s JOIN historias h ON s.id_saga =  h.id_saga AND h.visibilidad_historia = %s GROUP BY s.nombre_saga, s.id_saga LIMIT 20""", (True,))
             sagas= cursor.fetchall()
     return jsonify(sagas)
+
+@app.route("/buscar", methods=["POST"])
+@necesita("usuario", lambda: session.get("usuario")!=None )
+def buscar():
+    if request.method == "POST":
+        print("buscando")
+    return({"mm": "queso y plomo 🗿"})
+
 
 if __name__=="__main__":
     app.run(debug=True, port=1240, host="0.0.0.0") 

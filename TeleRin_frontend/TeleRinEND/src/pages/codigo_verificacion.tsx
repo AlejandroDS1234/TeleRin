@@ -94,8 +94,10 @@ function CodigoVerificacion() {
                             onHide={() => setRes(null)} 
                         />
                         )}
-                        <UseMensajeRedirigir />
                     </div>
+                </div>
+                <div className="fixed bottom-6 lg:bottom-10">
+                    <UseMensajeRedirigir/>
                 </div>
             </div>
         </div>

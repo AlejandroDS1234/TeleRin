@@ -4,6 +4,7 @@ import Iniciar_sesion from '../pages/iniciar_sesion.tsx'
 import CodigoVerificacion from '../pages/codigo_verificacion.tsx'
 import Inicio from '../pages/inicio.tsx'
 import CorreoCambiarContraseña from '../pages/correo_cambiar_contraseña.tsx';
+import Buscar from '../pages/buscar.tsx'
 import Perfil from '../pages/perfil.tsx'
 import CambiarContraseña from '../pages/cambiar_contraseña.tsx'
 import RutasUsuario from './rutasConSesion.tsx';
@@ -36,6 +37,9 @@ function RutasIngresar() {
                 </Route>
                 <Route element={<RutaProtegida verificarUrl="http://localhost:1240/perfil" />}>
                     <Route path='/perfil' element={<Perfil/>} />
+                </Route>
+                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/buscar" />}>
+                    <Route path='/buscar' element={<Buscar/>} />
                 </Route>
             </Route>
         </Routes>

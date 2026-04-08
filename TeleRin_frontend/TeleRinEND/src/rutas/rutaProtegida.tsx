@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet } from "react-router-dom";
+import { redirigir } from '../function_generales';
 
 
 interface RutaProtegidaProps {
@@ -10,7 +11,7 @@ function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthorized, setIsAuthorized] = useState(true);
     const [redirectPath, setRedirectPath] = useState("/iniciar_sesion");
-
+    console.log("entre")
     useEffect(() => {
         const verificarAcceso = async () => {
             try {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import { set, useForm } from 'react-hook-form';
 import { enviarInfoServer, redirigir } from '../function_generales';
-import { Loader,Mail } from 'lucide-react';
+import { Loader,Mail,BookUser } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Mensaje from '../assets/componentes/mensaje.tsx';
 import Sobrefondo_olvido_contraseña from '../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña.tsx';

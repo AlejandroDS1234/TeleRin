@@ -121,11 +121,10 @@ function Inicio() {
                 <Sobrefondo_principal />
             </div>
             <div className="relative z-20 font-serif text-gray-900 bg-[#f5f0e6]">
-                <UseMensajeRedirigir/>
-                    <section className="p-4 bg-[] aling-center flex flex-col w-full sm:h-[60vh] z-20">
+                    <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
                         <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
-                        <div className="flex w-full gap-4 overflow-x-scroll bg-[#fdfaf3] border border-black">
-                            <Sagas/>
+                        <div className="flex w-full gap-4 overflow-x-scroll bg-[#f5f0e6] border border-black">
+                            <Sagas classname="bg-[#f5f0e6]"/>
                         </div>
                     </section>
             </div>
@@ -137,6 +136,9 @@ function Inicio() {
                             <Historias/>
                         </div>
                     </section>
+                    <div className="fixed bottom-18 lg:bottom-10 bg-[#f5f0e6]">
+                        <UseMensajeRedirigir/>
+                    </div>
             </div>
         </div>
     );

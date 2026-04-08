@@ -18,8 +18,8 @@ function Navbar() {
         <Landmark color={resaltado == "/inicio"? "#FF0000": "#000"} />
       </button>
 
-      <button className="hover:cursor-pointer" onClick={() => {navigate("/perfil"); setResaltado("/perfil")}}>
-        <Search color={resaltado == "/"? "#FF0000": "#000"} />
+      <button className="hover:cursor-pointer" onClick={() => {navigate("/buscar"); setResaltado("/buscar")}}>
+        <Search color={resaltado == "/buscar"? "#FF0000": "#000"} />
       </button>
 
       <button className="hover:cursor-pointer" onClick={() => navigate("/iniciar_sesion")}>
