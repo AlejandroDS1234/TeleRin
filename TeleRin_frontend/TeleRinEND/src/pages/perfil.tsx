@@ -1,6 +1,6 @@
 import { useUser } from "../assets/componentes/userContext"
 import { UserPen, NotepadText, Loader } from 'lucide-react'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { enviarInfoServer } from "../function_generales"
 import { MensajePlano } from "../assets/componentes/mensaje"
 
@@ -105,7 +105,7 @@ function Imagen() {
     return (
         < div className="flex justify-center mb-4" >
             <img
-                className="w-40 h-40 object-cover border-2 border-black grayscale"
+                className="w-40 h-40 object-cover border-2 border-black"
                 src={`http://localhost:1240/Fotos/perfil/${usuario.foto_perfil_usuario}`}
             />
         </div >
@@ -113,11 +113,121 @@ function Imagen() {
 }
 
 function Pais() {
+    const { usuario, setUsuario } = useUser()
+    const [res, setRes] = useState(null)
+    const [paises, setPaises] = useState([])
+    const [paisUsuario, setPaisUsuario] = useState(usuario.id_pais)
+    const [cargando, setCargando] = useState(true)
+
+    useEffect(() => {
+        const fetchPaises = async () => {
+            try {
+                const pro = await fetch("http://localhost:1240/api/paises", { method: "POST", credentials: "include" })
+                const paises = await pro.json()
+                setPaises(paises)
+            } catch {
+                return (
+                    <div>error</div>
+                )
+            } finally {
+
+                setCargando(false)
+            }
+        }
+        fetchPaises()
+    }, [])
+
+    if (cargando) {
+        return (
+            <div>
+                <p>Cargando <Loader className="animate-spin" /></p>
+            </div>
+        )
+    }
+
+    function hola(ji) { console.log("hola") }
+
     return (
-        <div>mamaebo</div>
+        <div className="flex flex-col w-full">
+            <select
+                className="w-full border-b-2"
+                disabled={cargando}
+                value={paisUsuario}
+                onChange={(e) => {
+                    setPaisUsuario(e.target.value)
+                    cambiarDato({ "id_pais": e.target.value }, hola, setCargando, setRes, setUsuario)
+                }
+                }
+            >
+                {paises.map(pais => (
+                    <option key={pais.id_pais} value={pais.id_pais}>
+                        {pais.nombre_pais}
+                    </option>
+                ))}
+            </select>
+            {res && <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={Date.now()} onHide={() => setRes(null)} />}
+        </div>
     )
 }
 
+
+function Genero() {
+    const { usuario, setUsuario } = useUser()
+    const [res, setRes] = useState(null)
+    const [generos, setGeneros] = useState([])
+    const [generoUsuario, setGeneroUsuario] = useState(usuario.id_genero)
+    const [cargando, setCargando] = useState(true)
+
+    useEffect(() => {
+        const fetchGeneros = async () => {
+            try {
+                const pro = await fetch("http://localhost:1240/api/generos", { method: "POST", credentials: "include" })
+                const generos = await pro.json()
+                setGeneros(generos)
+            } catch {
+                return (
+                    <div>error</div>
+                )
+            } finally {
+
+                setCargando(false)
+            }
+        }
+        fetchGeneros()
+    }, [])
+
+    if (cargando) {
+        return (
+            <div>
+                <p>Cargando <Loader className="animate-spin" /></p>
+            </div>
+        )
+    }
+
+    function hola(ji) { console.log("hola") }
+
+    return (
+        <div className="flex flex-col w-full">
+            <select
+                className="w-full border-b-2"
+                disabled={cargando}
+                value={generoUsuario}
+                onChange={(e) => {
+                    setGeneroUsuario(e.target.value)
+                    cambiarDato({ "id_genero": e.target.value }, hola, setCargando, setRes, setUsuario)
+                }
+                }
+            >
+                {generos.map(genero => (
+                    <option key={genero.id_genero} value={genero.id_genero}>
+                        {genero.nombre_genero}
+                    </option>
+                ))}
+            </select>
+            {res && <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={Date.now()} onHide={() => setRes(null)} />}
+        </div>
+    )
+}
 
 function Perfil() {
     return (
@@ -131,6 +241,12 @@ function Perfil() {
             </h2>
             <Nombre />
             <Descripcion />
+            <div className="flex gap-4">
+                <Pais />
+                <Genero />
+            </div>
+
+
             <div className="flex justify-center border-t-2 border-black pt-3 mt-4">
                 <p className="font-bold uppercase">Se busca información <br /><small className="font-thin">(Escribe en los campos para editar)</small></p>
             </div>

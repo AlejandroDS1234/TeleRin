@@ -11,15 +11,12 @@ function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthorized, setIsAuthorized] = useState(true);
     const [redirectPath, setRedirectPath] = useState("/iniciar_sesion");
-    console.log("entre")
     useEffect(() => {
         const verificarAcceso = async () => {
             try {
                 const response = await fetch(verificarUrl, { credentials: "include" });
-                console.log(response);
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data);
                     if (data.redirigir) {
                         setIsAuthorized(false);
                         setRedirectPath(data.redirigir);

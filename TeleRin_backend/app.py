@@ -191,6 +191,7 @@ def actualizar_sesion(correo: str):
 
 @app.route("/sesion", methods=["POST"])
 def sesion():
+    datos_indefinidos(session["usuario"])
     return jsonify({"usuario": session.get("usuario")})
 
 def guardar_ip(correo: str):
@@ -508,29 +509,19 @@ def cambiar_contraseña():
         return jsonify({"redirigir": "/iniciar_sesion", "mensaje_redirigir": {"mensaje": "Contraseña cambiada exitosamente, inicia sesión de nuevo", "tipo": "success"}})
     return jsonify({"mmm": "No te creo 😑"})
 
-@app.route("/api/paises")
-def paises_generos():
+@app.route("/api/paises", methods=["POST"])
+def api_paises():
     datos_indefinidos(session["usuario"])
     actualizar_sesion(session["usuario"]["correo_usuario"])
     paises=dato_en_db("1", "1", "paises")
-    pais_usuario=dato_en_db(session["usuario"]["id_pais"], "id_pais", "paises")
-    lista={
-        "pais_usuario": pais_usuario[0],
-        "paises":paises
-    }
-    return jsonify(lista)
+    return jsonify(paises)
 
-@app.route("/api/generos")
+@app.route("/api/generos", methods=["POST"])
 def api_generos():
     datos_indefinidos(session["usuario"])
-    actualizar_sesion(sesion["usuario"]["correo_usuario"])
+    actualizar_sesion(session["usuario"]["correo_usuario"])
     generos =dato_en_db("1", "1", "generos")
-    genero_usuario=dato_en_db(session["usuario"]["id_genero"], "id_genero", "generos")
-    lista={
-        "genero_usuario": genero_usuario[0],
-        "generos":generos
-    }
-    return jsonify(lista)
+    return jsonify(generos)
     
     
 
@@ -538,6 +529,7 @@ def api_generos():
 def perfil():
     if request.method=="POST":
         form = request.get_json()
+        print(form)
         if form.get("nombre_usuario", False) and dato_en_db(form["nombre_usuario"], 'nombre_usuario') and form.get("nombre_usuario", False) != session["usuario"]["nombre_usuario"]:
             return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
         if form.get("id_pais", False) and not dato_en_db(form["id_pais"], "id_pais", "paises"):
