@@ -4,7 +4,7 @@ import { enviarInfoServer, redirigir } from "../function_generales";
 import { Loader, Hash } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Mensaje from "../assets/componentes/mensaje";
+import { Mensaje } from "../assets/componentes/mensaje";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import Sobrefondo_olvido_contraseña from "../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña";
 
@@ -30,7 +30,7 @@ function CodigoVerificacion() {
 
     return (
         <div>
-        {/* FONDO */}
+            {/* FONDO */}
             <div className="absolute top-0 right-0 h-full w-full z-20">
                 <Sobrefondo_olvido_contraseña />
             </div>
@@ -53,51 +53,52 @@ function CodigoVerificacion() {
                     {/* FORM */}
                     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)} method="POST">
 
-                        <InputWithIcon 
-                        icon={<Hash />} 
-                        type="text"
-                        placeholder="Código de verificación"
-                        register={register("codigo", {
-                            required: "Debe ingresar el código de verificación"
-                        })}
+                        <InputWithIcon
+                            icon={<Hash />}
+                            type="number"
+                            placeholder="Código de verificación"
+                            register={register("codigo", {
+                                required: "Debe ingresar el código de verificación"
+                            })}
                         />
 
                         {errors.codigo && (
-                        <p className="text-red-500 text-sm">
-                            {errors.codigo.message}
-                        </p>
+                            <p className="text-red-500 text-sm">
+                                {errors.codigo.message}
+                            </p>
                         )}
 
                         <button
-                        type="submit"
-                        disabled={cargando}
-                        className="flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="submit"
+                            disabled={cargando}
+                            className="flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                        {cargando ? (
-                            <>
-                            <p>Validando</p>
-                            <Loader className="animate-spin" />
-                            </>
-                        ) : "Validar código"}
+                            {cargando ? (
+                                <>
+                                    <p>Validando</p>
+                                    <Loader className="animate-spin" />
+                                </>
+                            ) : "Validar código"}
                         </button>
 
-                       
+
 
                     </form>
                     {/* MENSAJE REDIRECCIÓN */}
-                    <div className="w-full">
-                         {res && (
-                        <Mensaje 
-                            mensaje={res.mensaje} 
-                            tipo={res.tipo} 
-                            id={Date.now()} 
-                            onHide={() => setRes(null)} 
-                        />
-                        )}
-                    </div>
+
                 </div>
                 <div className="fixed bottom-6 lg:bottom-10">
-                    <UseMensajeRedirigir/>
+                    <div className="w-full bg-white/30">
+                        <UseMensajeRedirigir />
+                        {res && (
+                            <Mensaje
+                                mensaje={res.mensaje}
+                                tipo={res.tipo}
+                                id={Date.now()}
+                                onHide={() => setRes(null)}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

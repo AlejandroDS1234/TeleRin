@@ -1,4 +1,4 @@
-import Editor from "./Editor";
+import Editor from "../assets/componentes/editor_texto.tsx";
 
 function PaginaEditor() {
   return (

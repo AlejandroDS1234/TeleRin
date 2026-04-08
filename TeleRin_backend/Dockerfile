@@ -2,9 +2,11 @@ FROM python:3.13.12
 
 WORKDIR /TELERIN
 
-COPY . .
+COPY requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
 
 EXPOSE 1240
 

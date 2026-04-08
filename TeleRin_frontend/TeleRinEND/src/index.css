@@ -35,8 +35,22 @@
     font-style: normal;
 }
 
+@layer base {
+
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type='number'] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
+}
+
 :root {
-    --color_principal: ##f5f1e8;
+    --color_principal: #f5f1e8;
     --color_bordes: #000000;
     --color_texto: #000000;
     --warning: #FF0000;

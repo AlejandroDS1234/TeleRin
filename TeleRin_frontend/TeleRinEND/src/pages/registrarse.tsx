@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import Mensaje from "../assets/componentes/mensaje";
+import { Mensaje } from "../assets/componentes/mensaje";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { enviarInfoServer, redirigir, cambiarTamañoBarraContraseña } from "../function_generales";

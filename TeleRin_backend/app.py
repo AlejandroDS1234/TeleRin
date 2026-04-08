@@ -258,7 +258,7 @@ def enviar_correo(correo):
     if codigo==False:
         return jsonify({"mensaje":"Error al enviar el correo de validacion", "tipo":"danger"})
     session["codigo_validacion"]=encriptar(codigo)
-    return jsonify({"redirigir": "/codigo_verificacion", "mensaje_redirigir": {"mensaje": "Codigo de validacion enviado a tu correo", "tipo": "success"}})
+    return jsonify({"redirigir": "/codigo_verificacion", "mensaje_redirigir": {"mensaje": "Codigo enviado", "tipo": "success"}})
 
 def dato_en_db(dato: str | None, nombre_dato: str | dict, tabla: str = "USUARIOS") -> dict | None:
     with conectar() as db:
@@ -535,21 +535,20 @@ def api_generos():
     
 
 @app.route("/perfil", methods=["POST", "GET"])
-@necesita("usuario", lambda: session.get("usuario")!=None)
 def perfil():
     if request.method=="POST":
         form = request.get_json()
-        nombre_usuario=form["nombre_usuario"]
-        pais_usuario=form["pais"]
-        genero_usuario=form["genero"]
-        descripcion_usuario=form["descripcion"]
-        if dato_en_db(nombre_usuario, 'nombre_usuario') and nombre_usuario != session["usuario"]["nombre_usuario"]:
+        if form.get("nombre_usuario", False) and dato_en_db(form["nombre_usuario"], 'nombre_usuario') and form.get("nombre_usuario", False) != session["usuario"]["nombre_usuario"]:
             return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
+        if form.get("id_pais", False) and not dato_en_db(form["id_pais"], "id_pais", "paises"):
+            return jsonify({"mensaje":"Pais no registrado", "tipo":"warning"})
+        if form.get("id_genero", False) and not dato_en_db(form["id_genero"], "id_genero", "generos"):
+            return jsonify({"mensaje":"Genero no registrado", "tipo":"warning"})
         datos_indefinidos(session["usuario"])
-        actualizar_datos("USUARIOS", {"nombre_usuario": nombre_usuario, "id_pais": pais_usuario, "id_genero": genero_usuario, "descripcion_personal": descripcion_usuario}, {"correo_usuario": session["usuario"]["correo_usuario"]})
+        actualizar_datos("USUARIOS", form, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
         actualizar_sesion(session["usuario"]["correo_usuario"])
-        flash("Datos actualizados", "success")
-        return redirect(request.referrer)
+        print(list(form.keys()))
+        return jsonify({"mensaje":f"{list(form.keys())[0][:-8].replace('_', '')} actualizado", "tipo":"success"})
     return jsonify({"mm": "Investigando? :)"})
         
 @app.route("/guardar_foto_perfil", methods=["POST"])
@@ -749,6 +748,12 @@ def buscar():
     if request.method == "POST":
         print("buscando")
     return({"mm": "queso y plomo 🗿"})
+
+@app.route("/necesita_usuario")
+@necesita("usuario", lambda: session.get("usuario")!=None)
+def necesita_usuario():
+    return jsonify({"mm": "okey"})
+
 
 
 if __name__=="__main__":

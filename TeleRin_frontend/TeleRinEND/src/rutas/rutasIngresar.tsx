@@ -10,11 +10,12 @@ import CambiarContraseña from '../pages/cambiar_contraseña.tsx'
 import RutasUsuario from './rutasConSesion.tsx';
 import RutaProtegida from './rutaProtegida.tsx';
 import RutasSinSesion from './rutasSinSesion.tsx';
+import PaginaEditor from '../pages/editor_texto.tsx'
 import { Routes, Route } from "react-router-dom";
 
 
 function RutasIngresar() {
-    return ( 
+    return (
 
         <Routes>
             <Route element={<RutasSinSesion />}>
@@ -31,19 +32,16 @@ function RutasIngresar() {
             </Route>
 
 
-            <Route element={<RutasUsuario />}>
-                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/inicio" />}>
+            <Route element={<RutaProtegida verificarUrl="http://localhost:1240/necesita_usuario" />}>
+                <Route element={<RutasUsuario />}>
                     <Route path="/inicio" element={<Inicio />} />
-                </Route>
-                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/perfil" />}>
-                    <Route path='/perfil' element={<Perfil/>} />
-                </Route>
-                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/buscar" />}>
-                    <Route path='/buscar' element={<Buscar/>} />
+                    <Route path='/perfil' element={<Perfil />} />
+                    <Route path='/buscar' element={<Buscar />} />
+                    <Route path='/editor' element={<PaginaEditor />} />
                 </Route>
             </Route>
         </Routes>
-        )
+    )
 }
 
 export default RutasIngresar;

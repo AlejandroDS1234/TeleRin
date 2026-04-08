@@ -3,7 +3,7 @@ import { set, useForm } from 'react-hook-form';
 import { enviarInfoServer, redirigir, cambiarTamañoBarraContraseña } from '../function_generales';
 import { Loader, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Mensaje from '../assets/componentes/mensaje.tsx';
+import { Mensaje } from '../assets/componentes/mensaje.tsx';
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import Sobrefondo_olvido_contraseña from '../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña.tsx';
 
@@ -54,35 +54,35 @@ function CambiarContraseña() {
 
                         {/* NUEVA CONTRASEÑA */}
                         <InputWithIcon
-                        icon={<Lock />}
-                        type="password"
-                        placeholder="Contraseña nueva"
-                        register={register("contraseña_usuario_nueva", {
-                            required: "La contraseña es obligatoria",
-                            onChange(e) {
-                            handleContraseñaChange(e);
-                            },
-                        })}
+                            icon={<Lock />}
+                            type="password"
+                            placeholder="Contraseña nueva"
+                            register={register("contraseña_usuario_nueva", {
+                                required: "La contraseña es obligatoria",
+                                onChange(e) {
+                                    handleContraseñaChange(e);
+                                },
+                            })}
                         />
 
                         {errors.contraseña_usuario_nueva && (
-                        <p className="text-red-500 text-sm">
-                            {errors.contraseña_usuario_nueva.message}
-                        </p>
+                            <p className="text-red-500 text-sm">
+                                {errors.contraseña_usuario_nueva.message}
+                            </p>
                         )}
 
                         {/* CONFIRMAR CONTRASEÑA */}
                         <InputWithIcon
-                        icon={<Lock />}
-                        type="password"
-                        placeholder="Confirmar contraseña"
-                        register={register("contraseña_usuario_nueva_confirmacion", {
-                            required: "Confirmar contraseña es obligatorio",
-                            validate: (value) => {
-                            const newPassword = getValues("contraseña_usuario_nueva");
-                            return newPassword === value || "Las contraseñas no coinciden";
-                            }
-                        })}
+                            icon={<Lock />}
+                            type="password"
+                            placeholder="Confirmar contraseña"
+                            register={register("contraseña_usuario_nueva_confirmacion", {
+                                required: "Confirmar contraseña es obligatorio",
+                                validate: (value) => {
+                                    const newPassword = getValues("contraseña_usuario_nueva");
+                                    return newPassword === value || "Las contraseñas no coinciden";
+                                }
+                            })}
                         />
 
                         {/* BARRA DE SEGURIDAD */}
@@ -90,30 +90,30 @@ function CambiarContraseña() {
                             <div
                                 className="h-2 rounded-full transition-all"
                                 style={{
-                                width: `${parseInt(contraseñaSegura)}%`,
-                                backgroundColor: colorBarra
+                                    width: `${parseInt(contraseñaSegura)}%`,
+                                    backgroundColor: colorBarra
                                 }}
                             />
                         </div>
 
                         {errors.contraseña_usuario_nueva_confirmacion && (
-                        <p className="text-red-500 text-sm">
-                            {errors.contraseña_usuario_nueva_confirmacion.message}
-                        </p>
+                            <p className="text-red-500 text-sm">
+                                {errors.contraseña_usuario_nueva_confirmacion.message}
+                            </p>
                         )}
 
                         {/* BOTÓN */}
                         <button
-                        type="submit"
-                        disabled={cargando}
-                        className="flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="submit"
+                            disabled={cargando}
+                            className="flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                        {cargando ? (
-                            <>
-                            <p>Cambiando</p>
-                            <Loader className="animate-spin" />
-                            </>
-                        ) : "Cambiar contraseña"}
+                            {cargando ? (
+                                <>
+                                    <p>Cambiando</p>
+                                    <Loader className="animate-spin" />
+                                </>
+                            ) : "Cambiar contraseña"}
                         </button>
 
                     </form>
@@ -123,15 +123,15 @@ function CambiarContraseña() {
             <div className="absolute w-[60%] z-40 bottom-[70%]">
                 <div>
                     {res && (
-                    <Mensaje 
-                        mensaje={res.mensaje} 
-                        tipo={res.tipo} 
-                        id={Date.now()} 
-                        onHide={() => setRes(null)} 
-                    />
+                        <Mensaje
+                            mensaje={res.mensaje}
+                            tipo={res.tipo}
+                            id={Date.now()}
+                            onHide={() => setRes(null)}
+                        />
                     )}
                 </div>
-            </div>   
+            </div>
         </div>
     )
 }

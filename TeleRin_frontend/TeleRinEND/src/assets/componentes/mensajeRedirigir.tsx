@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import Mensaje from "./mensaje";
+import { Mensaje } from "./mensaje";
 import { useEffect } from "react";
 
 function UseMensajeRedirigir() {

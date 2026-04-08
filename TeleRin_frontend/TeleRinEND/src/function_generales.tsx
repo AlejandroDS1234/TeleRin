@@ -64,3 +64,9 @@ export function cambiarTamañoBarraContraseña(input: string) {
     return { width, color }
 }
 
+export async function actualizarSesion() {
+    const pro = await fetch("http://localhost:1240/sesion", { method: "POST", credentials: "include" })
+    const res = await pro.json()
+    return res
+}
+
