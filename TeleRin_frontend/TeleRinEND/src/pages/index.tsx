@@ -3,7 +3,7 @@ import Sobrefondo from '../assets/sobre_fondos_de_menus/sobrefondo.tsx';
 import Boton_registro from '../assets/botones_componentes/boton_registro.tsx';
 import Boton_inicio_sesion from '../assets/botones_componentes/boton_inicio_sesion.tsx';
 import Boton_mas_de_nosotros from '../assets/botones_componentes/boton_mas_de_nosotros.tsx';
-import Morris from  '../assets/componentes/morris.tsx'
+import Morris from '../assets/componentes/morris.tsx'
 
 function CallToAction() {
     return (
@@ -51,11 +51,11 @@ function Index() {
             </div>
 
             {/* 5. MORRIS (encima de todo) */}
-            <div className="absolute top-[0%] right-[40%] h-[25%] aspect-square lg:top-[20%] lg:left-[40%] lg:h-[25%]  z-60">
+            <div className="absolute top-[0%] right-[40%] h-[25%] aspect-square lg:fixed lg:top-[10vh] lg:left-1/2 lg:-translate-x-1/2 lg:w-[10vh] lg:h-[10vh]  z-60">
                 <Morris />
             </div>
 
         </div>
     );
-    }
+}
 export default Index;

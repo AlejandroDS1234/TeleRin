@@ -1,5 +1,5 @@
 import { useUser } from "../assets/componentes/userContext";
-import { useState , useEffect} from "react";
+import { useState, useEffect } from "react";
 import { Sagacard, HistoriaCard } from "../assets/componentes/sagas&historias_cards";
 import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
 import { Loader } from 'lucide-react'
@@ -13,7 +13,7 @@ function Sagas() {
     useEffect(() => {
         const sagasBack = async () => {
             try {
-                let pro = await fetch("http://localhost:1240/simulacion_recomenda_sagas", {method:"POST", credentials:"include"})
+                let pro = await fetch("http://localhost:1240/simulacion_recomenda_sagas", { method: "POST", credentials: "include" })
                 let sagas = await pro.json()
                 setSagas(sagas)
                 setCargando(false)
@@ -37,12 +37,12 @@ function Sagas() {
     if (cargando) {
         return (
             <div>
-                <p>Cargando <Loader className="animate-spin"/></p>
+                <p>Cargando <Loader className="animate-spin" /></p>
             </div>
         )
     }
 
-    return(
+    return (
         <>
             {sagas.map(saga => (
                 <Sagacard
@@ -50,7 +50,7 @@ function Sagas() {
                     ids={`${saga.id_saga}`}
                     img={`${saga.imagen_saga}`}
                     titulo={`${saga.nombre_saga}`}
-                    libros={`${ saga.libros}`}
+                    libros={`${saga.libros}`}
                 />
             ))}
         </>
@@ -65,7 +65,7 @@ function Historias() {
     useEffect(() => {
         const historiasBack = async () => {
             try {
-                let pro = await fetch("http://localhost:1240/simulacion_recomendar_libros", {method:"POST", credentials:"include"})
+                let pro = await fetch("http://localhost:1240/simulacion_recomendar_libros", { method: "POST", credentials: "include" })
                 let historias = await pro.json()
                 console.log(historias)
                 setHistorias(historias)
@@ -80,7 +80,7 @@ function Historias() {
     }, [])
 
     if (error) {
-        
+
         return (
             <div>
                 <p>error al cargar las historias</p>
@@ -91,12 +91,12 @@ function Historias() {
     if (cargando) {
         return (
             <div>
-                <p>Cargando <Loader className="animate-spin"/></p>
+                <p>Cargando <Loader className="animate-spin" /></p>
             </div>
         )
     }
 
-    return(
+    return (
         <>
             {historias.map(historia => (
                 <HistoriaCard
@@ -104,11 +104,11 @@ function Historias() {
                     idh={`${historia.id_historia}`}
                     titulo={`${historia.nombre_historia}`}
                     descripcion={`${historia.descripcion_historia}`}
-                    calificacion={`${ historia.calificacion_p}`}
+                    calificacion={`${historia.calificacion_p}`}
                 />
             ))}
         </>
-    ) 
+    )
 }
 
 
@@ -121,24 +121,24 @@ function Inicio() {
                 <Sobrefondo_principal />
             </div>
             <div className="relative z-20 font-serif text-gray-900 bg-[#f5f0e6]">
-                    <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
-                        <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
-                        <div className="flex w-full gap-4 overflow-x-scroll bg-[#f5f0e6] border border-black">
-                            <Sagas classname="bg-[#f5f0e6]"/>
-                        </div>
-                    </section>
+                <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
+                    <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
+                    <div className="flex w-full gap-4 overflow-x-scroll bg-[#f5f0e6] border border-black">
+                        <Sagas classname="bg-[#f5f0e6]" />
+                    </div>
+                </section>
             </div>
             <br />
             <div className="relative z-20 font-serif text-gray-900 bg-[#f5f0e6]">
-                    <section className="p-2">
-                        <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
-                        <div className="flex w-full gap-4 overflow-x-scroll sm:flex-row z-20 bg-[#fdfaf3] border border-black">
-                            <Historias/>
-                        </div>
-                    </section>
-                    <div className="fixed bottom-18 lg:bottom-10 bg-[#f5f0e6]">
-                        <UseMensajeRedirigir/>
+                <section className="p-2">
+                    <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
+                    <div className="flex w-full gap-4 overflow-x-scroll sm:flex-row z-20 bg-[#fdfaf3] border border-black">
+                        <Historias />
                     </div>
+                </section>
+                <div className="fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
+                    <UseMensajeRedirigir />
+                </div>
             </div>
         </div>
     );

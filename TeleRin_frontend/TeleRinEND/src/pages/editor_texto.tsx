@@ -2,23 +2,15 @@ import Editor from "../assets/componentes/editor_texto.tsx";
 
 function PaginaEditor() {
   return (
-    <div className="min-h-screen bg-[#e5e3dc] flex flex-col items-center p-4">
-
-      {/* 🧾 HOJA */}
-      <div className="
-        w-full max-w-[700px]
-        bg-white
-        shadow-xl
-        rounded-md
-        p-4
-      ">
+    <div className="flex justify-center lg:items-center">
+      <div className="min-h-screen bg-[#e5e3dc] w-full max-w-[700px] h-[90vh] shadow-xl flex flex-col items-center p-4">
 
         {/* ✏️ EDITOR */}
         <Editor />
 
       </div>
-
     </div>
+
   );
 }
 

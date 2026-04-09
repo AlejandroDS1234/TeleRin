@@ -1,8 +1,10 @@
 import { useUser } from "../assets/componentes/userContext"
-import { UserPen, NotepadText, Loader } from 'lucide-react'
+import { UserPen, NotepadText, Loader, ImagePlus, ThumbsUp, SquareX } from 'lucide-react'
 import { useState, useEffect } from "react"
 import { enviarInfoServer } from "../function_generales"
 import { MensajePlano } from "../assets/componentes/mensaje"
+import Modal from "../assets/componentes/modal"
+import { set } from "react-hook-form"
 
 
 function Historial() {
@@ -101,12 +103,73 @@ function Descripcion() {
 }
 
 function Imagen() {
-    const { usuario } = useUser()
+    const { usuario, setUsuario } = useUser()
+    const [abrirModal, setAbrirModal] = useState(false)
+
+    const [nuevaFoto, setNuevaFoto] = useState(null)
+    const [imagen, setImagen] = useState("")
+
+    const [res, setRes] = useState(null)
+
+
+
     return (
-        < div className="flex justify-center mb-4" >
+        < div className="flex justify-center items-center mb-4 z-1" >
+            <Modal open={abrirModal}
+                onClose={() => setAbrirModal(false)}
+                className="bg-[var(--color_principal)] w-full m-5 sm:max-w-lg flex flex-col gap-4 items-center">
+
+
+                <h3>Cambiar Foto Perfil</h3>
+                <label className={`border border-6 rounded-full aspect-square w-sm
+                    flex items-center justify-center hover:cursor-pointer overflow-hidden`} >
+                    {nuevaFoto ? <img src={imagen} className="object-cover aspect-square" /> : <ImagePlus size={200} className="" />}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onInput={(e) => {
+                            if (e.target.files[0]) {
+                                setNuevaFoto(e.target.files[0])
+                                setImagen(URL.createObjectURL(e.target.files[0]))
+                            }
+                        }} />
+                </label>
+                {nuevaFoto && (<div className="flex gap-4">
+                    <ThumbsUp
+                        color="#01af02"
+                        className="hover:cursor-pointer"
+                        onClick={async () => {
+                            const data = new FormData()
+                            data.append("imagen", nuevaFoto)
+                            const res = await enviarInfoServer("http://localhost:1240/guardar_foto_perfil", data)
+                            setRes(res)
+                            if (res.tipo == "success") {
+                                setUsuario((prev) => ({ ...prev, foto_perfil_usuario: res.foto_perfil_usuario }))
+                                setTimeout(() => {
+                                    setNuevaFoto(null)
+                                    setImagen("")
+                                    setRes(null)
+                                    setAbrirModal(false)
+                                }, 1500)
+                            }
+                        }} />
+                    <SquareX
+                        color="#FF0000"
+                        className="hover:cursor-pointer"
+                        onClick={() => {
+                            setNuevaFoto(null)
+                            setImagen("")
+                        }} />
+                </div>)}
+                {nuevaFoto && (<p>{nuevaFoto.name}</p>)}
+                {res && (<MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={Date.now()} onHide={() => setRes(null)} />)}
+
+            </Modal>
             <img
-                className="w-40 h-40 object-cover border-2 border-black"
-                src={`http://localhost:1240/Fotos/perfil/${usuario.foto_perfil_usuario}`}
+                className="w-40 h-40 object-cover border-2 border-black hover:cursor-pointer"
+                src={`http://localhost:1240/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
+                onClick={() => setAbrirModal(true)}
             />
         </div >
     )

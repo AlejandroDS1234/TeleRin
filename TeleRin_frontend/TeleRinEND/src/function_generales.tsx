@@ -1,13 +1,19 @@
 export async function enviarInfoServer(url: string, data: any) {
     let tipo = data instanceof FormData;
-    let pro = await fetch(url, {
+
+    const opciones: any = {
         method: "POST",
-        headers: {
-            "Content-Type": tipo ? "multipart/form-data" : "application/json"
-        },
         body: tipo ? data : JSON.stringify(data),
         credentials: "include"
-    })
+    }
+
+    if (!tipo) {
+        opciones.headers = {
+            "Content-Type": "application/json"
+        }
+    }
+
+    let pro = await fetch(url, opciones)
     let res = await pro.json();
     return res
 }

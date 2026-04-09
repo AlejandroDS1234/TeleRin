@@ -19,8 +19,6 @@ import re
 from flask_cors import CORS
 from langdetect import detect
 
-print("Iniciando aplicación...")
-
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
 CORS(app, supports_credentials=True, origins=["http://localhost:4210"]) 
@@ -438,7 +436,6 @@ def cerrar_sesion():
 @app.route("/inicio")
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def  inicio():
-    print(session["usuario"])
     actualizar_sesion(session["usuario"]["correo_usuario"])
     return jsonify({"mensaje": "Bienvenido al inicio", "tipo": "success"})
    
@@ -529,7 +526,6 @@ def api_generos():
 def perfil():
     if request.method=="POST":
         form = request.get_json()
-        print(form)
         if form.get("nombre_usuario", False) and dato_en_db(form["nombre_usuario"], 'nombre_usuario') and form.get("nombre_usuario", False) != session["usuario"]["nombre_usuario"]:
             return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
         if form.get("id_pais", False) and not dato_en_db(form["id_pais"], "id_pais", "paises"):
@@ -539,7 +535,6 @@ def perfil():
         datos_indefinidos(session["usuario"])
         actualizar_datos("USUARIOS", form, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
         actualizar_sesion(session["usuario"]["correo_usuario"])
-        print(list(form.keys()))
         return jsonify({"mensaje":f"{list(form.keys())[0][:-8].replace('_', '')} actualizado", "tipo":"success"})
     return jsonify({"mm": "Investigando? :)"})
         
@@ -547,6 +542,7 @@ def perfil():
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def guardar_foto_perfil():
     if request.method=="POST":
+        print(request.files)
         imagen=request.files['imagen']
         mensaje, resultado = validar_imagen_completa(imagen)
         if resultado:
@@ -554,7 +550,7 @@ def guardar_foto_perfil():
         nombre_archivo, ruta=ruta_guardado(session["usuario"]["codigo_usuario"], "_perfil", "Fotos/perfil")
         imagen.save(ruta)
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": session["usuario"]["correo_usuario"]})
-        return redirect(request.referrer)
+        return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
 
 @app.route("/crear_historia", methods=["GET","POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
@@ -649,14 +645,11 @@ def historia(id_historia):
 def saga(id_saga):
     saga=dato_en_db(id_saga, "id_saga", "saga")
     if not saga:
-        print("Saga no encontrada")
-        print(id_saga)
         abort(404) 
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.fecha_actualizacion, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia WHERE h.id_saga = %s AND h.visibilidad_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion ORDER BY h.fecha_actualizacion DESC""", (id_saga, True))
             historias=cursor.fetchall()
-    print(historias[0]["calificacion_p"])
     autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
     return render_template("pagina/saga.html", saga=saga[0], historias=historias, autor=autor[0])
 
@@ -723,7 +716,6 @@ def simulacion_recomendar():
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia ,ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia WHERE h.visibilidad_historia = %s AND id_saga = '' GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion ORDER BY calificacion_p DESC LIMIT 20""", (True,))
             historias=cursor.fetchall()
-            print(historias)
     return jsonify(historias)
 
 @app.route("/simulacion_recomenda_sagas", methods=["POST"])

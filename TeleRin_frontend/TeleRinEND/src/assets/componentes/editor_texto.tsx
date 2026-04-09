@@ -7,6 +7,8 @@ function Editor() {
   const quillRef = useRef(null); // guardamos la instancia
 
   useEffect(() => {
+    if (quillRef.current) return;
+
     const quill = new Quill(editorRef.current, {
       theme: "snow",
       placeholder: "Escribe algo épico...",
@@ -21,9 +23,8 @@ function Editor() {
 
     quillRef.current = quill;
 
-    // 📌 Detecta cambios en el editor
     quill.on("text-change", () => {
-      obtenerContenido(); // llamas tu función
+      obtenerContenido();
     });
 
   }, []);
@@ -44,11 +45,16 @@ function Editor() {
   };
 
   return (
-    <div className="flex justify-center w-full">
-      <div
-        ref={editorRef}
-        className="bg-white w-full max-w-[700px] min-h-[400px]"
-      />
+    <div className="w-full h-full inline justify-center">
+
+      {/* CONTENEDOR VISUAL */}
+      <div className="w-full h-full max-w-[700px] bg-white p-4 rounded shadow ">
+
+        {/* 🔥 ESTE NO LLEVA FLEX */}
+        <div ref={editorRef} />
+
+      </div>
+
     </div>
   );
 }
