@@ -10,7 +10,8 @@ import CambiarContraseña from '../pages/cambiar_contraseña.tsx'
 import RutasUsuario from './rutasConSesion.tsx';
 import RutaProtegida from './rutaProtegida.tsx';
 import RutasSinSesion from './rutasSinSesion.tsx';
-import PaginaEditor from '../pages/editor_texto.tsx'
+import PaginaEditor from '../pages/crear_historia.tsx'
+import Historias from '../pages/historias.tsx'
 import { Routes, Route } from "react-router-dom";
 
 
@@ -38,6 +39,7 @@ function RutasIngresar() {
                     <Route path='/perfil' element={<Perfil />} />
                     <Route path='/buscar' element={<Buscar />} />
                     <Route path='/editor' element={<PaginaEditor />} />
+                    <Route path='/historia/:id_historia' element={<Historias />} />
                 </Route>
             </Route>
         </Routes>

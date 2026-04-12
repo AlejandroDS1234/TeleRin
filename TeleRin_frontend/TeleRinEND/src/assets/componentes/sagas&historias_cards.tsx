@@ -15,7 +15,7 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }) {
 export function HistoriaCard({ idh, titulo, descripcion, calificacion }) {
     return (
         <Link
-            to={idh}
+            to={`/historia/${encodeURIComponent(idh)}`}
             className="bg-[#e4e0d6] flex flex-col items-center border-2 border-black w-full min-h-[220px] p-4"
         >
             <h3 className="font-bold text-center">{titulo}</h3>

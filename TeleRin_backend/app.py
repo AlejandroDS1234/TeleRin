@@ -636,15 +636,17 @@ def calificar_historia():
     insertar_db("calificacion_historia", {"id_historia": id_historia, "calificacion": calificacion, "codigo_usuario": id_usuario})
     return jsonify({"mensaje": "Gracias :)", "tipo": "success"})
 
-@app.route("/historia/<id_historia>")
+@app.route("/api/historia/<id_historia>", methods=["POST"])
 def historia(id_historia):
     historia=dato_en_db(id_historia, "id_historia", "historias")
     if not historia:
-        abort(404)
+        return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
     if historia[0]["visibilidad_historia"] == 0:
-        abort(403)
+        return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
     guardar_historial(id_historia)
-    return render_template("pagina/historia.html", historia=historia[0])
+    print("h",historia[0])
+    return jsonify(historia[0])
+
          
 @app.route("/saga/<id_saga>")
 @necesita("usuario", lambda: session.get("usuario")!=None)

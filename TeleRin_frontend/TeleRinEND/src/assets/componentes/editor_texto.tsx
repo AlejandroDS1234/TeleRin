@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import Quill from "quill";
 import "quill/dist/quill.snow.css";
 
-function Editor() {
+function Editor({ onChangeContenido }) {
   const editorRef = useRef(null);
   const quillRef = useRef(null); // guardamos la instancia
 
@@ -24,25 +24,13 @@ function Editor() {
     quillRef.current = quill;
 
     quill.on("text-change", () => {
-      obtenerContenido();
+      const html = quill.getContents();
+      const plainText = quill.getText();
+      onChangeContenido?.({ "html": html, "texto": plainText });
     });
 
   }, []);
 
-  // 🧠 FUNCIÓN PARA CAPTURAR CONTENIDO (LA DEJAMOS LISTA)
-  const obtenerContenido = () => {
-    if (!quillRef.current) return;
-
-    const contenidoHTML = quillRef.current.root.innerHTML;
-
-    // 👉 AQUÍ VAS A HACER ALGO CON EL CONTENIDO
-    // Ejemplo futuro:
-    // - guardarlo en estado
-    // - enviarlo al backend
-    // - validarlo
-
-    // console.log(contenidoHTML);
-  };
 
   return (
     <div className="w-full h-full inline justify-center">
