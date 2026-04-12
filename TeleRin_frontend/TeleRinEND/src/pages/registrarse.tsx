@@ -16,7 +16,7 @@ function FormularioRegistro() {
     const onSubmit = async (data) => {
         setCargando(true);
         try {
-            let res = await enviarInfoServer("http://localhost:1240/registrarse", data);
+            let res = await enviarInfoServer("/api/registrarse", data);
             redirigir(navigate, res);
             setRes(res);
         } catch (error) {

@@ -17,7 +17,7 @@ async function cambiarDato(dato, setBoton, setCargando, setRes, setUsuario) {
     setCargando(true)
     setRes(null)
     try {
-        const res = await enviarInfoServer("http://localhost:1240/perfil", dato)
+        const res = await enviarInfoServer("/api/perfil", dato)
         setRes(res)
         if (res.tipo == "success") {
             setBoton(false)
@@ -142,7 +142,7 @@ function Imagen() {
                         onClick={async () => {
                             const data = new FormData()
                             data.append("imagen", nuevaFoto)
-                            const res = await enviarInfoServer("http://localhost:1240/guardar_foto_perfil", data)
+                            const res = await enviarInfoServer("/api/guardar_foto_perfil", data)
                             setRes(res)
                             if (res.tipo == "success") {
                                 setUsuario((prev) => ({ ...prev, foto_perfil_usuario: res.foto_perfil_usuario }))
@@ -168,7 +168,7 @@ function Imagen() {
             </Modal>
             <img
                 className="w-40 h-40 object-cover border-2 border-black hover:cursor-pointer"
-                src={`http://localhost:1240/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
+                src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
                 onClick={() => setAbrirModal(true)}
             />
         </div >
@@ -185,7 +185,7 @@ function Pais() {
     useEffect(() => {
         const fetchPaises = async () => {
             try {
-                const pro = await fetch("http://localhost:1240/api/paises", { method: "POST", credentials: "include" })
+                const pro = await fetch("/api/paises", { method: "POST", credentials: "include" })
                 const paises = await pro.json()
                 setPaises(paises)
             } catch {
@@ -244,7 +244,7 @@ function Genero() {
     useEffect(() => {
         const fetchGeneros = async () => {
             try {
-                const pro = await fetch("http://localhost:1240/api/generos", { method: "POST", credentials: "include" })
+                const pro = await fetch("/api/generos", { method: "POST", credentials: "include" })
                 const generos = await pro.json()
                 setGeneros(generos)
             } catch {

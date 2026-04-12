@@ -13,7 +13,7 @@ function Sagas() {
     useEffect(() => {
         const sagasBack = async () => {
             try {
-                let pro = await fetch("http://localhost:1240/simulacion_recomenda_sagas", { method: "POST", credentials: "include" })
+                let pro = await fetch("/api/simulacion_recomenda_sagas", { method: "POST", credentials: "include" })
                 let sagas = await pro.json()
                 setSagas(sagas)
                 setCargando(false)
@@ -65,7 +65,7 @@ function Historias() {
     useEffect(() => {
         const historiasBack = async () => {
             try {
-                let pro = await fetch("http://localhost:1240/simulacion_recomendar_libros", { method: "POST", credentials: "include" })
+                let pro = await fetch("/api/simulacion_recomendar_libros", { method: "POST", credentials: "include" })
                 let historias = await pro.json()
                 console.log(historias)
                 setHistorias(historias)

@@ -26,7 +26,7 @@ function CambiarContraseña() {
         setCargando(true);
         setRes(null); // Limpiar mensaje anterior
         try {
-            let res = await enviarInfoServer("http://localhost:1240/cambiar_contraseña", data);
+            let res = await enviarInfoServer("/api/cambiar_contraseña", data);
             setRes(res);
             redirigir(navigate, res);
         } catch (error) {

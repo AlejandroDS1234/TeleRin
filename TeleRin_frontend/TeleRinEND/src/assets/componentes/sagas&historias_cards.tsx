@@ -1,21 +1,21 @@
-import {Book, BookHeart } from 'lucide-react'
+import { Book, BookHeart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 
-export function Sagacard({ids ,img, titulo, descripcion, libros}  ) {
+export function Sagacard({ ids, img, titulo, descripcion, libros }) {
     return (
         <Link to={ids} className='bg-[#e4e0d6] p-4 flex flex-col aling-center border-2 border-black h-full w-[80%] sm:w-[20%]'>
-            <img className='h-40 w-full object-contain' src={`http://localhost:1240/Fotos/fotos_sagas/${img}`} />
+            <img className='h-40 w-full object-contain' src={`/api/Fotos/fotos_sagas/${img}`} />
             <h3 className='text-bold'>{titulo}</h3>
-            <small className='flex'><Book />{ libros }</small>
+            <small className='flex'><Book />{libros}</small>
         </Link>
     )
 }
 
-export function HistoriaCard({idh, titulo, descripcion, calificacion}) {
+export function HistoriaCard({ idh, titulo, descripcion, calificacion }) {
     return (
-        <Link 
-            to={idh} 
+        <Link
+            to={idh}
             className="bg-[#e4e0d6] flex flex-col items-center border-2 border-black w-full min-h-[220px] p-4"
         >
             <h3 className="font-bold text-center">{titulo}</h3>
@@ -34,5 +34,5 @@ export function HistoriaCard({idh, titulo, descripcion, calificacion}) {
         </Link>
     );
 }
-// no se que de diferente tiene este className de historias con el de sagas 
+// no se que de diferente tiene este className de historias con el de sagas
 // pero dejalo como el de historias, no se por que el de sagas se ve raro en android

@@ -2,6 +2,7 @@
     "name": "telerinend",
     "private": true,
     "version": "0.0.0",
+    "proxy": "http://telerin:1240",
     "type": "module",
     "scripts": {
         "dev": "vite",

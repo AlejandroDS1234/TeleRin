@@ -71,7 +71,7 @@ export function cambiarTamañoBarraContraseña(input: string) {
 }
 
 export async function actualizarSesion() {
-    const pro = await fetch("http://localhost:1240/sesion", { method: "POST", credentials: "include" })
+    const pro = await fetch("/api/sesion", { method: "POST", credentials: "include" })
     const res = await pro.json()
     return res
 }

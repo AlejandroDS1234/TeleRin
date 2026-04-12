@@ -17,7 +17,7 @@ function CodigoVerificacion() {
     const onSubmit = async (data) => {
         setCargando(true);
         try {
-            let res = await enviarInfoServer("http://localhost:1240/validar_codigo", data);
+            let res = await enviarInfoServer("/api/validar_codigo", data);
             console.log(res);
             redirigir(navigate, res);
             setRes(res);

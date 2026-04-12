@@ -16,7 +16,7 @@ function CorreoCambiarContraseña() {
     const onSubmit = async (data) => {
         setCargando(true);
         try {
-            let res = await enviarInfoServer("http://localhost:1240/codigo_verificacion_cambiar_contrasena", data);
+            let res = await enviarInfoServer("/api/codigo_verificacion_cambiar_contrasena", data);
             setRes(res);
             redirigir(navigate, res);
         } catch (error) {

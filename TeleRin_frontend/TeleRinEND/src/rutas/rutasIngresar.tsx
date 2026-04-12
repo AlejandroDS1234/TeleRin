@@ -23,16 +23,16 @@ function RutasIngresar() {
                 <Route path="/registrarse" element={<Registrarse />} />
                 <Route path="/iniciar_sesion" element={<Iniciar_sesion />} />
                 <Route path="/olvide_mi_contrasena" element={<CorreoCambiarContraseña />} />
-                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/ingresar_codigo_validacion" />}>
+                <Route element={<RutaProtegida verificarUrl="/api/ingresar_codigo_validacion" />}>
                     <Route path="/codigo_verificacion" element={<CodigoVerificacion />} />
                 </Route>
-                <Route element={<RutaProtegida verificarUrl="http://localhost:1240/cambiar_contraseña" />}>
+                <Route element={<RutaProtegida verificarUrl="/api/cambiar_contraseña" />}>
                     <Route path="/cambiar_contraseña" element={<CambiarContraseña />} />
                 </Route>
             </Route>
 
 
-            <Route element={<RutaProtegida verificarUrl="http://localhost:1240/necesita_usuario" />}>
+            <Route element={<RutaProtegida verificarUrl="/api/necesita_usuario" />}>
                 <Route element={<RutasUsuario />}>
                     <Route path="/inicio" element={<Inicio />} />
                     <Route path='/perfil' element={<Perfil />} />

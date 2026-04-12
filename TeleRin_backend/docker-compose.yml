@@ -26,6 +26,8 @@ services:
       - /TELERINFRONTEND/node_modules
     environment:
       - VITE_API_URL=http://telerin:1240
+    depends_on:
+      - telerin
     restart: always
     stdin_open: true
     tty: true

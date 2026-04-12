@@ -20,7 +20,7 @@ function Iniciar_sesion_Form() {
         setCargando(true);
         setRes(null); // Limpiar mensaje anterior
         try {
-            let res = await enviarInfoServer("http://localhost:1240/iniciar_sesion", data);
+            let res = await enviarInfoServer("/api/iniciar_sesion", data);
             setRes(res);
             redirigir(navegate, res);
         } catch (error) {

@@ -21,7 +21,13 @@ from langdetect import detect
 
 app=Flask(__name__)
 app.secret_key = "GcWqCD7N4gueHr6LakfWrNNkKIQUYKYy"
-CORS(app, supports_credentials=True, origins=["http://localhost:4210"]) 
+CORS(app, supports_credentials=True, origins=[
+        r"http://localhost:4210",
+        r"http://127\.0\.0\.1:4210",
+        r"http://192\.168\.\d{1,3}\.\d{1,3}:4210",
+        r"http://10\.\d{1,3}\.\d{1,3}\.\d{1,3}:4210",
+        r"http://172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}:4210"
+]) 
 
 idiomas_soportados = {
         'ar': 'arabic',
@@ -187,7 +193,7 @@ def actualizar_sesion(correo: str):
             usuario=cursor.fetchone()
             session["usuario"]=usuario
 
-@app.route("/sesion", methods=["POST"])
+@app.route("/api/sesion", methods=["POST"])
 def sesion():
     datos_indefinidos(session["usuario"])
     return jsonify({"usuario": session.get("usuario")})
@@ -391,7 +397,7 @@ def cambiar_contraseña_comprobador(_=None):
     return jsonify({"redirigir": "/cambiar_contraseña", "mensaje_redirigir": {"mensaje": "Cambia tu contraseña", "tipo": "success"}})
 
 #rutas
-@app.route("/registrarse", methods=["POST", "GET"])
+@app.route("/api/registrarse", methods=["POST", "GET"])
 def registrarse():
     if request.method=="POST":
         form = request.get_json()
@@ -412,12 +418,12 @@ def registrarse():
         return enviar_correo(correo_us)
     return "MMMMMMMMMMM sospechoso"
 
-@app.route("/ingresar_codigo_validacion", methods=["GET"])
+@app.route("/api/ingresar_codigo_validacion", methods=["GET"])
 @necesita("codigo de validacion", lambda: session.get("codigo_validacion")!=None)
 def ingresar_codigo_validacion():
     return jsonify({"status": True}) 
 
-@app.route("/validar_codigo", methods=["POST"])
+@app.route("/api/validar_codigo", methods=["POST"])
 @necesita("codigo", lambda: session.get("codigo_validacion")!=None)
 def validar_codigo():
     if request.method!="POST":
@@ -439,19 +445,19 @@ def  inicio():
     actualizar_sesion(session["usuario"]["correo_usuario"])
     return jsonify({"mensaje": "Bienvenido al inicio", "tipo": "success"})
    
-@app.route("/Fotos/perfil/<filename>")
+@app.route("/api/Fotos/perfil/<filename>")
 def perfil_img(filename):
     if "usuario" not in session:
         abort(403)
     return send_from_directory("Fotos/perfil", filename)
 
-@app.route("/Fotos/fotos_sagas/<filename>")
+@app.route("/api/Fotos/fotos_sagas/<filename>")
 def fotos_saga(filename):
     if "usuario" not in session:
         abort(403)
     return send_from_directory("Fotos/fotos_sagas", filename)
 
-@app.route("/iniciar_sesion", methods=["GET", "POST"])
+@app.route("/api/iniciar_sesion", methods=["GET", "POST"])
 def iniciar_sesion():
     if request.method=="POST":
         form = request.get_json()
@@ -472,7 +478,7 @@ def iniciar_sesion():
                 return iniciar_sesion_dispositivo_nuevo(correo)
     return "Que intentas? 😏"
 
-@app.route("/codigo_verificacion_cambiar_contrasena", methods=["GET", "POST"])
+@app.route("/api/codigo_verificacion_cambiar_contrasena", methods=["GET", "POST"])
 def codigo_verificacion_cambiar_contraseña():
     if request.method=="POST":
         form = request.get_json()
@@ -488,7 +494,7 @@ def codigo_verificacion_cambiar_contraseña():
         return enviar_correo(correo)
     return "No se que poner 😝"
 
-@app.route("/cambiar_contraseña", methods=["GET", "POST"])
+@app.route("/api/cambiar_contraseña", methods=["GET", "POST"])
 @necesita("verificar tu usuario", lambda: session.get("cambiar_contraseña_usuario"))
 def cambiar_contraseña():
     if request.method=="POST":
@@ -522,7 +528,7 @@ def api_generos():
     
     
 
-@app.route("/perfil", methods=["POST", "GET"])
+@app.route("/api/perfil", methods=["POST", "GET"])
 def perfil():
     if request.method=="POST":
         form = request.get_json()
@@ -538,7 +544,7 @@ def perfil():
         return jsonify({"mensaje":f"{list(form.keys())[0][:-8].replace('_', '')} actualizado", "tipo":"success"})
     return jsonify({"mm": "Investigando? :)"})
         
-@app.route("/guardar_foto_perfil", methods=["POST"])
+@app.route("/api/guardar_foto_perfil", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def guardar_foto_perfil():
     if request.method=="POST":
@@ -710,7 +716,7 @@ def detectar_idioma(texto):
 
 
 
-@app.route("/simulacion_recomendar_libros", methods=["POST"])
+@app.route("/api/simulacion_recomendar_libros", methods=["POST"])
 def simulacion_recomendar():
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
@@ -718,7 +724,7 @@ def simulacion_recomendar():
             historias=cursor.fetchall()
     return jsonify(historias)
 
-@app.route("/simulacion_recomenda_sagas", methods=["POST"])
+@app.route("/api/simulacion_recomenda_sagas", methods=["POST"])
 def simulacion_recomendar_sagas():
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
@@ -733,7 +739,7 @@ def buscar():
         print("buscando")
     return({"mm": "queso y plomo 🗿"})
 
-@app.route("/necesita_usuario")
+@app.route("/api/necesita_usuario")
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def necesita_usuario():
     return jsonify({"mm": "okey"})

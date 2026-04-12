@@ -10,7 +10,13 @@ export default defineConfig({
     host: true,
     watch: {
       usePolling: true      // ← Agregar esto
-    }
-  },
+    },
+    proxy: {
+      '/api': {
+        target: 'http://telerin:1240',
+        changeOrigin: true
+      }
+    },
+  }
 
 })

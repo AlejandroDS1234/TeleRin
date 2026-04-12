@@ -9,7 +9,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         const fetchUsuario = async () => {
             try {
                 console.log("Intentando cargar usuario...");
-                const response = await fetch("http://localhost:1240/sesion", {
+                const response = await fetch("/api/sesion", {
                     method: "POST",
                     credentials: "include"
                 });
