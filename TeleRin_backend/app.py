@@ -639,10 +639,12 @@ def calificar_historia():
 @app.route("/api/historia/<id_historia>", methods=["POST"])
 def historia(id_historia):
     historia=dato_en_db(id_historia, "id_historia", "historias")
+    print("---------------------------------------",id_historia)
     if not historia:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
     if historia[0]["visibilidad_historia"] == 0:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
+    historia[0]["fecha_actualizacion"]=historia[0]["fecha_actualizacion"].strftime("%d/%m/%Y")
     guardar_historial(id_historia)
     print("h",historia[0])
     return jsonify(historia[0])

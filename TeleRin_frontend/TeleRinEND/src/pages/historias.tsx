@@ -19,7 +19,7 @@ function Historias() {
             try {
                 ;
                 console.log(id_historia)
-                const res = await fetch(`/api/historia/${id_historia}`, { method: "POST", credentials: "include" })
+                const res = await fetch(`/api/historia/${encodeURIComponent(id_historia)}`, { method: "POST", credentials: "include" })
                 const historia = await res.json();
                 redirigir(navigate, historia);
                 setContenido(historia);
