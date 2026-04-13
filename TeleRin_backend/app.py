@@ -618,36 +618,47 @@ def sagas_creadas(usuario):
         sagas_usuario=dato_en_db(usuario, "codigo_usuario", "saga")
         return jsonify(sagas_usuario)
     
-@app.route("/calificar_historia", methods=["POST"])
+@app.route("/api/calificar_historia/<id_historia>", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
-def calificar_historia():
+def calificar_historia(id_historia):
     form = request.get_json()
-    id_historia = form.get("id_historia")
     calificacion = form.get("calificacion")
     id_usuario = session["usuario"]["codigo_usuario"]
     historia = dato_en_db(id_historia, "id_historia", "historias")
     if not historia:
         return jsonify({"mensaje": "Historia no encontrada", "tipo": "danger"})
-    if calificacion not in ["1", "2", "3"]:
-        return jsonify({"mensaje": "Calificación no válida", "tipo": "danger"})
+    if calificacion == 0:
+        if dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": id_usuario}, "calificacion_historia"):
+            with conectar() as db:
+                with db.cursor() as cursor:
+                    cursor.execute('DELETE FROM "calificacion_historia" WHERE id_historia = %s AND codigo_usuario = %s',(id_historia, id_usuario))
+                    db.commit()
+        return jsonify({"fin": "Calificacion quitada", "tipo": "danger"})
+    if calificacion not in [1, 2, 3]:
+        return jsonify({"fin": "Calificación no válida", "tipo": "danger"})
     if dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": id_usuario}, "calificacion_historia"):
         actualizar_datos("calificacion_historia", {"calificacion": calificacion}, {"id_historia": id_historia, "codigo_usuario": id_usuario})
-        return jsonify({"mensaje": "Gracias :)", "tipo": "success"})
+        return jsonify({"fin": "calificacion cambiada", "tipo": "success"})
     insertar_db("calificacion_historia", {"id_historia": id_historia, "calificacion": calificacion, "codigo_usuario": id_usuario})
-    return jsonify({"mensaje": "Gracias :)", "tipo": "success"})
+    print("------------------", calificacion)
+    return jsonify({"fin": "calificacion cambiada", "tipo": "success"})
 
 @app.route("/api/historia/<id_historia>", methods=["POST"])
 def historia(id_historia):
     historia=dato_en_db(id_historia, "id_historia", "historias")
-    print("---------------------------------------",id_historia)
     if not historia:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
     if historia[0]["visibilidad_historia"] == 0:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
     historia[0]["fecha_actualizacion"]=historia[0]["fecha_actualizacion"].strftime("%d/%m/%Y")
     guardar_historial(id_historia)
-    print("h",historia[0])
-    return jsonify(historia[0])
+    calificacion = dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "calificacion_historia")
+    return jsonify({"historia": historia[0]})
+
+@app.route("/api/calificacion_historia/<id_historia>", methods=["POST"])
+def calificacion_historia(id_historia):
+    calificacion = dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "calificacion_historia")
+    return jsonify(calificacion[0]["calificacion"] if calificacion else 0)
 
          
 @app.route("/saga/<id_saga>")
