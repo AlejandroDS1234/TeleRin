@@ -79,7 +79,7 @@ function Editor({
       readOnly: soloLectura,
       placeholder: soloLectura ? "" : "Escribe algo épico...",
       modules: {
-        toolbar: soloLectura ? false : `#${toolbarIdRef.current}`,
+        toolbar: `#${toolbarIdRef.current}`,
       },
     });
 
@@ -112,11 +112,10 @@ function Editor({
   return (
     <div className="w-full h-full inline justify-center">
       <div className="w-full h-full max-w-[700px] bg-white p-4 rounded shadow ">
-        {!soloLectura && (
-          <div id={toolbarIdRef.current} className="flex justify-between p-4">
-            {toolbarItems.map((item, index) => renderToolbarItem(item, index, quillRef))}
-          </div>
-        )}
+        <div id={toolbarIdRef.current} className="flex justify-between p-4">
+          {toolbarItems.map((item, index) => renderToolbarItem(item, index, quillRef))}
+        </div>
+
 
         <div ref={editorRef} />
       </div>
