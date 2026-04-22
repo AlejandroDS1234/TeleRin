@@ -6,6 +6,27 @@ import { Loader } from 'lucide-react'
 import Sobrefondo_principal from "../assets/sobre_fondos_de_menus/sobre_fondo_principal";
 
 
+function HistoriasPrincipales() {
+    return (
+        <div className="relative sm:flex-row max-h-lg min-h-lg sm:max-h-90 sm:min-h-90 bg-[#e4e0d6]">
+            <img
+                src="https://media.istockphoto.com/id/1127245421/es/foto/manos-de-mujer-pidiendo-la-bendici%C3%B3n-de-dios-sobre-fondo-puesta-de-sol.webp?s=1024x1024&w=is&k=20&c=rckoeBloyLTsIHQabNQRzxtgKAzZrakd4IIlKDU3nRw="
+                className="object-cover w-full h-full"
+            />
+            <div className="absolute bottom-6 right-6 sm:right-12 max-w-[90%] sm:max-w-sm text-right">
+                <h3 className="wrap-break-word font-bold text-2xl sm:text-3xl text-center bg-white/50 backdrop-blur-md rounded-2xl p-2">
+                    Nombre de la sega a la que estamos llamando :)
+                </h3>
+                <br className="hidden sm:block " />
+                <p className="hidden sm:block bg-white/50 backdrop-blur-md rounded-2xl p-2">
+                    descripcion Lorem ipsum dolor sit amet consectetur adipisicing elit. Error, quasi necessitatibus, ipsum facilis animi debitis, culpa sed laboriosam qui vitae aliquid porro ab provident nesciunt ducimus. Temporibus recusandae expedita obcaecati.
+                </p>
+            </div>
+        </div>
+    )
+}
+
+
 function Sagas() {
     const [sagas, setSagas] = useState([]);
     const [cargando, setCargando] = useState(true)
@@ -113,32 +134,49 @@ function Historias() {
 
 
 function Inicio() {
-    const { usuario } = useUser();
     console.log("estoy en inicio")
     return (
         <div>
             <div className="absolute top-0 left-0 h-full w-full z-10">
                 <Sobrefondo_principal />
             </div>
-            <div className="relative z-20 font-serif text-gray-900 bg-[#f5f0e6]">
+            <div className="relative z-20 font-serif text-gray-900 ">
+                <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
+                    <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Principales</h4>
+                    <div className="flex w-full justify-center gap-4">
+                        <HistoriasPrincipales />
+                    </div>
+                </section>
+            </div>
+            <div className="relative z-20 font-serif text-gray-900 ">
                 <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
-                    <div className="flex w-full gap-4 overflow-x-scroll bg-[#f5f0e6] border border-black">
-                        <Sagas classname="bg-[#f5f0e6]" />
+                    <div className="flex w-full gap-4 overflow-x-scroll">
+                        <Sagas />
                     </div>
                 </section>
             </div>
             <br />
-            <div className="relative z-20 font-serif text-gray-900 bg-[#f5f0e6]">
+            <div className="relative z-20 font-serif text-gray-900 ">
                 <section className="p-2">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
-                    <div className="flex w-full gap-4 overflow-x-scroll sm:flex-row z-20 bg-[#fdfaf3] border border-black">
+                    <div className="flex w-full gap-4 overflow-x-scroll sm:flex-row z-20 ">
                         <Historias />
                     </div>
                 </section>
+
                 <div className="fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
                     <UseMensajeRedirigir />
                 </div>
+            </div>
+            <br />
+            <div className="relative z-20 font-serif text-gray-900">
+                <section className="p-2">
+                    <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas x2 prueba</h4>
+                    <div className="flex w-full gap-4 overflow-x-scroll sm:flex-row z-20">
+                        <Historias />
+                    </div>
+                </section>
             </div>
         </div>
     );

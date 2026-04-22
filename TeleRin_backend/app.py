@@ -573,6 +573,10 @@ def crear_historia():
             return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "warning"})
         if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
             return jsonify({"mensaje":"Llena todos los datos","tipo": "warning"})
+        if len(nombre_historia.split(" "))>8 or len(nombre_historia)>140:
+            return jsonify({"mensaje": "El nombre de la historia es muy largo","tipo": "warning"})
+        if len(descripcion_historia.split(" "))>100 or len(descripcion_historia)>1000:
+            return jsonify({"mensaje":"La descripcion de la historia es muy larga","tipo": "warning"})
         if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia} , "historias"):
             return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "warning"})
         if len(texto_historia.replace(" ", ""))<1000:
@@ -652,7 +656,9 @@ def crear_saga():
     mensaje, resultado = validar_imagen_completa(imagen_saga)
     if resultado:
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
-    if len(descripcion_saga.split(" "))>60:
+    if len(nombre_saga.split(" "))>8 or len(nombre_saga)>140:
+        return jsonify({"mensaje": "El nombre de la saga es muy largo","tipo": "danger"})
+    if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>1000:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)
