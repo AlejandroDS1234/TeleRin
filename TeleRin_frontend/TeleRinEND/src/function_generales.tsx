@@ -86,3 +86,18 @@ export function Suiche({ label, register }) {
     );
 }
 
+import { useEffect, useState } from "react";
+
+export function useIsLg() {
+    const [isLg, setIsLg] = useState(window.innerWidth >= 1024);
+
+    useEffect(() => {
+        const handleResize = () => setIsLg(window.innerWidth >= 1024);
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return isLg;
+}

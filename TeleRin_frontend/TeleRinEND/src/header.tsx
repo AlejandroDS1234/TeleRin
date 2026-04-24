@@ -26,7 +26,7 @@ function Header({ url = "/" }: HeaderProps) {
                 <motion.div className="h-[4px] bg-black "
                     initial={{ width: 0 }}
                     animate={{ width: "92%" }}
-                    transition={{ duration: 1.5 }}
+                    transition={{ duration: 1.4 }}
                 />
             </div>
         </motion.header>
