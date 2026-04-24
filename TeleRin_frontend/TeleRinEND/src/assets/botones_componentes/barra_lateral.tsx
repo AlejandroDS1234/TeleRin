@@ -1,14 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../componentes/userContext";
 import { useState } from "react";
-import { Search, BookCopy, Feather, Landmark } from "lucide-react";
+import { Search, DoorClosed, Feather, Landmark } from "lucide-react";
 import { motion } from "framer-motion";
-import { useIsLg } from "../../function_generales";
+import { useIsLg, redirigir } from "../../function_generales";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { usuario } = useUser();
+  const { usuario, setUsuario } = useUser();
   const [abierta, setabierta] = useState(false);
   const isLg = useIsLg();
 
@@ -18,7 +18,6 @@ function Navbar() {
     { ruta: "/inicio", Icono: Landmark, Texto: "Inicio" },
     { ruta: "/buscar", Icono: Search, Texto: "Buscar" },
     { ruta: "/editor", Icono: Feather, Texto: "Crear Historia" },
-    { ruta: "/iniciar_sesion", Icono: BookCopy, Texto: "Cerrar Sesión" }
   ];
 
   const iconos = {
@@ -68,8 +67,9 @@ function Navbar() {
       animate={abierta ? "abierta" : "cerrada"}
     >
       <motion.button
-        className={`lg:w-[90%] hover:cursor-pointer flex flex-row items-center`}
+        className={`lg:w-[90%] justify-center lg:justify-start hover:cursor-pointer flex flex-1 flex-row items-center`}
         onClick={() => navigate("/perfil")}
+        whileHover={{ scale: 1.05 }}
       >
         <motion.div
           variants={{
@@ -97,8 +97,9 @@ function Navbar() {
       {items.map(({ ruta, Icono, Texto }) => (
         <motion.button
           key={ruta}
-          className={`lg:w-[90%] hover:cursor-pointer flex flex-row items-center`}
+          className={`justify-center lg:justify-start lg:w-[90%] hover:cursor-pointer flex flex-1 flex-row items-center`}
           onClick={() => navigate(ruta)}
+          whileHover={{ scale: 1.05 }}
         >
           <motion.div
             variants={iconos}
@@ -110,6 +111,31 @@ function Navbar() {
             className={`hidden lg:block lg:whitespace-nowrap ${resaltado === ruta ? "text-[#FF0000]" : ""} `}>{Texto}</motion.p>
         </motion.button>
       ))}
+      <motion.button
+        className={`justify-center lg:justify-start lg:w-[90%] hover:cursor-pointer flex flex-1 flex-row items-center`}
+        onClick={async () => {
+          const pro = await fetch("/api/cerrar_sesion", {
+            method: "POST",
+            credentials: "include"
+          })
+          const res = await pro.json()
+          if (pro.ok) {
+            setUsuario(null);
+
+            redirigir(navigate, res)
+          }
+        }}
+        whileHover={{ scale: 1.05 }}
+      >
+        <motion.div
+          variants={iconos}
+          className="w-min h-min"
+        >
+          <DoorClosed />
+        </motion.div>
+        <motion.p variants={textos}
+          className={`hidden lg:block lg:whitespace-nowrap `}>Cerrar Sesión</motion.p>
+      </motion.button>
     </motion.div>
   );
 }

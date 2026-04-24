@@ -493,10 +493,10 @@ def cambiar_contraseña():
         return jsonify({"redirigir": "/iniciar_sesion", "mensaje_redirigir": {"mensaje": "Contraseña cambiada exitosamente, inicia sesión de nuevo", "tipo": "success"}})
     return jsonify({"mmm": "No te creo 😑"})
 
-@app.route("/cerrar_sesion", methods=["GET", "POST"])
+@app.route("/api/cerrar_sesion", methods=["GET", "POST"])
 def cerrar_sesion():
     session.clear()
-    return redirect(url_for("index"))
+    return jsonify({"redirigir": "/", "mensaje_redirigir": {"mensaje": "Sesión cerrada", "tipo": "success"}})
 
 @app.route("/api/necesita_usuario")
 @necesita("usuario", lambda: session.get("usuario")!=None)
