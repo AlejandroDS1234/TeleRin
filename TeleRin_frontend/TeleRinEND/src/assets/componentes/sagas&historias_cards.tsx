@@ -15,8 +15,8 @@ function Lineas({ grosor, espaciado, cantidad }) {
     )
 }
 
+
 export function Sagacard({ ids, img, titulo, descripcion, libros }) {
-    console.log(descripcion)
     return (
         <Link to={ids}
             className={`relative p-4 bg-[#e4e0d6] flex flex-col border-2 border-black border-double h-70 flex-none w-50 sm:w-full`}
@@ -27,10 +27,9 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }) {
                     <div className='bg-black w-[98%] border-black h-px' />
                 </div>
 
-                <motion.h3
+                <h3
                     className='truncate w-full font-bold text-2xl font-serif h-min text-center'
-                    whileHover={{ scale: 1.05 }}
-                >{titulo}</motion.h3>
+                >{titulo}</h3>
 
                 <div className='flex flex-col w-full justify-center items-center gap-px'>
                     <div className='bg-black w-[98%] border-black h-px' />
@@ -53,26 +52,57 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }) {
     )
 }
 
-export function HistoriaCard({ idh, titulo, descripcion, calificacion }) {
+export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }) {
+
+    const MotionHeart = motion(BookHeart)
+    const MotionLink = motion(Link)
+
     return (
-        <Link
+        <MotionLink
+            whileHover={{ scale: 0.95 }}
             to={`/historia/${encodeURIComponent(idh)}`}
-            className="bg-[#e4e0d6] flex flex-col items-center border-1 border-black flex-none w-50 sm:w-full h-70 p-4"
+            className="bg-[#e4e0d6] flex flex-col gap-4 border border-black border-dotted flex-none w-50 sm:w-full h-50 p-4"
         >
-            <h3 className="font-bold text-center">{titulo}</h3>
-
-            <div className="mt-auto text-center">
+            <h3 className="font-bold w-full line-clamp-2">{titulo}</h3>
+            <div className="w-full line-clamp-3">
                 <p>{descripcion}</p>
-
-                <small className="flex justify-center mt-2">
+            </div>
+            <small className="mt-auto w-full flex justify-between">
+                <motion.div className="flex gap-[0.5px]"
+                    variants={{
+                        normal: {},
+                        marcado: {
+                            transition: {
+                                staggerChildren: 0.1,
+                                delay: 1
+                            }
+                        }
+                    }}
+                    initial="normal"
+                    whileInView="marcado"
+                    viewport={{ once: true, amount: 1 }}
+                >
                     {[...Array(3)].map((_, i) => (
-                        <span key={i}>
-                            {i < calificacion ? <BookHeart /> : <Book />}
+                        <span
+                            key={i}>
+                            {i < calificacion ?
+                                <MotionHeart
+                                    variants={{
+                                        normal: {
+                                            scale: 1
+                                        },
+                                        marcado: {
+                                            scale: [1, 1.15, 1],
+                                        }
+                                    }}
+                                    color="#FF0000" /> :
+                                <Book />}
                         </span>
                     ))}
-                </small>
-            </div>
-        </Link>
+                </motion.div>
+                <p className="font-bold truncate">--{autor}</p>
+            </small>
+        </MotionLink>
     );
 }
 

@@ -124,6 +124,7 @@ function Historias() {
                     titulo={`${historia.nombre_historia}`}
                     descripcion={`${historia.descripcion_historia}`}
                     calificacion={`${historia.calificacion_p}`}
+                    autor={`${historia.nombre_usuario}`}
                 />
             ))}
         </>
@@ -134,9 +135,9 @@ function Historias() {
 function Inicio() {
     return (
         <div>
-            <div className="absolute top-0 left-0 h-full w-full z-10">
+            {/* <div className="absolute top-0 left-0 h-full w-full z-10">
                 <Sobrefondo_principal />
-            </div>
+            </div> */}
             <div className="relative z-20 font-serif text-gray-900 ">
                 <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Principales</h4>
@@ -148,7 +149,8 @@ function Inicio() {
             <br />
 
             <div className="relative z-20 font-serif text-gray-900 ">
-                <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
+                <section
+                    className="p-4 bg-[] aling-center flex flex-col w-full z-20">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
                     <div className=" flex overflow-x-scroll overflow-y-hidden sm:overflow-hidden sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
                         <Sagas />
@@ -167,20 +169,7 @@ function Inicio() {
                     </div>
                 </section>
             </div>
-            <br />
-
-            <div className="relative z-20 font-serif text-gray-900 ">
-                <section className="p-2">
-                    <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
-                    <div
-                        className=" flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20"
-                    >
-                        <Historias />
-                    </div>
-                </section>
-            </div>
-
-            <div className="fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
+            <div className="z-30 fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
                 <UseMensajeRedirigir />
             </div>
         </div>
