@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict F4dMlyqRCGWDjpEVXCjTJsgN3yKbVCgx8eILKLkvWHUgLNti9BSNR4KdWhON2Fs
+\restrict PthhQd7dL8KR5MmGAI5UFURIOnov9V8lbttCgddCj87Dx6ZAhZYrMZDz9U9BY4G
 
 -- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-03-23 19:33:26
+-- Started on 2026-04-27 14:48:12
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -268,8 +268,10 @@ ALTER TABLE ONLY public.paletas ALTER COLUMN id_paleta SET DEFAULT nextval('publ
 
 COPY public."USUARIOS" (nombre_usuario, correo_usuario, "contraseña_usuario", id_pais, id_genero, descripcion_personal, foto_perfil_usuario, ip_usuario, codigo_usuario, id_paleta, idioma_usuario) FROM stdin;
 Yesi	yesickrivera@gmail.com	scrypt:32768:8:1$mgfPi1AwZmlLjL4S$fc94fd67e5b212bfe3bd3e5d1c85a5d3607bd403592c906f6b3a94ed4ac4f1b12f418deb467dea9634f744106910b21f8881128f3acc3d7d2117476629cdd98e	0	0	\N	predefinido.jpg	scrypt:32768:8:1$gf1y4v7z0b5FJPEY$ac1fd1bc9d957f71ffaa860a760ad37d17090e36fd8d7f6eaddad6510129bbc8ebf68777afb69bf8d93fddfc25ca576484c37e5595bfa2901ad252fe179bb27f	940371yesic	\N	\N
-isaacKawaiUwU 2.0	ducuarasatizabalalejandro@gmail.com	scrypt:32768:8:1$wd6rx8ojlp1ICMPM$f30630e8f8b2d55732222b2c788ae18827af4db70acb1323ad7c74d461ef07f2c24568fbc17728dfc47f1f9fcf34c80ccf5d722980e7ad660dd67dfc282d8780	192	1	hola1234 :)	994474ducua_perfil.jpg	scrypt:32768:8:1$uymsnwNeTq5kiXrr$36aa2f583e7b8aa4e8e13df78c91ac132d734ac8574f64dafa76c7228e2ee0db338f705ad1f66939bf0939335ab74d35322dd372d2f9019499aed730688a173b	994474ducua	556416	spanish
-alejandro	aleducsa@alpumarejopalmira.edu.co	scrypt:32768:8:1$nfDWd4ChH9eLPV7T$83d9a6d62fc76d27f1ba44052328f94cc911b46f9b67e35be38d45e5cfddf49ff33a56835c96a95ab899dbc995c7e54ffc512f0ef942dcf22bc024b9f4c264d3	37	1	programador	924583aledu_perfil.jpg	scrypt:32768:8:1$dwnEtJRD85jCm5Vt$005daabe64dc2877b3845ef3b9f3e69f56764ba8cb5eb6170fb9ef59f91fa54b5a13b5cb067da769704f4b393dd86b6e6d25e03039d898072635addb97276e3c	924583aledu	846907	\N
+alejandro	aleducsaj@alpumarejopalmira.edu.co	scrypt:32768:8:1$nfDWd4ChH9eLPV7T$83d9a6d62fc76d27f1ba44052328f94cc911b46f9b67e35be38d45e5cfddf49ff33a56835c96a95ab899dbc995c7e54ffc512f0ef942dcf22bc024b9f4c264d3	37	1	programador	924583aledu_perfil.jpg	scrypt:32768:8:1$dwnEtJRD85jCm5Vt$005daabe64dc2877b3845ef3b9f3e69f56764ba8cb5eb6170fb9ef59f91fa54b5a13b5cb067da769704f4b393dd86b6e6d25e03039d898072635addb97276e3c	924583aledu	846907	\N
+Alejo 123 	ducuarasatizabalalejandro@gmail.com	scrypt:32768:8:1$27OD1UN2UT0FOubX$502d715fe0229a1032cac76695688c2c0bc1c0f6a325f58ec8500d973f8ce6a9ea8d1940d1c3357e38e354d01f5ee8aaa22c07b44030ae020788445b16d1ab76	37	1	Programador	994474ducua_perfil.jpg	scrypt:32768:8:1$EHisMEcTk4PLpphj$c5657b61d622ab6b8c19c90007947cbef6ee81bce7ec209da6c5a428fb061d69e2ff089d049731574a74d830d8e1f06a45a77e4dfb1de9ca54e0321a90dc1a81	994474ducua	556416	spanish
+the Crow23	jcbprofesion@gmail.com	scrypt:32768:8:1$nN3bkDzBr1OOcFyp$e11e135d4ce3273e3863fb3aa817dce57bdc897caf7915858fc21ef67b32638bfa678fa1b61f21e4ca05e0dec8c2b8047baaef61f030b674707185896e56ff05	37	1	plumas y palabras son llevadas por el viento	489228jcbpr_perfil.jpg	scrypt:32768:8:1$B0w09JAp6fOBujse$f2e905ddfdaf762c5de99a7e74e6d07da96c631908e2b0017b11d2422f80fa4d8f75ba7495d9d458a09599e1ca5f85b20586c0ca285bac2526ad12de8cd5550c	489228jcbpr	1	spanish
+Ema_Bagnol	emanuelbanol4@gmail.com	scrypt:32768:8:1$psD2flt1UzJeKQ5U$e273bba092e00cfa9f215b49725f11f409ebdc0120238f859d0f7aad058be94081125c80ed2e5de05fae143b46ca658265514c8a7c7fe9634b32f991b1e43c3e	37	1	Betatester	903204emanu_perfil.jpg	scrypt:32768:8:1$pCZehUCoshw7iTQw$0a2cb9d8e42917754df8d407b5d4ef894009bfac6bb6c537475e5a5833979a47638eb001941bba8e867bd6bfef5eba1b140c2ba3c24f11bb8ed696be42b9d915	903204emanu	1	spanish
 \.
 
 
@@ -280,11 +282,15 @@ alejandro	aleducsa@alpumarejopalmira.edu.co	scrypt:32768:8:1$nfDWd4ChH9eLPV7T$83
 --
 
 COPY public.calificacion_historia (codigo_usuario, id_historia, calificacion) FROM stdin;
-994474ducua	-historia-924583aledu-un Historia	1
 924583aledu	-historia-994474ducua-1	1
 924583aledu	-historia-994474ducua-prueba 34	1
 994474ducua	-historia-994474ducua-1	3
 994474ducua	-historia-994474ducua-prueba 34	1
+994474ducua	-historia-994474ducua--primer historia con hashtag	2
+994474ducua	-historia-994474ducua-2	2
+994474ducua	-historia-994474ducua--probando recomendador	3
+994474ducua	-historia-924583aledu-un Historia	2
+994474ducua	-historia-924583aledu--Ahora si la primer histora con #	2
 \.
 
 
@@ -353,6 +359,22 @@ COPY public.historial (id_historia, tiempo_vista, codigo_usuario) FROM stdin;
 -historia-994474ducua-1	2026-03-18 20:15:56	994474ducua
 -historia-994474ducua-prueba 34	2026-03-19 21:16:16	924583aledu
 -historia-994474ducua-prueba 34	2026-03-20 00:20:54	994474ducua
+-historia-924583aledu--994474ducua	2026-04-27 15:08:28	994474ducua
+-historia-924583aledu--994474ducua	2026-04-27 15:08:28	994474ducua
+-historia-994474ducua--probando recomendador	2026-04-27 07:46:18	994474ducua
+-historia-994474ducua--probando recomendador	2026-04-27 07:46:18	994474ducua
+-historia-994474ducua--segunda historia con hashtags	2026-04-27 15:46:19	994474ducua
+-historia-994474ducua--segunda historia con hashtags	2026-04-27 15:46:19	994474ducua
+-historia-924583aledu-un Historia	2026-04-27 12:32:25	994474ducua
+-historia-924583aledu-un Historia	2026-04-27 12:32:25	994474ducua
+-historia-994474ducua-primer historia de la pagina	2026-04-13 03:58:28	994474ducua
+-historia-994474ducua-primer historia de la pagina	2026-04-13 03:58:28	994474ducua
+-historia-924583aledu--Ahora si la primer histora con #	2026-04-27 14:07:59	994474ducua
+-historia-924583aledu--Ahora si la primer histora con #	2026-04-27 14:07:59	994474ducua
+-historia-994474ducua--primer historia con hashtag	2026-04-27 06:05:32	994474ducua
+-historia-994474ducua--primer historia con hashtag	2026-04-27 06:05:32	994474ducua
+-historia-994474ducua-2	2026-04-27 14:56:47	994474ducua
+-historia-994474ducua-2	2026-04-27 14:56:47	994474ducua
 \.
 
 
@@ -838,7 +860,7 @@ ALTER TABLE ONLY public.hashtags_sagas
 
 
 --
--- TOC entry 3362 (class 2606 OID 16555)
+-- TOC entry 3362 (class 2606 OID 16551)
 -- Name: paletas paletas_codigo_usuario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -846,11 +868,11 @@ ALTER TABLE ONLY public.paletas
     ADD CONSTRAINT paletas_codigo_usuario_fkey FOREIGN KEY (codigo_usuario) REFERENCES public."USUARIOS"(codigo_usuario) NOT VALID;
 
 
--- Completed on 2026-03-23 19:33:27
+-- Completed on 2026-04-27 14:48:12
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict F4dMlyqRCGWDjpEVXCjTJsgN3yKbVCgx8eILKLkvWHUgLNti9BSNR4KdWhON2Fs
+\unrestrict PthhQd7dL8KR5MmGAI5UFURIOnov9V8lbttCgddCj87Dx6ZAhZYrMZDz9U9BY4G
 

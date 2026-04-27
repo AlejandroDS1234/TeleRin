@@ -13,7 +13,7 @@ function Header({ url = "/" }: HeaderProps) {
                     <motion.p
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1, delay: 1.6 }}
+                        transition={{ duration: 0.9, delay: 1.6 }}
                     >TeleRin</motion.p>
                 </Link>
             </div>
@@ -21,12 +21,12 @@ function Header({ url = "/" }: HeaderProps) {
                 <motion.div className="h-[2px] bg-black "
                     initial={{ width: 0 }}
                     animate={{ width: "95%" }}
-                    transition={{ duration: 1 }}
+                    transition={{ duration: 0.9 }}
                 />
                 <motion.div className="h-[4px] bg-black "
                     initial={{ width: 0 }}
                     animate={{ width: "92%" }}
-                    transition={{ duration: 1.4 }}
+                    transition={{ duration: 1.3 }}
                 />
             </div>
         </motion.header>

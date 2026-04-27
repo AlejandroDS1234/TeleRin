@@ -315,12 +315,15 @@ def paleta_en_base(paleta: dict, codigo_usuario: str):
         return False
     return paleta[0]["id_paleta"]
 
+@app.route("/api/guardar_historial/<id_historia>", methods=["POST"])
 def guardar_historial(id_historia: str):
     codigo_usuario=session["usuario"]["codigo_usuario"]
     tiempo=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if dato_en_db(None, {"codigo_usuario": codigo_usuario, "id_historia": id_historia}, "historial"):
         actualizar_datos("historial", {"tiempo_vista": tiempo}, {"codigo_usuario": codigo_usuario, "id_historia": id_historia})
+        print("actualizado", random.randint(100000,999999))
         return
+    print("insertado", random.randint(100000,999999))
     insertar_db("historial", {"codigo_usuario": codigo_usuario, "tiempo_vista": tiempo, "id_historia": id_historia})
 
 def hashtag_db(texto: str, id: str, tabla_campo: str):
@@ -598,8 +601,6 @@ def historia(id_historia):
     if historia[0]["visibilidad_historia"] == 0:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
     historia[0]["fecha_actualizacion"]=historia[0]["fecha_actualizacion"].strftime("%d/%m/%Y")
-    guardar_historial(id_historia)
-    calificacion = dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "calificacion_historia")
     return jsonify({"historia": historia[0]})
 
 @app.route("/api/calificar_historia/<id_historia>", methods=["POST"])
@@ -631,7 +632,7 @@ def calificacion_historia(id_historia):
     calificacion = dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "calificacion_historia")
     return jsonify(calificacion[0]["calificacion"] if calificacion else 0)
 
-@app.route("/historial_usuario", methods=["POST"])
+@app.route("/api/historial_usuario", methods=["POST"])
 def historial_usuario():
     codigo_usuario=session["usuario"]["codigo_usuario"]
     with conectar() as db:

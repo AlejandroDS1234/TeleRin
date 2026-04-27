@@ -1,15 +1,62 @@
 import { useUser } from "../assets/componentes/userContext"
 import { UserPen, NotepadText, Loader, ImagePlus, ThumbsUp, SquareX } from 'lucide-react'
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { enviarInfoServer } from "../function_generales"
 import { MensajePlano } from "../assets/componentes/mensaje"
+import { HistoriaCard } from "../assets/componentes/sagas&historias_cards";
 import Modal from "../assets/componentes/modal"
 import { set } from "react-hook-form"
 
 
 function Historial() {
+    const [historial, setHistorial] = useState([]);
+    const [cargando, setCargando] = useState(true)
+    const [error, setError] = useState(false);
+    useEffect(() => {
+        const historialBack = async () => {
+            try {
+                let pro = await fetch("/api/historial_usuario", { method: "POST", credentials: "include" })
+                let historial = await pro.json()
+                setHistorial(historial)
+                setCargando(false)
+            } catch (Error) {
+                setError(true)
+            }
+
+        }
+        historialBack()
+    }, [])
+
+    if (error) {
+
+        return (
+            <div>
+                <p>error al cargar las historias</p>
+            </div>
+        )
+    }
+
+    if (cargando) {
+        return (
+            <div>
+                <p>Cargando <Loader className="animate-spin" /></p>
+            </div>
+        )
+    }
+
     return (
-        <div>hi</div>
+        <>
+            {historial.map(historia => (
+                <HistoriaCard
+                    key={`${historia.id_historia}`}
+                    idh={`${historia.id_historia}`}
+                    titulo={`${historia.nombre_historia}`}
+                    descripcion={`${historia.descripcion_historia}`}
+                    calificacion={`${historia.calificacion_p}`}
+                    autor={`${historia.nombre_usuario}`}
+                />
+            ))}
+        </>
     )
 }
 
@@ -108,15 +155,26 @@ function Imagen() {
 
     const [nuevaFoto, setNuevaFoto] = useState(null)
     const [imagen, setImagen] = useState("")
+    const inputFotoRef = useRef(null)
 
     const [res, setRes] = useState(null)
 
+    function limpiarSeleccionFoto() {
+        setNuevaFoto(null)
+        setImagen("")
+        if (inputFotoRef.current) {
+            inputFotoRef.current.value = ""
+        }
+    }
 
 
     return (
         < div className="flex justify-center items-center mb-4 z-1" >
             <Modal open={abrirModal}
-                onClose={() => setAbrirModal(false)}
+                onClose={() => {
+                    limpiarSeleccionFoto()
+                    setAbrirModal(false)
+                }}
                 className="bg-[var(--color_principal)] w-full m-5 sm:max-w-lg flex flex-col gap-4 items-center">
 
 
@@ -125,13 +183,15 @@ function Imagen() {
                     flex items-center justify-center hover:cursor-pointer overflow-hidden`} >
                     {nuevaFoto ? <img src={imagen} className="object-cover aspect-square" /> : <ImagePlus size={200} className="" />}
                     <input
+                        ref={inputFotoRef}
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onInput={(e) => {
-                            if (e.target.files[0]) {
-                                setNuevaFoto(e.target.files[0])
-                                setImagen(URL.createObjectURL(e.target.files[0]))
+                        onChange={(e) => {
+                            const archivo = e.target.files?.[0]
+                            if (archivo) {
+                                setNuevaFoto(archivo)
+                                setImagen(URL.createObjectURL(archivo))
                             }
                         }} />
                 </label>
@@ -147,8 +207,7 @@ function Imagen() {
                             if (res.tipo == "success") {
                                 setUsuario((prev) => ({ ...prev, foto_perfil_usuario: res.foto_perfil_usuario }))
                                 setTimeout(() => {
-                                    setNuevaFoto(null)
-                                    setImagen("")
+                                    limpiarSeleccionFoto()
                                     setRes(null)
                                     setAbrirModal(false)
                                 }, 1500)
@@ -158,8 +217,7 @@ function Imagen() {
                         color="#FF0000"
                         className="hover:cursor-pointer"
                         onClick={() => {
-                            setNuevaFoto(null)
-                            setImagen("")
+                            limpiarSeleccionFoto()
                         }} />
                 </div>)}
                 {nuevaFoto && (<p>{nuevaFoto.name}</p>)}
@@ -294,24 +352,29 @@ function Genero() {
 
 function Perfil() {
     return (
-        <div className="max-w-md bg-[#F4E2B6] border-4 border-black p-2 font-serif text-center shadow-xl">
-            <h1 className="text-4xl font-extrabold tracking-widest border-b-4 border-black pb-2 mb-4">
-                SE BUSCA
-            </h1>
-            <Imagen />
-            <h2 className="text-xl font-bold uppercase border-y-2 border-black py-1 mb-3">
-                Lector Serial
-            </h2>
-            <Nombre />
-            <Descripcion />
-            <div className="flex gap-4">
-                <Pais />
-                <Genero />
-            </div>
-            <div className="flex justify-center border-t-2 border-black pt-3 mt-4">
-                <p className="font-bold uppercase">Se busca información <br /><small>(Escribe en los campos para editar)</small></p>
-            </div>
-        </div >
+        <>
+            {/* perfil */}
+            <div className="mx-auto max-w-md bg-[#F4E2B6] border-4 border-black p-2 font-serif text-center shadow-xl">
+                <h1 className="text-4xl font-extrabold tracking-widest border-b-4 border-black pb-2 mb-4">
+                    SE BUSCA
+                </h1>
+                <Imagen />
+                <h2 className="text-xl font-bold uppercase border-y-2 border-black py-1 mb-3">
+                    Lector Serial
+                </h2>
+                <Nombre />
+                <Descripcion />
+                <div className="flex gap-4">
+                    <Pais />
+                    <Genero />
+                </div>
+                <div className="flex justify-center border-t-2 border-black pt-3 mt-4">
+                    <p className="font-bold uppercase">Se busca información <br /><small>(Escribe en los campos para editar)</small></p>
+                </div>
+            </div >
+
+            {/* historial y listas */}
+        </>
     )
 }
 

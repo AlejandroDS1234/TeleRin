@@ -4,6 +4,7 @@ import { Sagacard, HistoriaCard } from "../assets/componentes/sagas&historias_ca
 import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
 import { Loader } from 'lucide-react'
 import Sobrefondo_principal from "../assets/sobre_fondos_de_menus/sobre_fondo_principal";
+import { motion } from 'framer-motion'
 
 
 function HistoriasPrincipales() {
@@ -133,8 +134,15 @@ function Historias() {
 
 
 function Inicio() {
+    const yaAnimado = sessionStorage.getItem("inicio-animado");
     return (
-        <div>
+        <motion.div
+            initial={yaAnimado ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 2 }}
+            viewport={{ once: true }}
+            onAnimationComplete={() => sessionStorage.setItem("inicio-animado", "true")}
+        >
             {/* <div className="absolute top-0 left-0 h-full w-full z-10">
                 <Sobrefondo_principal />
             </div> */}
@@ -172,7 +180,7 @@ function Inicio() {
             <div className="z-30 fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
                 <UseMensajeRedirigir />
             </div>
-        </div>
+        </motion.div>
     );
 }
 

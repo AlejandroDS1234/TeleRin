@@ -33,6 +33,8 @@ function RutasConSesion() {
         );
     }
 
+
+
     return (
         <>
             <div className="absolute w-full insert-0 lg:pl-[60px] z-30">

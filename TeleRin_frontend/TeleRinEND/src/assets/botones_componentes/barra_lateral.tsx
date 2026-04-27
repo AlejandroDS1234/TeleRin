@@ -121,7 +121,7 @@ function Navbar() {
           const res = await pro.json()
           if (pro.ok) {
             setUsuario(null);
-
+            sessionStorage.removeItem("inicio-animado")
             redirigir(navigate, res)
           }
         }}
