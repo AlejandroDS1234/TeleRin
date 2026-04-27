@@ -11,6 +11,8 @@
 <a class="foto_perfil" style="width: 7em" href="{{ url_for('perfil') }}"><img src="{{ url_for('perfil_img', filename=session['usuario']['foto_perfil_usuario']) }}"></a>
 {% endblock header %}
 
+
+
 {% block main %}
 <main id="saga" class="main_con_menu_lateral">
     {% include "layouts/menu_lateral.html" %}

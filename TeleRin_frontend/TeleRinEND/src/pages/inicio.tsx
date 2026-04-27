@@ -150,7 +150,7 @@ function Inicio() {
             <div className="relative z-20 font-serif text-gray-900 ">
                 <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
-                    <div className=" flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
+                    <div className=" flex overflow-x-scroll overflow-y-hidden sm:overflow-hidden sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
                         <Sagas />
                     </div>
                 </section>

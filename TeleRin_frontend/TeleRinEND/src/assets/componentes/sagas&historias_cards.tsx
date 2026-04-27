@@ -27,7 +27,10 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }) {
                     <div className='bg-black w-[98%] border-black h-px' />
                 </div>
 
-                <h3 className='truncate w-full font-bold text-2xl font-serif h-min text-center'>{titulo}</h3>
+                <motion.h3
+                    className='truncate w-full font-bold text-2xl font-serif h-min text-center'
+                    whileHover={{ scale: 1.05 }}
+                >{titulo}</motion.h3>
 
                 <div className='flex flex-col w-full justify-center items-center gap-px'>
                     <div className='bg-black w-[98%] border-black h-px' />
@@ -41,11 +44,11 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }) {
                 <div>{libros} libros</div>
             </small>
             <Lineas grosor='0.1px' espaciado='1px' cantidad={2} />
-            <motion.p className='absolute bottom-0 h-40'
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-            >{descripcion}kk</motion.p>
+            <motion.div className='absolute bottom-0 right-0 left-0 w-full h-[80%] bg-[#e4e0d6]/80 p-4'
+                initial={{ opacity: 0, y: 10 }}
+                whileHover={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+            ><p className='text-left w-full line-clamp-8'>{descripcion}</p></motion.div>
         </Link>
     )
 }
