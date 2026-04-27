@@ -24,7 +24,6 @@ function Iniciar_sesion_Form() {
             setRes(res);
             redirigir(navegate, res);
         } catch (error) {
-            console.log(error);
             setRes({ mensaje: "Error de conexión", tipo: "danger" });
         } finally {
             setCargando(false);

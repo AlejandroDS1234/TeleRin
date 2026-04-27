@@ -40,7 +40,6 @@ function Sagas() {
                 setCargando(false)
             } catch (Error) {
                 setError(true)
-                console.log(Error)
             }
 
         }
@@ -70,6 +69,7 @@ function Sagas() {
                     key={`${saga.id_saga}`}
                     ids={`${saga.id_saga}`}
                     img={`${saga.imagen_saga}`}
+                    descripcion={`${saga.descripcion_saga}`}
                     titulo={`${saga.nombre_saga}`}
                     libros={`${saga.libros}`}
                 />
@@ -88,12 +88,10 @@ function Historias() {
             try {
                 let pro = await fetch("/api/simulacion_recomendar_libros", { method: "POST", credentials: "include" })
                 let historias = await pro.json()
-                console.log(historias)
                 setHistorias(historias)
                 setCargando(false)
             } catch (Error) {
                 setError(true)
-                console.log(Error)
             }
 
         }
@@ -134,7 +132,6 @@ function Historias() {
 
 
 function Inicio() {
-    console.log("estoy en inicio")
     return (
         <div>
             <div className="absolute top-0 left-0 h-full w-full z-10">
@@ -148,35 +145,43 @@ function Inicio() {
                     </div>
                 </section>
             </div>
+            <br />
+
             <div className="relative z-20 font-serif text-gray-900 ">
                 <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
-                    <div className="flex w-full gap-4 overflow-x-scroll">
+                    <div className=" flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
                         <Sagas />
                     </div>
                 </section>
             </div>
             <br />
+
             <div className="relative z-20 font-serif text-gray-900 ">
                 <section className="p-2">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
-                    <div className="flex w-full gap-4 overflow-x-scroll sm:flex-row z-20 ">
+                    <div
+                        className=" flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20"
+                    >
                         <Historias />
                     </div>
                 </section>
-
-                <div className="fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
-                    <UseMensajeRedirigir />
-                </div>
             </div>
             <br />
-            <div className="relative z-20 font-serif text-gray-900">
+
+            <div className="relative z-20 font-serif text-gray-900 ">
                 <section className="p-2">
-                    <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas x2 prueba</h4>
-                    <div className="flex w-full gap-4 overflow-x-scroll sm:flex-row z-20">
+                    <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
+                    <div
+                        className=" flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20"
+                    >
                         <Historias />
                     </div>
                 </section>
+            </div>
+
+            <div className="fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
+                <UseMensajeRedirigir />
             </div>
         </div>
     );

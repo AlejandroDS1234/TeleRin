@@ -5,6 +5,7 @@ import { Loader, BookHeart, Book } from 'lucide-react'
 import { redirigir } from "../function_generales.tsx";
 import { useNavigate } from "react-router-dom";
 import { MensajePlano } from "../assets/componentes/mensaje.tsx";
+import { set } from "react-hook-form";
 
 
 function Calificacion() {
@@ -38,7 +39,7 @@ function Calificacion() {
             const data = await res.json();
             setRes(data);
         } catch (error) {
-            console.log(error);
+            setRes({ "mensaje": "Error de conexión", "tipo": "danger" });
         }
     }
 
@@ -71,8 +72,6 @@ function Historias() {
     useEffect(() => {
         const fetchContenido = async () => {
             try {
-                ;
-                console.log(id_historia)
                 const res = await fetch(`/api/historia/${encodeURIComponent(id_historia)}`, { method: "POST", credentials: "include" })
                 const historia = await res.json();
                 redirigir(navigate, historia);
@@ -95,7 +94,6 @@ function Historias() {
             </div>
         )
     }
-    console.log(contenido)
 
     return (
         <div className="flex justify-center lg:items-center">

@@ -8,16 +8,13 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const fetchUsuario = async () => {
             try {
-                console.log("Intentando cargar usuario...");
                 const response = await fetch("/api/sesion", {
                     method: "POST",
                     credentials: "include"
                 });
-                console.log("Response status:", response.status);
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("Datos recibidos:", data);
                     setUsuario(data.usuario);
                 } else {
                     console.error("Error en respuesta:", response.status, response.statusText);

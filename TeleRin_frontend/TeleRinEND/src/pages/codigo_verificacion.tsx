@@ -1,5 +1,5 @@
 import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { enviarInfoServer, redirigir } from "../function_generales";
 import { Loader, Hash } from "lucide-react";
 import { useState } from "react";
@@ -18,11 +18,10 @@ function CodigoVerificacion() {
         setCargando(true);
         try {
             let res = await enviarInfoServer("/api/validar_codigo", data);
-            console.log(res);
             redirigir(navigate, res);
             setRes(res);
         } catch (error) {
-            console.log(error);
+            setRes({ "mensaje": "Error de conexión", "tipo": "danger" });
         } finally {
             setCargando(false);
         }

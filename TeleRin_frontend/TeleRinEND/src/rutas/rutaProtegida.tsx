@@ -20,7 +20,6 @@ function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
                     if (data.redirigir) {
                         setIsAuthorized(false);
                         setRedirectPath(data.redirigir);
-                        console.log(data.redirigir);
                     }
                 } else {
                     setIsAuthorized(false);

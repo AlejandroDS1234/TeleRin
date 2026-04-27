@@ -20,7 +20,6 @@ export async function enviarInfoServer(url: string, data: any) {
 
 export function redirigir(navigate: any, datos: any = {}) {
     if (!datos.redirigir) return;
-    console.log(datos);
     navigate(datos.redirigir, { state: datos.mensaje_redirigir ? datos.mensaje_redirigir : {} });
 }
 

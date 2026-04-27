@@ -267,7 +267,7 @@ function Genero() {
         )
     }
 
-    function hola(ji) { console.log("hola") }
+    function hola(ji) { let a = "malas practicas, creo" }
 
     return (
         <div className="flex flex-col w-full">

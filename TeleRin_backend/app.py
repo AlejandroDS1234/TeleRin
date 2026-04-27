@@ -754,7 +754,7 @@ def simulacion_recomendar():
 def simulacion_recomendar_sagas():
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s JOIN historias h ON s.id_saga =  h.id_saga AND h.visibilidad_historia = %s GROUP BY s.nombre_saga, s.id_saga LIMIT 20""", (True,))
+            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s LEFT JOIN historias h ON s.id_saga =  h.id_saga AND h.visibilidad_historia = %s GROUP BY s.nombre_saga, s.id_saga LIMIT 20""", (True,))
             sagas= cursor.fetchall()
     return jsonify(sagas)
 

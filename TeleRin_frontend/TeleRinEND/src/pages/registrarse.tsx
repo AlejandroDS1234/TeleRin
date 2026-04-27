@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { Mensaje } from "../assets/componentes/mensaje";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ function FormularioRegistro() {
             redirigir(navigate, res);
             setRes(res);
         } catch (error) {
+            setRes({ "mensaje": "Error de conexión", "tipo": "danger" });
             console.log(error);
         } finally {
             setCargando(false);
