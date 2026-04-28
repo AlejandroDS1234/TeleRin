@@ -96,6 +96,7 @@ while ($true) {
             Write-Host "Atajos disponibles:" -ForegroundColor DarkGray
             Write-Host "  Ctrl+Shift+R -> reintentar ahora" -ForegroundColor DarkGray
             Write-Host "  Ctrl+Shift+Q -> salir" -ForegroundColor DarkGray
+            Write-Host "(Espera un poco despues de hacer Ctrl+Shift+R o Ctrl+Shift+Q)"
         }
     }
     elseif ($ipActual -ne $ultimaIp) {
