@@ -16,3 +16,6 @@ pandas
 flask-cors==6.0.2
 langdetect
 sentence-transformers
+psutil
+argparse
+qrcode
