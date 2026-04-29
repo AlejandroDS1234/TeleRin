@@ -2,14 +2,13 @@ $ErrorActionPreference = "Stop"
 [Console]::InputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
-$env:PYTHONIOENCODING = "utf-8"
+$env:PYTHONIOENCODING = "utf-8" 
 chcp 65001 > $null
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $backendPath = Join-Path $root "TeleRin_backend"
 $composeFile = Join-Path $backendPath "docker-compose.yml"
-
-function Get-WifiIp {
+function Get-WifiIp { 
     $priorityPatterns = @("Wi-Fi", "WLAN", "Wireless", "802.11")
 
     foreach ($pattern in $priorityPatterns) {

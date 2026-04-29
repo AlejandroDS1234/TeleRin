@@ -642,7 +642,7 @@ def historial_usuario():
     return jsonify(historias)
 
 #rutas de sagas --------------------------------------------------------------------------------------------------
-@app.route("/crear_saga", methods=["POST"])
+@app.route("/api/crear_saga", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def crear_saga():
     nombre_saga=request.form["nombre_saga"].strip()
@@ -657,9 +657,9 @@ def crear_saga():
     mensaje, resultado = validar_imagen_completa(imagen_saga)
     if resultado:
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
-    if len(nombre_saga.split(" "))>8 or len(nombre_saga)>140:
+    if len(nombre_saga.split(" "))>4 or len(nombre_saga)>25:
         return jsonify({"mensaje": "El nombre de la saga es muy largo","tipo": "danger"})
-    if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>1000:
+    if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>400:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)

@@ -167,7 +167,6 @@ function Imagen() {
         }
     }
 
-
     return (
         < div className="flex justify-center items-center mb-4 z-1" >
             <Modal open={abrirModal}
@@ -354,7 +353,7 @@ function Perfil() {
     return (
         <>
             {/* perfil */}
-            <div className="mx-auto max-w-md bg-[#F4E2B6] border-4 border-black p-2 font-serif text-center shadow-xl">
+            <div className="mx-auto max-w-md bg-[#F4E2B6] border-4 border-black p-2 font-serif text-center shadow-xl lg:min-h-screen lg:self-stretch lg:justify-senter lg:items-center">
                 <h1 className="text-4xl font-extrabold tracking-widest border-b-4 border-black pb-2 mb-4">
                     SE BUSCA
                 </h1>

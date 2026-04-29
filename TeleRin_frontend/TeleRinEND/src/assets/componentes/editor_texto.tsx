@@ -111,7 +111,7 @@ function Editor({
 
   return (
     <div className="w-full h-full inline justify-center">
-      <div className="w-full h-full max-w-[700px] bg-white p-4 rounded shadow ">
+      <div className=" w-full h-full max-w-[700px] bg-white p-4 rounded shadow ">
         <div id={toolbarIdRef.current} className="flex justify-between p-4">
           {toolbarItems.map((item, index) => renderToolbarItem(item, index, quillRef))}
         </div>

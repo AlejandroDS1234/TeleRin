@@ -49,6 +49,28 @@
     }
 }
 
+.scroll-suave {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 120, 120, .45) transparent;
+}
+
+.scroll-suave::-webkit-scrollbar {
+    width: 666px;
+}
+
+.scroll-suave::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-suave::-webkit-scrollbar-thumb {
+    background: rgba(120, 120, 120, .45);
+    border-radius: 999px;
+}
+
+.scroll-suave::-webkit-scrollbar-thumb:hover {
+    background: rgba(120, 120, 120, .7);
+}
+
 :root {
     --color_principal: #f5f1e8;
     --color_bordes: #000000;

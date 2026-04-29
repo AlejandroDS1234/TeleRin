@@ -119,9 +119,9 @@ function PaginaEditor() {
 
       <Modal open={abrirModal}
         onClose={() => setAbrirModal(false)}
-        className="bg-[var(--color_principal)] w-full h-130 sm:h-100 m-5 sm:w-130 flex flex-col justify-center items-center">
+        className="bg-[var(--color_principal)] w-full h-150 sm:h-100 m-5 sm:w-130 flex flex-col justify-center items-center">
         <div className={`flex flex-col gap-4 items-center justify-center w-full h-full p-10`}>
-          <div className={crearSagaMostrar ? "block" : "hidden"}><CrearSaga /></div>
+          <div className={crearSagaMostrar ? "block" : "hidden"}><CrearSaga onClose={() => setCrearSagaMostrar(false)} /></div>
           <div className={crearSagaMostrar ? "hidden" : "block"}><Guardar_historia /></div>
           <div className="w-full flex justify-center items-center bg-amber-200" onClick={() => setCrearSagaMostrar((prev) => !prev)}>
             {crearSagaMostrar ?

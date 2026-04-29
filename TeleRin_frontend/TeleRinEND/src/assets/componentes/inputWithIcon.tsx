@@ -8,7 +8,7 @@ interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement> {
 function InputWithIcon({ icon, register, className = "", ...props }: InputWithIconProps) {
     return (
         <div className="relative">
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5">
+            <div className="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
                 {icon}
             </div>
             <input
