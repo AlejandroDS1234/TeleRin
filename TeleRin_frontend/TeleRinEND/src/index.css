@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @font-face {
     font-family: "fuente";
     src: url("./assets/fonts/Bukhari Script.ttf") format("truetype");

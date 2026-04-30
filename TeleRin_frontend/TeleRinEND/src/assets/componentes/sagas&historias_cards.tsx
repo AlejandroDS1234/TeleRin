@@ -106,3 +106,12 @@ export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }) 
     );
 }
 
+export function SagasCardHorizontal({ img, titulo, className }) {
+    return (
+        <div className={`flex items-center gap-4 py-1 px-3 ${className} `}>
+            <img className='aspect-square h-full' src={`/api/Fotos/fotos_sagas/${img}`} />
+            <p className='truncate font-bold'>{titulo}</p>
+        </div>
+    )
+}
+
