@@ -4,7 +4,6 @@ import { enviarInfoServer } from "../../function_generales"
 import InputWithIcon from "./inputWithIcon"
 import { MensajePlano } from "./mensaje"
 import { SquareLibrary, BookCopy, ThumbsUp, SquareX } from "lucide-react"
-import { li } from "framer-motion/client"
 
 
 function CrearSaga({ onClose }) {

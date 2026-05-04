@@ -53,6 +53,13 @@ function SeleccionarSaga({ nuevaSaga, register, error, abrirCrearSaga, sagaSelec
             )
           },
 
+          {
+            value: "",
+            label: (
+              <p className="text-center text-gray-500 w-full">Sin saga</p>
+            )
+          },
+
           ...sagas.map(saga => ({
             value: saga.id_saga,
             label: (
@@ -67,6 +74,12 @@ function SeleccionarSaga({ nuevaSaga, register, error, abrirCrearSaga, sagaSelec
         ]}
         value={sagaSeleccion}
         onChange={(value) => {
+          if (value === 0) {
+            abrirCrearSaga();
+            setSagaSeleccion(null);
+            sagaSeleccionada(null);
+            return;
+          }
           setSagaSeleccion(value);
           sagaSeleccionada(value)
         }}
@@ -80,14 +93,9 @@ function SeleccionarSaga({ nuevaSaga, register, error, abrirCrearSaga, sagaSelec
 
 function Guardar_historia({ nuevaSaga, abrirCrearSaga }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const [sagaSeleccion, setSagaSeleccion] = useState(null);
+  const [sagaSeleccion, setSagaSeleccion] = useState("");
 
   const onSubmit = async (data) => {
-    if (!sagaSeleccion) {
-      alert("Debe seleccionar una saga");
-      return;
-    }
-
     data["id_saga"] = sagaSeleccion;
     console.log(data);
 
@@ -142,16 +150,18 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga }) {
 
 function PaginaEditor() {
   const [nuevaSaga, setNuevaSaga] = useState(false);
+  const [crearSaga, setCrearSaga] = useState(false);
   const [contenido, setContenido] = useState(null);
   const [abrirModal, setAbrirModal] = useState(false);
   const [crearSagaMostrar, setCrearSagaMostrar] = useState(false);
+
 
   return (
     <div className="flex justify-center lg:items-center">
       <Modal
         open={abrirModal}
         onClose={() => setAbrirModal(false)}
-        className="bg-[var(--color_principal)] w-full h-150 sm:h-100 m-5 sm:w-130 flex flex-col justify-center items-center"
+        className="bg-(--color_principal) w-full m-5 sm:w-130 flex flex-col justify-center items-center"
       >
         <div className="flex flex-col gap-4 items-center justify-center w-full h-full p-10">
           <div className={crearSagaMostrar ? "block" : "hidden"}>
@@ -159,16 +169,20 @@ function PaginaEditor() {
               onClose={() => {
                 setCrearSagaMostrar(false);
                 setNuevaSaga((prev) => !prev);
+                setCrearSaga(false);
               }}
             />
           </div>
 
           <div className={crearSagaMostrar ? "hidden" : "block"}>
-            <Guardar_historia nuevaSaga={nuevaSaga} abrirCrearSaga={() => setCrearSagaMostrar(true)} />
+            <Guardar_historia nuevaSaga={nuevaSaga} abrirCrearSaga={() => {
+              setCrearSagaMostrar(true)
+              setCrearSaga(true)
+            }} />
           </div>
 
           <div
-            className="w-full flex justify-center items-center bg-amber-200"
+            className={`${crearSaga ? "flex" : "hidden"} w-full justify-center items-center bg-amber-200`}
             onClick={() => setCrearSagaMostrar((prev) => !prev)}
           >
             {crearSagaMostrar ? (
