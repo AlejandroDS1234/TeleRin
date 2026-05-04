@@ -1,4 +1,4 @@
-import { set, useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 import { Mensaje } from "../assets/componentes/mensaje";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,21 +6,28 @@ import { enviarInfoServer, redirigir, cambiarTamañoBarraContraseña } from "../
 import { EyeClosed, Eye, Loader, Mail, UserRoundPlus } from "lucide-react";
 import Sobrefondo_registro from "../assets/sobre_fondos_de_menus/sobre_fondo_registro";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
+import type { ApiMessage } from "../types";
 
+type RegistroForm = {
+    nombre_usuario: string;
+    correo_usuario: string;
+    contraseña_usuario: string;
+};
 
 function FormularioRegistro() {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [res, setRes] = useState(null);
-    let navigate = useNavigate();
+    const { register, handleSubmit, formState: { errors } } = useForm<RegistroForm>();
+    const [res, setRes] = useState<ApiMessage | null>(null);
+    const navigate = useNavigate();
     const [cargando, setCargando] = useState(false);
-    const onSubmit = async (data) => {
+
+    const onSubmit = async (data: RegistroForm) => {
         setCargando(true);
         try {
-            let res = await enviarInfoServer("/api/registrarse", data);
+            const res = await enviarInfoServer<ApiMessage, RegistroForm>("/api/registrarse", data);
             redirigir(navigate, res);
             setRes(res);
         } catch (error) {
-            setRes({ "mensaje": "Error de conexión", "tipo": "danger" });
+            setRes({ mensaje: "Error de conexión", tipo: "danger" });
             console.log(error);
         } finally {
             setCargando(false);
@@ -28,14 +35,16 @@ function FormularioRegistro() {
     };
 
     const [mostrarContraseña, setMostrarContraseña] = useState(false);
-    const [contraseñaSegura, setContraseñaSegura] = useState(1);
+    const [contraseñaSegura, setContraseñaSegura] = useState("1%");
     const [colorBarra, setColorBarra] = useState("#0000FF");
-    const handleContraseñaChange = (e) => {
+
+    const handleContraseñaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const valor = e.target.value;
         const { width, color } = cambiarTamañoBarraContraseña(valor);
         setContraseñaSegura(width);
         setColorBarra(color);
     };
+
     return (
         <div>
             <form className="flex flex-col bg-[var(--color_principal)] w-full" onSubmit={handleSubmit(onSubmit)}>
@@ -46,7 +55,8 @@ function FormularioRegistro() {
                     className="p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
                     register={register("nombre_usuario", {
                         required: "El nombre es obligatorio",
-                    })} />
+                    })}
+                />
                 {errors.nombre_usuario && (
                     <p className="text-red-500 text-sm">
                         {errors.nombre_usuario.message}
@@ -70,7 +80,7 @@ function FormularioRegistro() {
                 )}
 
                 <InputWithIcon
-                    icon={mostrarContraseña ? <Eye onClick={() => setMostrarContraseña(false)} className='hover:cursor-pointer animate-pulse' /> : <EyeClosed onClick={() => setMostrarContraseña(true)} className='hover:cursor-pointer animate-pulse' />}
+                    icon={mostrarContraseña ? <Eye onClick={() => setMostrarContraseña(false)} className="hover:cursor-pointer animate-pulse" /> : <EyeClosed onClick={() => setMostrarContraseña(true)} className="hover:cursor-pointer animate-pulse" />}
                     autoComplete="off"
                     type={mostrarContraseña ? "text" : "password"}
                     placeholder="Contraseña"
@@ -88,14 +98,13 @@ function FormularioRegistro() {
                         onChange: (e) => {
                             handleContraseñaChange(e)
                         }
-                    })} />
-
+                    })}
+                />
 
                 <div className="h-4 bg-[var(--color_bordes)] rounded-full flex items-center px-2">
-                    <div className="h-2 rounded-full" style={{ width: `${parseInt(contraseñaSegura)}%`, backgroundColor: colorBarra }}></div>
+                    <div className="h-2 rounded-full" style={{ width: contraseñaSegura, backgroundColor: colorBarra }}></div>
                 </div>
                 {errors.contraseña_usuario && <p>{errors.contraseña_usuario.message}</p>}
-
 
                 <button
                     type="submit"
@@ -103,12 +112,11 @@ function FormularioRegistro() {
                     className="flex items-center justify-center gap-3 mt-4 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition">
                     {cargando ? <> <p>Registrando</p> <Loader className="animate-spin" /> </> : "Registrarse"}
                 </button>
-                {res && (<Mensaje mensaje={res.mensaje} tipo={res.tipo} id={Date.now()} onHide={() => setRes(null)} />)}
+                {res && (<Mensaje mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />)}
             </form>
         </div>
     )
 }
-
 
 function Registrarse() {
     return (

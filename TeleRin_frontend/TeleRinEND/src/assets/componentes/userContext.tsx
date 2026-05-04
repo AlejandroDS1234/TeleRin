@@ -1,9 +1,11 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect, useContext } from "react";
+import type { UserContextValue, Usuario } from "../../types";
 
-const UserContext = createContext(null);
+const UserContext = createContext<UserContextValue | null>(null);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-    const [usuario, setUsuario] = useState(null);
+    const [usuario, setUsuario] = useState<Usuario | null>(null);
 
     useEffect(() => {
         const fetchUsuario = async () => {
@@ -15,16 +17,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
                 if (response.ok) {
                     const data = await response.json();
-                    setUsuario(data.usuario);
+                    setUsuario(data.usuario as Usuario | null);
                 } else {
                     console.error("Error en respuesta:", response.status, response.statusText);
                     const errorData = await response.json();
                     console.error("Detalles del error:", errorData);
-                    setUsuario({ error: true }); // Marca como cargado pero con error
+                    setUsuario(null);
                 }
             } catch (error) {
                 console.error("Error fetching usuario:", error);
-                setUsuario({ error: true });
+                setUsuario(null);
             }
         }
         fetchUsuario();
@@ -37,5 +39,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useUser() {
-    return useContext(UserContext);
+    const context = useContext(UserContext);
+    if (!context) {
+        throw new Error("useUser debe usarse dentro de UserProvider");
+    }
+    return context;
 };

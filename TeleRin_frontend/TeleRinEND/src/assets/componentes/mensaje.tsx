@@ -4,7 +4,6 @@ export function Mensaje({ mensaje, tipo, id, tiempo = 6000, onHide }: { mensaje:
     //tiempo que se mostrara el mensaje
     const [visible, setVisible] = useState(true);
     useEffect(() => {
-        setVisible(true);
         const timer = setTimeout(() => {
             setVisible(false);
             if (onHide) onHide(); // Llamar callback cuando se oculta
@@ -42,7 +41,6 @@ export function MensajePlano({ mensaje, tipo, id, tiempo = 6000, onHide }: { men
     //tiempo que se mostrara el mensaje
     const [visible, setVisible] = useState(true);
     useEffect(() => {
-        setVisible(true);
         const timer = setTimeout(() => {
             setVisible(false);
             if (onHide) onHide(); // Llamar callback cuando se oculta

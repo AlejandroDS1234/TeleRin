@@ -1,61 +1,86 @@
-import { Book, BookHeart } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { Book, BookHeart } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
-function Lineas({ grosor, espaciado, cantidad }) {
+type LineasProps = {
+    grosor: string;
+    espaciado: string;
+    cantidad?: number;
+};
+
+type SagasCardProps = {
+    ids: string;
+    img: string;
+    titulo: string;
+    descripcion: string;
+    libros: string | number;
+};
+
+type HistoriaCardProps = {
+    idh: string;
+    titulo: string;
+    descripcion: string;
+    calificacion: string | number;
+    autor: string;
+};
+
+type SagasCardHorizontalProps = {
+    img: string;
+    titulo: string;
+    className?: string;
+};
+
+const MotionHeart = motion(BookHeart);
+const MotionLink = motion(Link);
+
+function Lineas({ grosor, espaciado, cantidad = 2 }: LineasProps) {
     return (
-        <div className={`flex flex-col w-full justify-center`} style={{ gap: espaciado }}>
-            {
-                Array.from({ length: cantidad || 2 }).map((_, i) => (
-                    <div className={`w-full border-black border`} style={{ height: grosor }} />
-                ))
-            }
-
+        <div className="flex flex-col w-full justify-center" style={{ gap: espaciado }}>
+            {Array.from({ length: cantidad }).map((_, index) => (
+                <div key={index} className="w-full border-black border" style={{ height: grosor }} />
+            ))}
         </div>
     )
 }
 
-
-export function Sagacard({ ids, img, titulo, descripcion, libros }) {
+export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardProps) {
     return (
         <Link to={ids}
-            className={`relative p-4 bg-[#e4e0d6] flex flex-col border-2 border-black border-double h-70 flex-none w-50 sm:w-full`}
+            className="relative p-4 bg-[#e4e0d6] flex flex-col border-2 border-black border-double h-70 flex-none w-50 sm:w-full"
         >
             <div>
-                <div className=' flex flex-col w-full justify-center items-center gap-px'>
-                    <div className='bg-black w-full border-black h-[1.5px]' />
-                    <div className='bg-black w-[98%] border-black h-px' />
+                <div className="flex flex-col w-full justify-center items-center gap-px">
+                    <div className="bg-black w-full border-black h-[1.5px]" />
+                    <div className="bg-black w-[98%] border-black h-px" />
                 </div>
 
                 <h3
-                    className='truncate w-full font-bold text-2xl font-serif h-min text-center'
+                    className="truncate w-full font-bold text-2xl font-serif h-min text-center"
                 >{titulo}</h3>
 
-                <div className='flex flex-col w-full justify-center items-center gap-px'>
-                    <div className='bg-black w-[98%] border-black h-px' />
-                    <div className='bg-black w-full border-black h-[1.5px]' />
+                <div className="flex flex-col w-full justify-center items-center gap-px">
+                    <div className="bg-black w-[98%] border-black h-px" />
+                    <div className="bg-black w-full border-black h-[1.5px]" />
                 </div>
             </div>
 
-            <img className='mt-auto h-43 w-full object-cover' src={`/api/Fotos/fotos_sagas/${img}`} />
+            <img className="mt-auto h-43 w-full object-cover" src={`/api/Fotos/fotos_sagas/${img}`} />
 
-            <small className='mt-auto flex justify-center'>
+            <small className="mt-auto flex justify-center">
                 <div>{libros} libros</div>
             </small>
-            <Lineas grosor='0.1px' espaciado='1px' cantidad={2} />
-            <motion.div className='absolute bottom-0 right-0 left-0 w-full h-[80%] bg-[#e4e0d6]/80 p-4'
+            <Lineas grosor="0.1px" espaciado="1px" cantidad={2} />
+            <motion.div className="absolute bottom-0 right-0 left-0 w-full h-[80%] bg-[#e4e0d6]/80 p-4"
                 initial={{ opacity: 0, y: 10 }}
                 whileHover={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-            ><p className='text-left w-full line-clamp-8'>{descripcion}</p></motion.div>
+            ><p className="text-left w-full line-clamp-8">{descripcion}</p></motion.div>
         </Link>
     )
 }
 
-export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }) {
-
-    const MotionHeart = motion(BookHeart)
-    const MotionLink = motion(Link)
+export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }: HistoriaCardProps) {
+    const calificacionNumero = Number(calificacion);
 
     return (
         <MotionLink
@@ -83,9 +108,8 @@ export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }) 
                     viewport={{ once: true, amount: 1 }}
                 >
                     {[...Array(3)].map((_, i) => (
-                        <span
-                            key={i}>
-                            {i < calificacion ?
+                        <span key={i}>
+                            {i < calificacionNumero ?
                                 <MotionHeart
                                     variants={{
                                         normal: {
@@ -106,12 +130,11 @@ export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }) 
     );
 }
 
-export function SagasCardHorizontal({ img, titulo, className }) {
+export function SagasCardHorizontal({ img, titulo, className = "" }: SagasCardHorizontalProps) {
     return (
-        <div className={`flex items-center gap-4 py-1 px-3 ${className} `}>
-            <img className='aspect-square h-full' src={`/api/Fotos/fotos_sagas/${img}`} />
-            <p className='truncate font-bold'>{titulo}</p>
+        <div className={`flex items-center gap-4 py-1 px-3 ${className}`}>
+            <img className="aspect-square h-full" src={`/api/Fotos/fotos_sagas/${img}`} />
+            <p className="truncate font-bold">{titulo}</p>
         </div>
     )
 }
-

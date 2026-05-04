@@ -1,32 +1,39 @@
-import { useState } from 'react';
-import { set, useForm } from 'react-hook-form';
-import { enviarInfoServer, redirigir, cambiarTamañoBarraContraseña } from '../function_generales';
-import { Loader, Lock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Mensaje } from '../assets/componentes/mensaje.tsx';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { enviarInfoServer, redirigir, cambiarTamañoBarraContraseña } from "../function_generales";
+import { Loader, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Mensaje } from "../assets/componentes/mensaje.tsx";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
-import Sobrefondo_olvido_contraseña from '../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña.tsx';
+import Sobrefondo_olvido_contraseña from "../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña.tsx";
+import type { ApiMessage } from "../types";
+
+type CambiarContrasenaForm = {
+    contraseña_usuario_nueva: string;
+    contraseña_usuario_nueva_confirmacion: string;
+};
 
 function CambiarContraseña() {
-    const { register, handleSubmit, formState: { errors }, getValues } = useForm();
+    const { register, handleSubmit, formState: { errors }, getValues } = useForm<CambiarContrasenaForm>();
     const navigate = useNavigate();
     const [cargando, setCargando] = useState(false);
-    const [res, setRes] = useState(null);
+    const [res, setRes] = useState<ApiMessage | null>(null);
 
-    const [contraseñaSegura, setContraseñaSegura] = useState(1);
+    const [contraseñaSegura, setContraseñaSegura] = useState("1%");
     const [colorBarra, setColorBarra] = useState("#0000FF");
-    const handleContraseñaChange = (e) => {
+
+    const handleContraseñaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const valor = e.target.value;
         const { width, color } = cambiarTamañoBarraContraseña(valor);
         setContraseñaSegura(width);
         setColorBarra(color);
     };
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: CambiarContrasenaForm) => {
         setCargando(true);
-        setRes(null); // Limpiar mensaje anterior
+        setRes(null);
         try {
-            let res = await enviarInfoServer("/api/cambiar_contraseña", data);
+            const res = await enviarInfoServer<ApiMessage, CambiarContrasenaForm>("/api/cambiar_contraseña", data);
             setRes(res);
             redirigir(navigate, res);
         } catch (error) {
@@ -43,16 +50,12 @@ function CambiarContraseña() {
                 <Sobrefondo_olvido_contraseña />
             </div>
             <div className="bg-white/30 backdrop-blur-2xl p-8 rounded-2xl relative z-30 flex items-center justify-center top-[30vh] lg:w-[30%] lg:left-[35%] lg:top-[40vh]">
-                {/* TÍTULO */}
                 <h1 className="absolute text-xl font-bold text-center top-0">
                     Cambiar contraseña
                 </h1>
 
                 <div>
-                    {/* FORM */}
                     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-
-                        {/* NUEVA CONTRASEÑA */}
                         <InputWithIcon
                             icon={<Lock />}
                             type="password"
@@ -71,7 +74,6 @@ function CambiarContraseña() {
                             </p>
                         )}
 
-                        {/* CONFIRMAR CONTRASEÑA */}
                         <InputWithIcon
                             icon={<Lock />}
                             type="password"
@@ -85,12 +87,11 @@ function CambiarContraseña() {
                             })}
                         />
 
-                        {/* BARRA DE SEGURIDAD */}
                         <div className="w-full h-4 bg-[var(--color_bordes)] rounded-full flex items-center px-2">
                             <div
                                 className="h-2 rounded-full transition-all"
                                 style={{
-                                    width: `${parseInt(contraseñaSegura)}%`,
+                                    width: contraseñaSegura,
                                     backgroundColor: colorBarra
                                 }}
                             />
@@ -102,7 +103,6 @@ function CambiarContraseña() {
                             </p>
                         )}
 
-                        {/* BOTÓN */}
                         <button
                             type="submit"
                             disabled={cargando}
@@ -115,24 +115,23 @@ function CambiarContraseña() {
                                 </>
                             ) : "Cambiar contraseña"}
                         </button>
-
                     </form>
                 </div>
             </div>
-            {/* MENSAJE */}
             <div className="absolute w-[60%] z-40 bottom-[70%]">
                 <div>
                     {res && (
                         <Mensaje
                             mensaje={res.mensaje}
                             tipo={res.tipo}
-                            id={Date.now()}
+                            id={1}
                             onHide={() => setRes(null)}
                         />
                     )}
                 </div>
             </div>
         </div>
-    )
+    );
 }
+
 export default CambiarContraseña;

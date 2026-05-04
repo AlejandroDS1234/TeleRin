@@ -50,9 +50,13 @@ function Navbar() {
     }
   }
 
+  if (!usuario) {
+    return null;
+  }
+
   return (
     <motion.div
-      className="flex top-0 left-0 h-16 bg-white/30 w-full backdrop-blur-md items-center justify-evenly z-50 shadow-md lg:flex-col lg:py-4 lg:h-full lg:justify-evenly lg:items-center lg:py-6"
+      className="flex top-0 left-0 h-16 bg-white/30 w-full backdrop-blur-md items-center justify-evenly z-50 shadow-md lg:flex-col lg:py-4 lg:h-full lg:justify-evenly lg:items-center"
       onMouseEnter={() => isLg && setabierta(true)}
       onMouseLeave={() => isLg && setabierta(false)}
       variants={{

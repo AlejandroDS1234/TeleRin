@@ -1,7 +1,7 @@
 import Editor from "../assets/componentes/editor_texto.tsx";
 import { useUser } from "../assets/componentes/userContext.tsx";
 import { useEffect, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Modal from "../assets/componentes/modal.tsx";
 import InputWithIcon from "../assets/componentes/inputWithIcon.tsx";
 import { Suiche } from "../function_generales.tsx";
@@ -9,35 +9,55 @@ import { NotebookPen, BookOpenText, ChevronRight, ChevronLeft, Save } from "luci
 import CrearSaga from "../assets/componentes/crear_saga.tsx";
 import { CustomSelect } from "../assets/componentes/CustomSelect.tsx";
 import { SagasCardHorizontal } from "../assets/componentes/sagas&historias_cards.tsx";
+import type { Saga } from "../types";
 
+type GuardarHistoriaForm = {
+  nombre_historia: string;
+  descripcion_historia: string;
+  visibilidad_historia?: boolean;
+};
 
+type SeleccionarSagaProps = {
+  nuevaSaga: boolean;
+  error?: { message?: string } | null;
+  abrirCrearSaga: () => void;
+  sagaSeleccionada: (value: string) => void;
+};
 
-function SeleccionarSaga({ nuevaSaga, register, error, abrirCrearSaga, sagaSeleccionada }) {
+type GuardarHistoriaProps = {
+  nuevaSaga: boolean;
+  abrirCrearSaga: () => void;
+};
+
+function SeleccionarSaga({ nuevaSaga, error, abrirCrearSaga, sagaSeleccionada }: SeleccionarSagaProps) {
   const { usuario } = useUser();
-  const [sagaSeleccion, setSagaSeleccion] = useState(null);
-  const [sagas, setSagas] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [sagaSeleccion, setSagaSeleccion] = useState("");
+  const [sagas, setSagas] = useState<Saga[]>([]);
 
   useEffect(() => {
+    if (!usuario) {
+      return;
+    }
+
     const fetchSagas = async () => {
-      setCargando(true);
       try {
         const res = await fetch(`/api/sagas_creadas/${usuario.codigo_usuario}`, {
           method: "POST",
           credentials: "include",
         });
         const sagas = await res.json();
-        setSagas(sagas);
+        setSagas(sagas as Saga[]);
       } catch (error) {
         console.log(error);
-      } finally {
-        setCargando(false);
       }
     };
 
     fetchSagas();
-  }, [nuevaSaga, usuario.codigo_usuario]);
+  }, [nuevaSaga, usuario]);
 
+  if (!usuario) {
+    return null;
+  }
 
   return (
     <>
@@ -45,61 +65,59 @@ function SeleccionarSaga({ nuevaSaga, register, error, abrirCrearSaga, sagaSelec
         titulo="Seleccionar saga"
         options={[
           {
-            value: 0,
+            value: "__crear__",
             label: (
-              <button
-                className="hover:cursor-pointer font-[sloganGrande] text-center text-3xl text-orange-500 w-full"
-              >Crear Saga</button>
+              <button className="hover:cursor-pointer font-[sloganGrande] text-center text-3xl text-orange-500 w-full">
+                Crear Saga
+              </button>
             )
           },
-
           {
             value: "",
             label: (
               <p className="text-center text-gray-500 w-full">Sin saga</p>
             )
           },
-
-          ...sagas.map(saga => ({
+          ...sagas.map((saga) => ({
             value: saga.id_saga,
             label: (
               <SagasCardHorizontal
                 img={saga.imagen_saga}
                 titulo={saga.nombre_saga}
-                className={"h-15"}
+                className="h-15"
               />
             )
           }))
-
         ]}
         value={sagaSeleccion}
         onChange={(value) => {
-          if (value === 0) {
+          if (value === "__crear__") {
             abrirCrearSaga();
-            setSagaSeleccion(null);
-            sagaSeleccionada(null);
+            setSagaSeleccion("");
+            sagaSeleccionada("");
             return;
           }
           setSagaSeleccion(value);
-          sagaSeleccionada(value)
+          sagaSeleccionada(value);
         }}
-        className={"w-64"}
+        className="w-64"
       />
-      {error && <p className="text-red-500 text-sm">{error.message}</p>}
+      {error?.message && <p className="text-red-500 text-sm">{error.message}</p>}
     </>
   );
 }
 
-
-function Guardar_historia({ nuevaSaga, abrirCrearSaga }) {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+function Guardar_historia({ nuevaSaga, abrirCrearSaga }: GuardarHistoriaProps) {
+  const { register, handleSubmit, formState: { errors } } = useForm<GuardarHistoriaForm>();
   const [sagaSeleccion, setSagaSeleccion] = useState("");
 
-  const onSubmit = async (data) => {
-    data["id_saga"] = sagaSeleccion;
-    console.log(data);
+  const onSubmit = async (data: GuardarHistoriaForm) => {
+    const payload = {
+      ...data,
+      id_saga: sagaSeleccion
+    };
 
-
+    console.log(payload);
   };
 
   return (
@@ -132,8 +150,7 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga }) {
 
       <SeleccionarSaga
         nuevaSaga={nuevaSaga}
-        register={register}
-        error={errors.id_saga}
+        error={null}
         abrirCrearSaga={abrirCrearSaga}
         sagaSeleccionada={(value) => setSagaSeleccion(value)}
       />
@@ -151,10 +168,9 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga }) {
 function PaginaEditor() {
   const [nuevaSaga, setNuevaSaga] = useState(false);
   const [crearSaga, setCrearSaga] = useState(false);
-  const [contenido, setContenido] = useState(null);
+  const [, setContenido] = useState<unknown>(null);
   const [abrirModal, setAbrirModal] = useState(false);
   const [crearSagaMostrar, setCrearSagaMostrar] = useState(false);
-
 
   return (
     <div className="flex justify-center lg:items-center">
@@ -176,8 +192,8 @@ function PaginaEditor() {
 
           <div className={crearSagaMostrar ? "hidden" : "block"}>
             <Guardar_historia nuevaSaga={nuevaSaga} abrirCrearSaga={() => {
-              setCrearSagaMostrar(true)
-              setCrearSaga(true)
+              setCrearSagaMostrar(true);
+              setCrearSaga(true);
             }} />
           </div>
 
@@ -194,7 +210,7 @@ function PaginaEditor() {
         </div>
       </Modal>
 
-      <div className="min-h-screen bg-[#e5e3dc] w-full max-w-[700px] h-[90vh] shadow-xl flex flex-col items-center p-4">
+      <div className="min-h-screen bg-[#e5e3dc] w-full max-w-175 h-[90vh] shadow-xl flex flex-col items-center p-4">
         <Editor
           onChangeContenido={setContenido}
           toolbarItems={[

@@ -1,8 +1,66 @@
 import { useEffect, useRef } from "react";
 import Quill from "quill";
+import type Delta from "quill-delta";
 import "quill/dist/quill.snow.css";
 
-function renderToolbarItem(item, index, quillRef) {
+type ToolbarOption = {
+  value: string;
+  label?: string;
+};
+
+type QuillToolbarItem = {
+  type: "quill";
+  value: string;
+  tag?: "select";
+  options?: ToolbarOption[];
+  defaultValue?: string;
+  buttonValue?: string;
+  className?: string;
+};
+
+type CustomToolbarItem = {
+  type: "custom";
+  value: string;
+  label?: string;
+  className?: string;
+  style?: React.CSSProperties;
+  content?: React.ReactNode;
+};
+
+type ToolbarItem = QuillToolbarItem | CustomToolbarItem;
+
+type EditorChange = {
+  html: string;
+  texto: string;
+  delta: Delta;
+};
+
+type EditorProps = {
+  onChangeContenido?: ((contenido: EditorChange) => void) | null;
+  contenidoInicial?: Delta | null;
+  soloLectura?: boolean;
+  toolbarItems?: ToolbarItem[];
+};
+
+const DEFAULT_TOOLBAR_ITEMS: ToolbarItem[] = [
+  {
+    type: "quill",
+    value: "header",
+    tag: "select",
+    options: [
+      { value: "1", label: "H1" },
+      { value: "2", label: "H2" },
+      { value: "", label: "Normal" },
+    ],
+  },
+  { type: "quill", value: "bold" },
+  { type: "quill", value: "italic" },
+  { type: "quill", value: "underline" },
+  { type: "quill", value: "image" },
+  { type: "quill", value: "code-block" },
+];
+
+function renderToolbarItem(item: ToolbarItem, index: number) {
   if (item.type === "quill") {
     if (item.tag === "select") {
       return (
@@ -30,46 +88,26 @@ function renderToolbarItem(item, index, quillRef) {
     );
   }
 
-  if (item.type === "custom") {
-    return (
-      <div
-        key={`${item.label}-${index}`}
-        className={item.className}
-        style={item.style}
-      >
-        {item.content ?? item.label}
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <div
+      key={`${item.label ?? item.value}-${index}`}
+      className={item.className}
+      style={item.style}
+    >
+      {item.content ?? item.label}
+    </div>
+  );
 }
 
 function Editor({
   onChangeContenido,
   contenidoInicial = null,
   soloLectura = false,
-  toolbarItems = [
-    {
-      type: "quill",
-      value: "header",
-      tag: "select",
-      options: [
-        { value: "1", label: "H1" },
-        { value: "2", label: "H2" },
-        { value: "", label: "Normal" },
-      ],
-    },
-    { type: "quill", value: "bold" },
-    { type: "quill", value: "italic" },
-    { type: "quill", value: "underline" },
-    { type: "quill", value: "image" },
-    { type: "quill", value: "code-block" },
-  ],
-}) {
-  const editorRef = useRef(null);
-  const quillRef = useRef(null);
-  const toolbarIdRef = useRef(`toolbar-${Math.random().toString(36).slice(2)}`);
+  toolbarItems = DEFAULT_TOOLBAR_ITEMS,
+}: EditorProps) {
+  const editorRef = useRef<HTMLDivElement | null>(null);
+  const quillRef = useRef<Quill | null>(null);
+  const toolbarId = "toolbar-principal";
 
   useEffect(() => {
     if (!editorRef.current || quillRef.current) return;
@@ -79,7 +117,7 @@ function Editor({
       readOnly: soloLectura,
       placeholder: soloLectura ? "" : "Escribe algo épico...",
       modules: {
-        toolbar: `#${toolbarIdRef.current}`,
+        toolbar: `#${toolbarId}`,
       },
     });
 
@@ -97,7 +135,7 @@ function Editor({
         onChangeContenido?.({ html, texto, delta });
       });
     }
-  }, []);
+  }, [contenidoInicial, onChangeContenido, soloLectura]);
 
   useEffect(() => {
     if (!quillRef.current || !contenidoInicial) return;
@@ -111,11 +149,10 @@ function Editor({
 
   return (
     <div className="w-full h-full inline justify-center">
-      <div className=" w-full h-full max-w-[700px] bg-white p-4 rounded shadow ">
-        <div id={toolbarIdRef.current} className="flex justify-between p-4">
-          {toolbarItems.map((item, index) => renderToolbarItem(item, index, quillRef))}
+      <div className="w-full h-full max-w-175 bg-white p-4 rounded shadow">
+        <div id={toolbarId} className="flex justify-between p-4">
+          {toolbarItems.map((item, index) => renderToolbarItem(item, index))}
         </div>
-
 
         <div ref={editorRef} />
       </div>

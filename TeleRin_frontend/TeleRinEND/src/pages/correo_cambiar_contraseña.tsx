@@ -1,22 +1,27 @@
-import { useState } from 'react';
+import { useState } from "react";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
-import { set, useForm } from 'react-hook-form';
-import { enviarInfoServer, redirigir } from '../function_generales';
-import { Loader, Mail, BookUser } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Mensaje } from '../assets/componentes/mensaje.tsx';
-import Sobrefondo_olvido_contraseña from '../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña.tsx';
+import { useForm } from "react-hook-form";
+import { enviarInfoServer, redirigir } from "../function_generales";
+import { Loader, BookUser } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Mensaje } from "../assets/componentes/mensaje.tsx";
+import Sobrefondo_olvido_contraseña from "../assets/sobre_fondos_de_menus/sobre_fondo_olvido_contraseña.tsx";
+import type { ApiMessage } from "../types";
+
+type CorreoCambiarContrasenaForm = {
+    correo_para_codigo_usuario: string;
+};
 
 function CorreoCambiarContraseña() {
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors } } = useForm<CorreoCambiarContrasenaForm>();
     const [cargando, setCargando] = useState(false);
-    const [res, setRes] = useState(null);
+    const [res, setRes] = useState<ApiMessage | null>(null);
     const navigate = useNavigate();
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data: CorreoCambiarContrasenaForm) => {
         setCargando(true);
         try {
-            let res = await enviarInfoServer("/api/codigo_verificacion_cambiar_contrasena", data);
+            const res = await enviarInfoServer<ApiMessage, CorreoCambiarContrasenaForm>("/api/codigo_verificacion_cambiar_contrasena", data);
             setRes(res);
             redirigir(navigate, res);
         } catch (error) {
@@ -28,14 +33,12 @@ function CorreoCambiarContraseña() {
 
     return (
         <div>
-            <div className="absolute button-0 right-0 h-full w-full z-20">
+            <div className="absolute bottom-0 right-0 h-full w-full z-20">
                 <Sobrefondo_olvido_contraseña />
             </div>
             <div className="relative z-30 iteflex ms-center justify-center top-[30vh] lg:w-[30%] lg:left-[35%] lg:top-[26vh]">
                 <div className="bg-white/30 backdrop-blur-2xl p-8 rounded-2xl">
                     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-
-                        {/* INPUT CON ICONO */}
                         <InputWithIcon
                             icon={<BookUser />}
                             placeholder="Correo"
@@ -48,14 +51,12 @@ function CorreoCambiarContraseña() {
                             })}
                         />
 
-                        {/* ERROR */}
                         {errors.correo_para_codigo_usuario && (
                             <p className="text-red-500 text-sm">
                                 {errors.correo_para_codigo_usuario.message}
                             </p>
                         )}
 
-                        {/* BOTÓN */}
                         <button
                             type="submit"
                             disabled={cargando}
@@ -72,7 +73,7 @@ function CorreoCambiarContraseña() {
                             <Mensaje
                                 mensaje={res.mensaje}
                                 tipo={res.tipo}
-                                id={Date.now()}
+                                id={1}
                                 onHide={() => setRes(null)}
                             />
                         )}

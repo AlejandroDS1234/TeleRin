@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Navigate, Outlet } from "react-router-dom";
-import { redirigir } from '../function_generales';
 
 
 interface RutaProtegidaProps {

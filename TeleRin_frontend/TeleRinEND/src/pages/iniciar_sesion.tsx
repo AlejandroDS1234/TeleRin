@@ -1,39 +1,41 @@
-import { UserRoundPlus, LogIn, Loader, EyeClosed, Mail, BookUser } from 'lucide-react'
+import { Loader, EyeClosed, BookUser } from "lucide-react";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import { Link, useNavigate } from "react-router-dom";
-import botones from '../assets/styles/style.ts'
-import UseMensajeRedirigir from '../assets/componentes/mensajeRedirigir.tsx';
-import { enviarInfoServer, redirigir } from '../function_generales.tsx';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { Mensaje } from '../assets/componentes/mensaje.tsx';
-import Sobrefondo_inicio_sesion from '../assets/sobre_fondos_de_menus/sobre_fondo_iniciar_sesion.tsx';
+import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir.tsx";
+import { enviarInfoServer, redirigir } from "../function_generales.tsx";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { Mensaje } from "../assets/componentes/mensaje.tsx";
+import Sobrefondo_inicio_sesion from "../assets/sobre_fondos_de_menus/sobre_fondo_iniciar_sesion.tsx";
+import type { ApiMessage } from "../types.ts";
 
+type IniciarSesionForm = {
+    correo_usuario: string;
+    contraseña_usuario: string;
+};
 
 function Iniciar_sesion_Form() {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const navegate = useNavigate();
+    const { register, handleSubmit, formState: { errors } } = useForm<IniciarSesionForm>();
+    const navigate = useNavigate();
     const [cargando, setCargando] = useState(false);
-    const [res, setRes] = useState(null);
+    const [res, setRes] = useState<ApiMessage | null>(null);
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: IniciarSesionForm) => {
         setCargando(true);
-        setRes(null); // Limpiar mensaje anterior
+        setRes(null);
         try {
-            let res = await enviarInfoServer("/api/iniciar_sesion", data);
+            const res = await enviarInfoServer<ApiMessage, IniciarSesionForm>("/api/iniciar_sesion", data);
             setRes(res);
-            redirigir(navegate, res);
-        } catch (error) {
+            redirigir(navigate, res);
+        } catch {
             setRes({ mensaje: "Error de conexión", tipo: "danger" });
         } finally {
             setCargando(false);
-        };
+        }
     };
 
     return (
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-
-            {/* CORREO */}
             <InputWithIcon
                 icon={<BookUser />}
                 placeholder="Correo"
@@ -51,7 +53,6 @@ function Iniciar_sesion_Form() {
                 </p>
             )}
 
-            {/* CONTRASEÑA */}
             <InputWithIcon
                 icon={<EyeClosed />}
                 placeholder="Contraseña"
@@ -66,9 +67,8 @@ function Iniciar_sesion_Form() {
                 </p>
             )}
 
-            {/* BOTÓN */}
             <button
-                className={`flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition`}
+                className="flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
                 disabled={cargando}
                 type="submit"
             >
@@ -80,29 +80,25 @@ function Iniciar_sesion_Form() {
                 ) : "Iniciar sesión"}
             </button>
 
-            {/* LINK */}
             <Link
                 to="/olvide_mi_contrasena"
-                className={`flex items-center justify-center gap-1 mt-2`}
+                className="flex items-center justify-center gap-1 mt-2"
             >
                 ¿Olvidaste tu contraseña?
             </Link>
 
-            {/* MENSAJE */}
             <UseMensajeRedirigir />
             {res && (
                 <Mensaje
                     mensaje={res.mensaje}
                     tipo={res.tipo}
-                    id={Date.now()}
+                    id={1}
                     onHide={() => setRes(null)}
                 />
             )}
-
         </form>
     )
 }
-
 
 function Iniciar_sesion() {
     return (
@@ -119,9 +115,4 @@ function Iniciar_sesion() {
     )
 }
 
-
-
 export default Iniciar_sesion;
-
-
-

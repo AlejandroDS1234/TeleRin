@@ -11,7 +11,7 @@ type Props = {
     options: Option[];
     value: string;
     onChange: (value: string) => void;
-    className: String;
+    className: string;
 };
 
 // ==============================
@@ -38,20 +38,6 @@ export function CustomSelect({ titulo, options, value, onChange, className = "w-
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
-    // Detectar si abrir arriba o abajo
-    useEffect(() => {
-        if (!open || isMobile) return;
-
-        const rect = buttonRef.current?.getBoundingClientRect();
-        if (!rect) return;
-
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceAbove = rect.top;
-
-        // si no hay suficiente espacio abajo, abre arriba
-        setOpenUp(spaceBelow < 250 && spaceAbove > spaceBelow);
-    }, [open, isMobile]);
-
     // cerrar al hacer click fuera
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -75,7 +61,17 @@ export function CustomSelect({ titulo, options, value, onChange, className = "w-
             <button
                 type="button"
                 ref={buttonRef}
-                onClick={() => setOpen(!open)}
+                onClick={() => {
+                    if (!open && !isMobile) {
+                        const rect = buttonRef.current?.getBoundingClientRect();
+                        if (rect) {
+                            const spaceBelow = window.innerHeight - rect.bottom;
+                            const spaceAbove = rect.top;
+                            setOpenUp(spaceBelow < 250 && spaceAbove > spaceBelow);
+                        }
+                    }
+                    setOpen(!open)
+                }}
                 className="w-full px-4 py-2 border-b rounded flex justify-between items-center"
             >
                 <span className="truncate">{selected ? selected.label : titulo}</span>

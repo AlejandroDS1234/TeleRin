@@ -1,9 +1,7 @@
-import { ReactNode, InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes } from "react";
+import type { InputWithIconBaseProps } from "../../types";
 
-interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement> {
-    icon: ReactNode;
-    register?: any;
-}
+interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement>, InputWithIconBaseProps {}
 
 function InputWithIcon({ icon, register, className = "", ...props }: InputWithIconProps) {
     return (

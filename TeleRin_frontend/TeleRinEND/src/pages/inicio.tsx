@@ -1,11 +1,9 @@
-import { useUser } from "../assets/componentes/userContext";
 import { useState, useEffect } from "react";
 import { Sagacard, HistoriaCard } from "../assets/componentes/sagas&historias_cards";
 import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
-import { Loader } from 'lucide-react'
-import Sobrefondo_principal from "../assets/sobre_fondos_de_menus/sobre_fondo_principal";
-import { motion } from 'framer-motion'
-
+import { Loader } from "lucide-react";
+import { motion } from "framer-motion";
+import type { Historia, Saga } from "../types";
 
 function HistoriasPrincipales() {
     return (
@@ -18,7 +16,7 @@ function HistoriasPrincipales() {
                 <h3 className="wrap-break-word font-bold text-2xl sm:text-3xl text-center bg-white/50 backdrop-blur-md rounded-2xl p-2">
                     Nombre de la sega a la que estamos llamando :)
                 </h3>
-                <br className="hidden sm:block " />
+                <br className="hidden sm:block" />
                 <p className="hidden sm:block bg-white/50 backdrop-blur-md rounded-2xl p-2">
                     descripcion Lorem ipsum dolor sit amet consectetur adipisicing elit. Error, quasi necessitatibus, ipsum facilis animi debitis, culpa sed laboriosam qui vitae aliquid porro ab provident nesciunt ducimus. Temporibus recusandae expedita obcaecati.
                 </p>
@@ -27,111 +25,91 @@ function HistoriasPrincipales() {
     )
 }
 
-
 function Sagas() {
-    const [sagas, setSagas] = useState([]);
-    const [cargando, setCargando] = useState(true)
+    const [sagas, setSagas] = useState<Saga[]>([]);
+    const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(false);
+
     useEffect(() => {
         const sagasBack = async () => {
             try {
-                let pro = await fetch("/api/simulacion_recomenda_sagas", { method: "POST", credentials: "include" })
-                let sagas = await pro.json()
-                setSagas(sagas)
-                setCargando(false)
-            } catch (Error) {
-                setError(true)
+                const pro = await fetch("/api/simulacion_recomenda_sagas", { method: "POST", credentials: "include" });
+                const sagas = await pro.json();
+                setSagas(sagas as Saga[]);
+                setCargando(false);
+            } catch {
+                setError(true);
             }
-
-        }
-        sagasBack()
-    }, [])
+        };
+        sagasBack();
+    }, []);
 
     if (error) {
-        return (
-            <div>
-                <p>error al cargar las sagas</p>
-            </div>
-        )
+        return <p>error al cargar las sagas</p>;
     }
 
     if (cargando) {
-        return (
-            <div>
-                <p>Cargando <Loader className="animate-spin" /></p>
-            </div>
-        )
+        return <p>Cargando <Loader className="animate-spin" /></p>;
     }
 
     return (
         <>
-            {sagas.map(saga => (
+            {sagas.map((saga) => (
                 <Sagacard
-                    key={`${saga.id_saga}`}
-                    ids={`${saga.id_saga}`}
-                    img={`${saga.imagen_saga}`}
-                    descripcion={`${saga.descripcion_saga}`}
-                    titulo={`${saga.nombre_saga}`}
-                    libros={`${saga.libros}`}
+                    key={saga.id_saga}
+                    ids={saga.id_saga}
+                    img={saga.imagen_saga}
+                    descripcion={saga.descripcion_saga}
+                    titulo={saga.nombre_saga}
+                    libros={saga.libros ?? 0}
                 />
             ))}
         </>
     )
 }
 
-
 function Historias() {
-    const [historias, setHistorias] = useState([]);
-    const [cargando, setCargando] = useState(true)
+    const [historias, setHistorias] = useState<Historia[]>([]);
+    const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(false);
+
     useEffect(() => {
         const historiasBack = async () => {
             try {
-                let pro = await fetch("/api/simulacion_recomendar_libros", { method: "POST", credentials: "include" })
-                let historias = await pro.json()
-                setHistorias(historias)
-                setCargando(false)
-            } catch (Error) {
-                setError(true)
+                const pro = await fetch("/api/simulacion_recomendar_libros", { method: "POST", credentials: "include" });
+                const historias = await pro.json();
+                setHistorias(historias as Historia[]);
+                setCargando(false);
+            } catch {
+                setError(true);
             }
-
-        }
-        historiasBack()
-    }, [])
+        };
+        historiasBack();
+    }, []);
 
     if (error) {
-
-        return (
-            <div>
-                <p>error al cargar las historias</p>
-            </div>
-        )
+        return <p>error al cargar las historias</p>;
     }
 
     if (cargando) {
-        return (
-            <div>
-                <p>Cargando <Loader className="animate-spin" /></p>
-            </div>
-        )
+        return <p>Cargando <Loader className="animate-spin" /></p>;
     }
 
     return (
         <>
-            {historias.map(historia => (
+            {historias.map((historia) => (
                 <HistoriaCard
-                    key={`${historia.id_historia}`}
-                    idh={`${historia.id_historia}`}
-                    titulo={`${historia.nombre_historia}`}
-                    descripcion={`${historia.descripcion_historia}`}
-                    calificacion={`${historia.calificacion_p}`}
-                    autor={`${historia.nombre_usuario}`}
+                    key={historia.id_historia}
+                    idh={historia.id_historia}
+                    titulo={historia.nombre_historia}
+                    descripcion={historia.descripcion_historia}
+                    calificacion={historia.calificacion_p}
+                    autor={historia.nombre_usuario}
                 />
             ))}
         </>
     )
 }
-
 
 function Inicio() {
     const yaAnimado = sessionStorage.getItem("inicio-animado");
@@ -143,11 +121,8 @@ function Inicio() {
             viewport={{ once: true }}
             onAnimationComplete={() => sessionStorage.setItem("inicio-animado", "true")}
         >
-            {/* <div className="absolute top-0 left-0 h-full w-full z-10">
-                <Sobrefondo_principal />
-            </div> */}
-            <div className="relative z-20 font-serif text-gray-900 ">
-                <section className="p-4 bg-[] aling-center flex flex-col w-full z-20">
+            <div className="relative z-20 font-serif text-gray-900">
+                <section className="p-4 aling-center flex flex-col w-full z-20">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Principales</h4>
                     <div className="flex w-full justify-center gap-4">
                         <HistoriasPrincipales />
@@ -156,23 +131,20 @@ function Inicio() {
             </div>
             <br />
 
-            <div className="relative z-20 font-serif text-gray-900 ">
-                <section
-                    className="p-4 bg-[] aling-center flex flex-col w-full z-20">
+            <div className="relative z-20 font-serif text-gray-900">
+                <section className="p-4 aling-center flex flex-col w-full z-20">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Sagas Recomendadas</h4>
-                    <div className=" flex overflow-x-scroll overflow-y-hidden sm:overflow-hidden sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
+                    <div className="flex overflow-x-scroll overflow-y-hidden sm:overflow-hidden sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
                         <Sagas />
                     </div>
                 </section>
             </div>
             <br />
 
-            <div className="relative z-20 font-serif text-gray-900 ">
+            <div className="relative z-20 font-serif text-gray-900">
                 <section className="p-2">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
-                    <div
-                        className=" flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20"
-                    >
+                    <div className="flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
                         <Historias />
                     </div>
                 </section>

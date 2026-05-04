@@ -3,18 +3,27 @@ import { useForm } from "react-hook-form"
 import { enviarInfoServer } from "../../function_generales"
 import InputWithIcon from "./inputWithIcon"
 import { MensajePlano } from "./mensaje"
-import { SquareLibrary, BookCopy, ThumbsUp, SquareX } from "lucide-react"
+import { SquareLibrary, SquareX } from "lucide-react"
+import type { ApiMessage } from "../../types"
 
+type CrearSagaForm = {
+    nombre_saga: string;
+    descripcion_saga: string;
+}
 
-function CrearSaga({ onClose }) {
-    const [res, setRes] = useState(null)
+type CrearSagaProps = {
+    onClose: () => void;
+}
+
+function CrearSaga({ onClose }: CrearSagaProps) {
+    const [res, setRes] = useState<ApiMessage | null>(null)
     const [cargando, setCargando] = useState(false)
 
 
-    const [nuevaFoto, setNuevaFoto] = useState(null)
+    const [nuevaFoto, setNuevaFoto] = useState<File | null>(null)
     const [imagen, setImagen] = useState("/api/Fotos/fotos_sagas/predefinido.jpg")
-    const inputFotoRef = useRef(null)
-    const [mensajeFoto, setMensajeFoto] = useState(null)
+    const inputFotoRef = useRef<HTMLInputElement | null>(null)
+    const [mensajeFoto, setMensajeFoto] = useState<ApiMessage | null>(null)
     function limpiarSeleccionFoto() {
         setNuevaFoto(null)
         setImagen("/api/Fotos/fotos_sagas/predefinido.jpg")
@@ -24,23 +33,22 @@ function CrearSaga({ onClose }) {
     }
 
 
-    const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<CrearSagaForm>();
 
 
-    const onSubmit = async (data) => {
+    const onSubmit = async (data: CrearSagaForm) => {
         if (!nuevaFoto) {
             setMensajeFoto({ "mensaje": "Debe seleccionar una imagen", "tipo": "danger" })
             return
         }
         setCargando(true)
-        data["foto_saga"] = nuevaFoto
         const form = new FormData()
-        for (const key in data) {
-            form.append(key, data[key])
-        }
+        form.append("nombre_saga", data.nombre_saga)
+        form.append("descripcion_saga", data.descripcion_saga)
+        form.append("foto_saga", nuevaFoto)
 
         try {
-            let res = await enviarInfoServer("/api/crear_saga", form)
+            const res = await enviarInfoServer<ApiMessage, FormData>("/api/crear_saga", form)
             setRes(res)
             if (res.tipo == "success") {
                 setTimeout(() => {

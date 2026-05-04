@@ -1,11 +1,16 @@
-export async function enviarInfoServer(url: string, data: any) {
-    let tipo = data instanceof FormData;
+/* eslint-disable react-refresh/only-export-components */
+import { useEffect, useState } from "react";
+import type { NavigateFunction } from "react-router-dom";
+import type { FormRegisterLike, RedirectPayload } from "./types";
 
-    const opciones: any = {
+export async function enviarInfoServer<TResponse, TBody extends FormData | Record<string, unknown>>(url: string, data: TBody): Promise<TResponse> {
+    const tipo = data instanceof FormData;
+
+    const opciones: RequestInit = {
         method: "POST",
         body: tipo ? data : JSON.stringify(data),
         credentials: "include"
-    }
+    };
 
     if (!tipo) {
         opciones.headers = {
@@ -13,12 +18,12 @@ export async function enviarInfoServer(url: string, data: any) {
         }
     }
 
-    let pro = await fetch(url, opciones)
-    let res = await pro.json();
-    return res
+    const pro = await fetch(url, opciones);
+    const res = await pro.json();
+    return res as TResponse;
 }
 
-export function redirigir(navigate: any, datos: any = {}) {
+export function redirigir(navigate: NavigateFunction, datos: RedirectPayload = {}) {
     if (!datos.redirigir) return;
     navigate(datos.redirigir, { state: datos.mensaje_redirigir ? datos.mensaje_redirigir : {} });
 }
@@ -32,9 +37,9 @@ export function cambiarTamañoBarraContraseña(input: string) {
     } else {
         porcentaje += 25
     }
-    let listaMayusculas = lista.filter(caracter => /[A-Z]/.test(caracter))
-    let listaMinusculas = lista.filter(caracter => /[a-z]/.test(caracter))
-    let listaNumeros = lista.filter(caracter => /[0-9]/.test(caracter))
+    const listaMayusculas = lista.filter(caracter => /[A-Z]/.test(caracter))
+    const listaMinusculas = lista.filter(caracter => /[a-z]/.test(caracter))
+    const listaNumeros = lista.filter(caracter => /[0-9]/.test(caracter))
     if (listaMayusculas.length < 3) {
         porcentaje += 25 / 3 * listaMayusculas.length
     } else {
@@ -65,7 +70,7 @@ export function cambiarTamañoBarraContraseña(input: string) {
     } else {
         color = "#4dffff"
     }
-    let width = `${porcentaje}%`
+    const width = `${porcentaje}%`
     return { width, color }
 }
 
@@ -75,7 +80,12 @@ export async function actualizarSesion() {
     return res
 }
 
-export function Suiche({ label, register }) {
+type SuicheProps = {
+    label: string;
+    register: FormRegisterLike;
+};
+
+export function Suiche({ label, register }: SuicheProps) {
     return (
         <label className="inline-flex items-center gap-3 cursor-pointer">
             <input type="checkbox" className="sr-only peer" {...register} />
@@ -84,8 +94,6 @@ export function Suiche({ label, register }) {
         </label>
     );
 }
-
-import { useEffect, useState } from "react";
 
 export function useIsLg() {
     const [isLg, setIsLg] = useState(window.innerWidth >= 1024);

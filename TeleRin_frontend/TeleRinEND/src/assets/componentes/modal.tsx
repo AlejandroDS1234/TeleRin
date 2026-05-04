@@ -1,17 +1,23 @@
 import { useEffect } from "react"
+import type { MouseEvent, ReactNode } from "react";
 import { createPortal } from "react-dom"
 import { SquareX } from 'lucide-react'
 
+type ModalProps = {
+    open: boolean;
+    onClose: () => void;
+    children: ReactNode;
+    className?: string;
+};
 
-
-function Modal({ open, onClose, children, className = "" }) {
+function Modal({ open, onClose, children, className = "" }: ModalProps) {
 
     useEffect(() => {
         document.body.style.overflow = open ? "hidden" : "auto"
     }, [open])
 
     useEffect(() => {
-        const handleKey = (e) => {
+        const handleKey = (e: KeyboardEvent) => {
             if (e.key === "Escape") onClose()
         }
 
@@ -35,7 +41,7 @@ function Modal({ open, onClose, children, className = "" }) {
                     transform transition-all duration-300
                     ${open ? "scale-100 opacity-100" : "scale-90 opacity-0"}
                 `}
-                onClick={(e) => e.stopPropagation()}>
+                onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
                 <SquareX
                     onClick={onClose}
                     className="

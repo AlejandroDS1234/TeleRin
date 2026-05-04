@@ -16,7 +16,7 @@ function Morris() {
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
 
-    const activar = (e) => {
+    const activar = (e: MediaQueryList | MediaQueryListEvent) => {
       if (!rive) return;
 
       if (e.matches) {

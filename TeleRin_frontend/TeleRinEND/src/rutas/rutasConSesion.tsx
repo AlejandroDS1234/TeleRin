@@ -2,7 +2,6 @@ import Navbar from '../assets/botones_componentes/barra_lateral.tsx';
 import { UserProvider, useUser } from '../assets/componentes/userContext.tsx'
 import Header from '../header.tsx';
 import { Outlet } from "react-router-dom";
-import { useEffect, useState } from 'react';
 import { Loader } from 'lucide-react'
 
 
@@ -17,13 +16,7 @@ function RutasUsuario() {
 function RutasConSesion() {
 
     const { usuario } = useUser();
-    const [cargando, setcargando] = useState(true);
-
-    useEffect(() => {
-        if (usuario !== null) {
-            setcargando(false);
-        }
-    }, [usuario]);
+    const cargando = usuario === null;
 
     if (cargando) {
         return (
