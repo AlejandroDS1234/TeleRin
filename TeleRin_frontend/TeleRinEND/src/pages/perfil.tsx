@@ -7,7 +7,7 @@ import { MensajePlano } from "../assets/componentes/mensaje";
 import Modal from "../assets/componentes/modal";
 import type { ApiMessage, Genero, Pais, Usuario } from "../types";
 
-type PerfilPayload = Partial<Pick<Usuario, "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero">>;
+type PerfilPayload = Partial<Pick<Usuario, "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero">> & { mensaje?: string };
 type FotoPerfilResponse = ApiMessage & { foto_perfil_usuario?: string };
 
 async function cambiarDato(
@@ -61,7 +61,7 @@ function Nombre() {
                     className="hover:cursor-pointer"
                     disabled={cargandoNombre || !cambioNombre}
                     onClick={() => {
-                        cambiarDato({ nombre_usuario: nombre }, setCambioNombre, setCargandoNombre, setRes, setUsuario);
+                        cambiarDato({ nombre_usuario: nombre, mensaje: "Nombre actualizado" }, setCambioNombre, setCargandoNombre, setRes, setUsuario);
                     }}>
                     {cargandoNombre ? <Loader className="animate-spin" /> : <UserPen color={cambioNombre ? "#01af02" : "#000"} className={cambioNombre ? "animate-bounce" : "hover:cursor-not-allowed"} />}
                 </button>
@@ -97,7 +97,7 @@ function Descripcion() {
                     className="hover:cursor-pointer"
                     disabled={cargandoDescripcion || !cambioDescripcion}
                     onClick={() => {
-                        cambiarDato({ descripcion_personal: descripcion }, setCambioDescripcion, setCargandoDescripcion, setRes, setUsuario);
+                        cambiarDato({ descripcion_personal: descripcion, mensaje: "Descripción actualizada" }, setCambioDescripcion, setCargandoDescripcion, setRes, setUsuario);
                     }}>
                     {cargandoDescripcion ? <Loader className="animate-spin" /> : <NotepadText color={cambioDescripcion ? "#01af02" : "#000"} className={cambioDescripcion ? "animate-bounce" : "hover:cursor-not-allowed"} />}
                 </button>
@@ -217,7 +217,7 @@ function Pais() {
                 value={paisUsuario}
                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     setPaisUsuario(e.target.value);
-                    cambiarDato({ id_pais: e.target.value }, null, setCargando, setRes, setUsuario);
+                    cambiarDato({ id_pais: e.target.value, mensaje: "País actualizado" }, null, setCargando, setRes, setUsuario);
                 }}
             >
                 {paises.map((pais) => (
@@ -262,7 +262,7 @@ function Genero() {
                 value={generoUsuario}
                 onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                     setGeneroUsuario(e.target.value);
-                    cambiarDato({ id_genero: e.target.value }, null, setCargando, setRes, setUsuario);
+                    cambiarDato({ id_genero: e.target.value, mensaje: "Género actualizado" }, null, setCargando, setRes, setUsuario);
                 }}
             >
                 {generos.map((genero) => (

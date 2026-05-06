@@ -525,6 +525,7 @@ def api_generos():
 def perfil():
     if request.method=="POST":
         form = request.get_json()
+        mensaje=form["mensaje"]
         if form.get("nombre_usuario", False) and dato_en_db(form["nombre_usuario"], 'nombre_usuario') and form.get("nombre_usuario", False) != session["usuario"]["nombre_usuario"]:
             return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
         if form.get("id_pais", False) and not dato_en_db(form["id_pais"], "id_pais", "paises"):
@@ -532,9 +533,10 @@ def perfil():
         if form.get("id_genero", False) and not dato_en_db(form["id_genero"], "id_genero", "generos"):
             return jsonify({"mensaje":"Genero no registrado", "tipo":"warning"})
         datos_indefinidos(session["usuario"])
+        form.pop("mensaje")
         actualizar_datos("USUARIOS", form, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
         actualizar_sesion(session["usuario"]["correo_usuario"])
-        return jsonify({"mensaje":f"{list(form.keys())[0][:-8].replace('_', '')} actualizado", "tipo":"success"})
+        return jsonify({"mensaje": mensaje, "tipo":"success"})
     return jsonify({"mm": "Investigando? :)"})
         
 @app.route("/api/guardar_foto_perfil", methods=["POST"])
@@ -558,11 +560,12 @@ def perfil_img(filename):
     return send_from_directory("Fotos/perfil", filename)
 
 #rutas de historias --------------------------------------------------------------------------------------------------
-@app.route("/crear_historia", methods=["GET","POST"])
+@app.route("/api/crear_historia", methods=["GET","POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def crear_historia():
     if request.method=="POST":
         form = request.get_json()
+        print(form)
         nombre_historia=form["nombre_historia"].strip()
         descripcion_historia=form["descripcion_historia"].strip()
         saga_historia=form["saga_historia"]
@@ -576,22 +579,22 @@ def crear_historia():
             return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "warning"})
         if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
             return jsonify({"mensaje":"Llena todos los datos","tipo": "warning"})
-        if len(nombre_historia.split(" "))>8 or len(nombre_historia)>140:
+        if len(nombre_historia.split(" "))>8:
             return jsonify({"mensaje": "El nombre de la historia es muy largo","tipo": "warning"})
-        if len(descripcion_historia.split(" "))>100 or len(descripcion_historia)>1000:
+        if len(descripcion_historia.split(" "))>200:
             return jsonify({"mensaje":"La descripcion de la historia es muy larga","tipo": "warning"})
-        if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia} , "historias"):
+        if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]} , "historias"):
             return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "warning"})
-        if len(texto_historia.replace(" ", ""))<1000:
+        if len(texto_historia.replace(" ", ""))<500: 
             return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
-        if len(descripcion_historia)>100:
-            return jsonify({"mensaje": "La descripcion de la historia es muy larga","tipo": "warning"})
         idioma = detectar_idioma(texto_historia)
         insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"], "idioma": idioma})
         hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
-        flash("Historia creada", "success")
-        return redirect(url_for("inicio"))
-    return render_template("pagina/crear_historias.html")
+        redirigir = f"/historia/{id_historia}"
+        if not visivilidad_historia:
+            redirigir = "/perfil"
+        return jsonify({"redirigir": redirigir, "mensaje_redirigir": {"mensaje": "Historia creada exitosamente", "tipo": "success"}})
+    return jsonify({"mm": "Creando historia?"})
 
 @app.route("/api/historia/<id_historia>", methods=["POST"])
 def historia(id_historia):
@@ -657,9 +660,9 @@ def crear_saga():
     mensaje, resultado = validar_imagen_completa(imagen_saga)
     if resultado:
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
-    if len(nombre_saga.split(" "))>4 or len(nombre_saga)>25:
+    if len(nombre_saga.split(" "))>4:
         return jsonify({"mensaje": "El nombre de la saga es muy largo","tipo": "danger"})
-    if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>400:
+    if len(descripcion_saga.split(" "))>60:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)

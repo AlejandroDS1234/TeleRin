@@ -13,7 +13,12 @@ type ModalProps = {
 function Modal({ open, onClose, children, className = "" }: ModalProps) {
 
     useEffect(() => {
-        document.body.style.overflow = open ? "hidden" : "auto"
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = open ? "hidden" : "auto";
+
+        return () => {
+            document.body.style.overflow = previousOverflow || "auto";
+        };
     }, [open])
 
     useEffect(() => {

@@ -5,6 +5,7 @@ import { Loader, BookHeart, Book } from "lucide-react";
 import { redirigir } from "../function_generales.tsx";
 import type Delta from "quill-delta";
 import type { ApiMessage } from "../types";
+import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir.tsx";
 
 type HistoriaDetalle = {
     historia: {
@@ -127,6 +128,9 @@ function Historias() {
                         }
                     ]}
                 />
+            </div>
+            <div className="z-30 fixed bottom-18 lg:bottom-18 bg-[#f5f0e6]">
+                <UseMensajeRedirigir />
             </div>
         </div>
     )

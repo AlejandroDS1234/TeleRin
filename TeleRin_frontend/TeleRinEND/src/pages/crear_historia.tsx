@@ -5,17 +5,37 @@ import { useForm } from "react-hook-form";
 import Modal from "../assets/componentes/modal.tsx";
 import InputWithIcon from "../assets/componentes/inputWithIcon.tsx";
 import { Suiche } from "../function_generales.tsx";
-import { NotebookPen, BookOpenText, ChevronRight, ChevronLeft, Save } from "lucide-react";
+import { NotebookPen, BookOpenText, ChevronRight, ChevronLeft, Save, Loader } from "lucide-react";
 import CrearSaga from "../assets/componentes/crear_saga.tsx";
 import { CustomSelect } from "../assets/componentes/CustomSelect.tsx";
 import { SagasCardHorizontal } from "../assets/componentes/sagas&historias_cards.tsx";
 import type { Saga } from "../types";
+import type Delta from "quill-delta";
+import { enviarInfoServer, redirigir } from "../function_generales.tsx";
+import type { ApiMessage } from "../types";
+import { useNavigate } from "react-router-dom";
+import { MensajePlano } from "../assets/componentes/mensaje.tsx";
+
+type EditorContenido = {
+  html: string;
+  texto: string;
+  delta: Delta;
+};
 
 type GuardarHistoriaForm = {
   nombre_historia: string;
   descripcion_historia: string;
-  visibilidad_historia?: boolean;
+  visibilidad_historia: boolean;
 };
+
+type GuardarHistoriaDatos = {
+  nombre_historia: string;
+  descripcion_historia: string;
+  visibilidad_historia: boolean;
+  saga_historia: string | null;
+  historia: Object | null;
+  texto_historia: string;
+}
 
 type SeleccionarSagaProps = {
   nuevaSaga: boolean;
@@ -27,6 +47,7 @@ type SeleccionarSagaProps = {
 type GuardarHistoriaProps = {
   nuevaSaga: boolean;
   abrirCrearSaga: () => void;
+  contenido: EditorContenido | null;
 };
 
 function SeleccionarSaga({ nuevaSaga, error, abrirCrearSaga, sagaSeleccionada }: SeleccionarSagaProps) {
@@ -107,17 +128,33 @@ function SeleccionarSaga({ nuevaSaga, error, abrirCrearSaga, sagaSeleccionada }:
   );
 }
 
-function Guardar_historia({ nuevaSaga, abrirCrearSaga }: GuardarHistoriaProps) {
+
+function Guardar_historia({ nuevaSaga, abrirCrearSaga, contenido }: GuardarHistoriaProps) {
   const { register, handleSubmit, formState: { errors } } = useForm<GuardarHistoriaForm>();
   const [sagaSeleccion, setSagaSeleccion] = useState("");
+  const [res, setRes] = useState<ApiMessage | null>(null);
+  const navigate = useNavigate();
+  const [cargando, setCargando] = useState(false);
 
   const onSubmit = async (data: GuardarHistoriaForm) => {
+    setCargando(true);
     const payload = {
       ...data,
-      id_saga: sagaSeleccion
+      saga_historia: sagaSeleccion,
+      historia: contenido?.delta ?? null,
+      texto_historia: contenido?.texto ?? "",
     };
+    try {
+      const resp = await enviarInfoServer<ApiMessage, GuardarHistoriaDatos>("/api/crear_historia", payload);
+      resp.redirigir && sessionStorage.removeItem("contenido_historia");
+      redirigir(navigate, resp);
+      setRes(resp);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setCargando(false);
+    }
 
-    console.log(payload);
   };
 
   return (
@@ -159,18 +196,23 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga }: GuardarHistoriaProps) {
         type="submit"
         className="flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
       >
-        Guardar
+        {cargando ? <><p>Guardando</p><Loader className="animate-spin" /></> : <p>Guardar</p>}
       </button>
+      {res && <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />}
     </form>
   );
 }
 
 function PaginaEditor() {
+  const contenidoGuardado = sessionStorage.getItem("contenido_historia");
+  const delta = contenidoGuardado ? JSON.parse(contenidoGuardado).delta : null;
+
   const [nuevaSaga, setNuevaSaga] = useState(false);
   const [crearSaga, setCrearSaga] = useState(false);
-  const [, setContenido] = useState<unknown>(null);
+  const [contenido, setContenido] = useState<EditorContenido | null>(contenidoGuardado ? JSON.parse(contenidoGuardado) : null);
   const [abrirModal, setAbrirModal] = useState(false);
   const [crearSagaMostrar, setCrearSagaMostrar] = useState(false);
+
 
   return (
     <div className="flex justify-center lg:items-center">
@@ -191,10 +233,13 @@ function PaginaEditor() {
           </div>
 
           <div className={crearSagaMostrar ? "hidden" : "block"}>
-            <Guardar_historia nuevaSaga={nuevaSaga} abrirCrearSaga={() => {
-              setCrearSagaMostrar(true);
-              setCrearSaga(true);
-            }} />
+            <Guardar_historia
+              nuevaSaga={nuevaSaga}
+              contenido={contenido}
+              abrirCrearSaga={() => {
+                setCrearSagaMostrar(true);
+                setCrearSaga(true);
+              }} />
           </div>
 
           <div
@@ -212,7 +257,11 @@ function PaginaEditor() {
 
       <div className="min-h-screen bg-[#e5e3dc] w-full max-w-175 h-[90vh] shadow-xl flex flex-col items-center p-4">
         <Editor
-          onChangeContenido={setContenido}
+          onChangeContenido={(datos) => {
+            setContenido(datos);
+            sessionStorage.setItem("contenido_historia", JSON.stringify(datos));
+          }}
+          contenidoInicial={delta}
           toolbarItems={[
             {
               type: "quill",
