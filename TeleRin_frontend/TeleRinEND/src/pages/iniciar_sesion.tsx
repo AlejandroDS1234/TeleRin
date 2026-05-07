@@ -1,4 +1,4 @@
-import { Loader, EyeClosed, BookUser } from "lucide-react";
+import { Loader, EyeClosed, BookUser, Eye } from "lucide-react";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import { Link, useNavigate } from "react-router-dom";
 import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir.tsx";
@@ -19,6 +19,7 @@ function Iniciar_sesion_Form() {
     const navigate = useNavigate();
     const [cargando, setCargando] = useState(false);
     const [res, setRes] = useState<ApiMessage | null>(null);
+    const [mostrarContraseña, setMostrarContraseña] = useState(false);
 
     const onSubmit = async (data: IniciarSesionForm) => {
         setCargando(true);
@@ -54,9 +55,9 @@ function Iniciar_sesion_Form() {
             )}
 
             <InputWithIcon
-                icon={<EyeClosed />}
+                icon={mostrarContraseña ? <Eye onClick={() => setMostrarContraseña(false)} className="hover:cursor-pointer animate-pulse" /> : <EyeClosed onClick={() => setMostrarContraseña(true)} className="hover:cursor-pointer animate-pulse" />}
                 placeholder="Contraseña"
-                type="password"
+                type={mostrarContraseña ? "text" : "password"}
                 register={register("contraseña_usuario", {
                     required: "Ingrese su contraseña"
                 })}

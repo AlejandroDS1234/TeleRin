@@ -1,12 +1,12 @@
 import type { InputHTMLAttributes } from "react";
 import type { InputWithIconBaseProps } from "../../types";
 
-interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement>, InputWithIconBaseProps {}
+interface InputWithIconProps extends InputHTMLAttributes<HTMLInputElement>, InputWithIconBaseProps { }
 
 function InputWithIcon({ icon, register, className = "", ...props }: InputWithIconProps) {
     return (
         <div className="relative">
-            <div className="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
+            <div className="absolute inset-y-0 left-3 flex items-center text-gray-600 z-10">
                 {icon}
             </div>
             <input

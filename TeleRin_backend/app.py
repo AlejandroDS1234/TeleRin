@@ -136,6 +136,11 @@ def detectar_idioma(texto):
     idioma = detect(texto)
     return idiomas_soportados.get(idioma, 'spanish')
 
+def tamaño_imagen_menor(imagen, w=150, h=150):
+    img = Image.open(imagen)
+    img.thumbnail((w, h), Image.Resampling.LANCZOS)
+    return img
+
 #validar archivos e imagenes --------------------------------------------------------------------------------------------------
 def ruta_guardado(nombre_archivo, archivo_de_que, direccion, extension=".jpg"):
     direccion_proyecto=os.getcwd()
@@ -164,6 +169,11 @@ def validar_imagen_completa(file, max_mb=5, min_w=300, min_h=300):
     if w < min_w or h < min_h:
         return f"La imagen debe ser mínimo {min_w}x{min_h} px", True
     return None, False   
+
+def generar_imagen_reducida(imagen_file, ancho=150, alto=150):
+    img = Image.open(imagen_file)
+    img.thumbnail((ancho, alto), Image.Resampling.LANCZOS)
+    return img
 
 #utilidades de la base de datos --------------------------------------------------------------------------------------------------
 def conectar():
@@ -550,6 +560,14 @@ def guardar_foto_perfil():
             return jsonify({"mensaje": mensaje, "tipo": "danger"})
         nombre_archivo, ruta=ruta_guardado(session["usuario"]["codigo_usuario"], "_perfil", "Fotos/perfil")
         imagen.save(ruta)
+        
+        # Generar y guardar versión reducida
+        imagen.seek(0)  # Reset para poder leerla de nuevo
+        reducida = generar_imagen_reducida(imagen, 150, 150)
+        nombre_reducida = nombre_archivo.replace(".jpg", "_reducida.jpg")
+        ruta_reducida = ruta.replace(".jpg", "_reducida.jpg")
+        reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
+        
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": session["usuario"]["correo_usuario"]})
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
 
@@ -557,6 +575,12 @@ def guardar_foto_perfil():
 def perfil_img(filename):
     if "usuario" not in session:
         abort(403)
+    # Obtener el parámetro "size" del URL
+    size = request.args.get('size', 'full')  # default: 'full'
+    
+    if size == 'reducida':
+        filename = filename.replace('.jpg', '_reducida.jpg')
+    
     return send_from_directory("Fotos/perfil", filename)
 
 #rutas de historias --------------------------------------------------------------------------------------------------
@@ -666,6 +690,14 @@ def crear_saga():
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)
+    
+    # Generar y guardar versión reducida
+    imagen_saga.seek(0)  # Reset para poder leerla de nuevo
+    reducida = generar_imagen_reducida(imagen_saga, 150, 150)
+    nombre_reducida = imagen_saga_nombre.replace(".jpg", "_reducida.jpg")
+    ruta_reducida = imagen_saga_ruta.replace(".jpg", "_reducida.jpg")
+    reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
+    
     insertar_db("saga", {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]})
     hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})
     return jsonify({"mensaje": "Saga creada", "tipo": "success"})
@@ -693,6 +725,10 @@ def saga(id_saga):
 def fotos_saga(filename):
     if "usuario" not in session:
         abort(403)
+    # Obtener el parámetro "size" del URL
+    size = request.args.get('size', 'full')  # default: 'full'
+    if size == 'reducida':
+        filename = filename.replace('.jpg', '_reducida.jpg')
     return send_from_directory("Fotos/fotos_sagas", filename)
 
 #rutas paletas de colores --------------------------------------------------------------------------------------------------

@@ -3,13 +3,15 @@ import { useUser } from "../componentes/userContext";
 import { useState } from "react";
 import { Search, DoorClosed, Feather, Landmark } from "lucide-react";
 import { motion } from "framer-motion";
-import { useIsLg, redirigir } from "../../function_generales";
+import { useIsLg } from "../../function_generales";
+import CerrarSesion from "./cerrar_sesion";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { usuario, setUsuario } = useUser();
+  const { usuario } = useUser();
   const [abierta, setabierta] = useState(false);
+  const [imagenPerfilCargada, setImagenPerfilCargada] = useState(false);
   const isLg = useIsLg();
 
   const resaltado = location.pathname;
@@ -84,13 +86,24 @@ function Navbar() {
               x: -1
             }
           }}
-          className="w-10 h-10 flex justify-center items-center "
+          className="w-10 h-10 flex justify-center items-center relative"
         >
-          <motion.img
+          {/* Placeholder borroso (imagen reducida) */}
+          <img
+            src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?size=reducida&t=${Date.now()}`}
+            className="absolute inset-0 w-full h-full object-cover rounded-full border-2 border-black"
+            style={{ opacity: !imagenPerfilCargada ? 1 : 0 }}
+          />
 
-            className="h-10 aspect-square rounded-full border-2"
-            style={{ borderColor: resaltado === "/perfil" ? "#FF0000" : "#000" }}
+          {/* Imagen real con fade in */}
+          <motion.img
+            className="h-10 aspect-square rounded-full border-2 transition-opacity duration-300"
+            style={{
+              borderColor: resaltado === "/perfil" ? "#FF0000" : "#000",
+              opacity: imagenPerfilCargada ? 1 : 0
+            }}
             src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
+            onLoad={() => setImagenPerfilCargada(true)}
           />
         </motion.div>
 
@@ -115,31 +128,23 @@ function Navbar() {
             className={`hidden lg:block lg:whitespace-nowrap ${resaltado === ruta ? "text-[#FF0000]" : ""} `}>{Texto}</motion.p>
         </motion.button>
       ))}
-      <motion.button
-        className={`justify-center lg:justify-start lg:w-[90%] hover:cursor-pointer flex flex-1 flex-row items-center`}
-        onClick={async () => {
-          const pro = await fetch("/api/cerrar_sesion", {
-            method: "POST",
-            credentials: "include"
-          })
-          const res = await pro.json()
-          if (pro.ok) {
-            setUsuario(null);
-            sessionStorage.clear();
-            redirigir(navigate, res)
-          }
-        }}
-        whileHover={{ scale: 1.05 }}
-      >
-        <motion.div
-          variants={iconos}
-          className="w-min h-min"
-        >
-          <DoorClosed />
-        </motion.div>
-        <motion.p variants={textos}
-          className={`hidden lg:block lg:whitespace-nowrap `}>Cerrar Sesión</motion.p>
-      </motion.button>
+      <CerrarSesion
+        boton={
+          <motion.button
+            className={`justify-center lg:justify-start lg:w-[90%] hover:cursor-pointer flex flex-1 flex-row items-center`}
+            whileHover={{ scale: 1.05 }}
+          >
+            <motion.div
+              variants={iconos}
+              className="w-min h-min"
+            >
+              <DoorClosed />
+            </motion.div>
+            <motion.p variants={textos}
+              className={`hidden lg:block lg:whitespace-nowrap `}>Salir</motion.p>
+          </motion.button>
+        }
+      />
     </motion.div>
   );
 }

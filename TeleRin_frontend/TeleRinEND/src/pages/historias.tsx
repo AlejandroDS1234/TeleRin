@@ -97,7 +97,7 @@ function Historias() {
     if (cargando || !contenido) {
         return (
             <div className="flex justify-center lg:items-center">
-                <div className="min-h-screen bg-[#e5e3dc] w-full max-w-[700px] h-[90vh] shadow-xl flex flex-col items-center p-4">
+                <div className="min-h-screen bg-[#e5e3dc] w-full max-w-175 h-[90vh] shadow-xl flex flex-col items-center p-4">
                     <p>Cargando<Loader className="animate-spin" /></p>
                 </div>
             </div>
@@ -106,9 +106,9 @@ function Historias() {
 
     return (
         <div className="flex justify-center lg:items-center">
-            <div className="min-h-screen bg-[#e5e3dc] w-full max-w-[700px] h-[90vh] shadow-xl flex flex-col items-center p-4">
+            <div className="min-h-screen bg-[#e5e3dc] w-full max-w-175 h-[90vh] shadow-xl flex flex-col items-center p-4">
                 <Editor
-                    soloLectura={false}
+                    soloLectura={true}
                     contenidoInicial={contenido.historia.contenido_historia}
                     onChangeContenido={null}
                     toolbarItems={[

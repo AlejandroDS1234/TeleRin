@@ -114,6 +114,7 @@ function Imagen() {
     const [imagen, setImagen] = useState("");
     const inputFotoRef = useRef<HTMLInputElement | null>(null);
     const [res, setRes] = useState<FotoPerfilResponse | null>(null);
+    const [imagenPerfilCargada, setImagenPerfilCargada] = useState(false);
 
     function limpiarSeleccionFoto() {
         setNuevaFoto(null);
@@ -177,11 +178,22 @@ function Imagen() {
                 {nuevaFoto && (<p>{nuevaFoto.name}</p>)}
                 {res && (<MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />)}
             </Modal>
-            <img
-                className="w-40 h-40 object-cover border-2 border-black hover:cursor-pointer"
-                src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
-                onClick={() => setAbrirModal(true)}
-            />
+            <div className="relative w-40 h-40 cursor-pointer" onClick={() => setAbrirModal(true)}>
+                {/* Placeholder borroso (imagen reducida) */}
+                <img
+                    src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?size=reducida&t=${Date.now()}`}
+                    className="absolute inset-0 w-full h-full object-cover border-2 border-black"
+                    style={{ opacity: !imagenPerfilCargada ? 1 : 0 }}
+                />
+
+                {/* Imagen real con fade in */}
+                <img
+                    className="w-40 h-40 object-cover border-2 border-black hover:cursor-pointer transition-opacity duration-300"
+                    style={{ opacity: imagenPerfilCargada ? 1 : 0 }}
+                    src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
+                    onLoad={() => setImagenPerfilCargada(true)}
+                />
+            </div>
         </div>
     )
 }
@@ -207,7 +219,7 @@ function Pais() {
     }, []);
 
     if (!usuario) return null;
-    if (cargando) return <p>Cargando <Loader className="animate-spin" /></p>;
+    if (cargando) return <p className="flex w-full text-center">Cargando <Loader className="animate-spin" /></p>;
 
     return (
         <div className="flex flex-col w-full">
@@ -252,7 +264,7 @@ function Genero() {
     }, []);
 
     if (!usuario) return null;
-    if (cargando) return <p>Cargando <Loader className="animate-spin" /></p>;
+    if (cargando) return <p className="flex w-full text-center">Cargando <Loader className="animate-spin" /></p>;
 
     return (
         <div className="flex flex-col w-full">

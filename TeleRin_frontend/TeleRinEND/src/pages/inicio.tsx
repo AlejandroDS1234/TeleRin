@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Sagacard, HistoriaCard } from "../assets/componentes/sagas&historias_cards";
+import { Sagacard, SagaCardCargando, HistoriaCard, HistoriaCardCargando } from "../assets/componentes/sagas&historias_cards";
 import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
@@ -49,7 +49,13 @@ function Sagas() {
     }
 
     if (cargando) {
-        return <p>Cargando <Loader className="animate-spin" /></p>;
+        return (
+            <>
+                {Array.from({ length: 20 }).map((_, i) => (
+                    <SagaCardCargando key={i} />
+                ))}
+            </>
+        );
     }
 
     return (
@@ -92,7 +98,13 @@ function Historias() {
     }
 
     if (cargando) {
-        return <p>Cargando <Loader className="animate-spin" /></p>;
+        return (
+            <>
+                {Array.from({ length: 20 }).map((_, i) => (
+                    <HistoriaCardCargando key={i} />
+                ))}
+            </>
+        )
     }
 
     return (
