@@ -171,8 +171,13 @@ def validar_imagen_completa(file, max_mb=5, min_w=300, min_h=300):
     return None, False   
 
 def generar_imagen_reducida(imagen_file, ancho=150, alto=150):
+    """Genera una versión pequeña y comprimida de la imagen"""
     img = Image.open(imagen_file)
+    # Redimensiona manteniendo proporción
     img.thumbnail((ancho, alto), Image.Resampling.LANCZOS)
+    # Convertir a RGB si es necesario (para guardar como JPEG)
+    if img.mode in ('RGBA', 'P'):
+        img = img.convert('RGB')
     return img
 
 #utilidades de la base de datos --------------------------------------------------------------------------------------------------
@@ -603,13 +608,13 @@ def crear_historia():
             return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "warning"})
         if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
             return jsonify({"mensaje":"Llena todos los datos","tipo": "warning"})
-        if len(nombre_historia.split(" "))>8:
+        if len(nombre_historia.split(" "))>8 or len(nombre_historia)>50:
             return jsonify({"mensaje": "El nombre de la historia es muy largo","tipo": "warning"})
-        if len(descripcion_historia.split(" "))>200:
+        if len(descripcion_historia.split(" "))>200 or len(descripcion_historia)>500:
             return jsonify({"mensaje":"La descripcion de la historia es muy larga","tipo": "warning"})
         if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]} , "historias"):
             return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "warning"})
-        if len(texto_historia.replace(" ", ""))<500: 
+        if len(texto_historia.replace(" ", ""))<500 or len(texto_historia)<1000: 
             return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
         idioma = detectar_idioma(texto_historia)
         insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"], "idioma": idioma})
@@ -684,9 +689,9 @@ def crear_saga():
     mensaje, resultado = validar_imagen_completa(imagen_saga)
     if resultado:
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
-    if len(nombre_saga.split(" "))>4:
+    if len(nombre_saga.split(" "))>4 or len(nombre_saga)>50:
         return jsonify({"mensaje": "El nombre de la saga es muy largo","tipo": "danger"})
-    if len(descripcion_saga.split(" "))>60:
+    if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>500:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
     imagen_saga.save(imagen_saga_ruta)
