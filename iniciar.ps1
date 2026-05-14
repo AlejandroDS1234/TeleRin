@@ -13,13 +13,13 @@ function Get-WifiIp {
 
     foreach ($pattern in $priorityPatterns) {
         $ip = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
-            Where-Object {
-                $_.IPAddress -notlike "127.*" -and
-                $_.PrefixOrigin -ne "WellKnown" -and
-                $_.InterfaceAlias -like "*$pattern*"
-            } |
-            Sort-Object SkipAsSource |
-            Select-Object -ExpandProperty IPAddress -First 1
+        Where-Object {
+            $_.IPAddress -notlike "127.*" -and
+            $_.PrefixOrigin -ne "WellKnown" -and
+            $_.InterfaceAlias -like "*$pattern*"
+        } |
+        Sort-Object SkipAsSource |
+        Select-Object -ExpandProperty IPAddress -First 1
 
         if ($ip) {
             return $ip
@@ -27,13 +27,13 @@ function Get-WifiIp {
     }
 
     $fallback = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
-        Where-Object {
-            $_.IPAddress -notlike "127.*" -and
-            $_.IPAddress -notlike "172.1*" -and
-            $_.InterfaceAlias -notmatch "vEthernet|WSL|Docker|Loopback|Virtual|VMware|Hyper-V|Tailscale|ZeroTier"
-        } |
-        Sort-Object InterfaceMetric, SkipAsSource |
-        Select-Object -ExpandProperty IPAddress -First 1
+    Where-Object {
+        $_.IPAddress -notlike "127.*" -and
+        $_.IPAddress -notlike "172.1*" -and
+        $_.InterfaceAlias -notmatch "vEthernet|WSL|Docker|Loopback|Virtual|VMware|Hyper-V|Tailscale|ZeroTier"
+    } |
+    Sort-Object InterfaceMetric, SkipAsSource |
+    Select-Object -ExpandProperty IPAddress -First 1
 
     return $fallback
 }
@@ -77,7 +77,7 @@ function Show-Qr {
     Write-Host "  Ctrl+Shift+R -> regenerar QR manualmente" -ForegroundColor DarkGray
     Write-Host "  Ctrl+Shift+Q -> salir" -ForegroundColor DarkGray
     Write-Host ""
-    docker compose -f $composeFile exec -T telerin python generarQR.py --url $url --once | Out-Host
+    docker compose -f $composeFile exec -T telerin python generarQR.py --url $url | Out-Host
 }
 
 Ensure-DockerServices

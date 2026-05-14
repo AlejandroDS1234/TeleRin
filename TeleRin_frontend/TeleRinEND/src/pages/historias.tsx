@@ -45,7 +45,7 @@ function Calificacion() {
             const data = await res.json();
             setRes(data as ApiMessage);
         } catch {
-            setRes({ mensaje: "Error de conexión", tipo: "danger" });
+            setRes({ mensaje: "Error de conexiÃ³n", tipo: "danger" });
         }
     };
 

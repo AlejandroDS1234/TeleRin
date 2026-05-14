@@ -1,10 +1,10 @@
 #flask
-from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify, abort, send_from_directory
+from flask import Flask, request, flash, redirect, url_for, session, jsonify, abort, send_from_directory
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
-
+ 
 import os
 import re
 import socket
@@ -75,7 +75,7 @@ def registrar_funcion(nombre):
         return func
     return decorador
 
-def necesita(nombre, validacion, redireccion: str = "/"):
+def necesita(nombre: str, validacion: bool, redireccion: str = "/"):
     def decorador(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -135,11 +135,6 @@ def es_color_claro(color: str):
 def detectar_idioma(texto):
     idioma = detect(texto)
     return idiomas_soportados.get(idioma, 'spanish')
-
-def tamaño_imagen_menor(imagen, w=150, h=150):
-    img = Image.open(imagen)
-    img.thumbnail((w, h), Image.Resampling.LANCZOS)
-    return img
 
 #validar archivos e imagenes --------------------------------------------------------------------------------------------------
 def ruta_guardado(nombre_archivo, archivo_de_que, direccion, extension=".jpg"):
@@ -439,7 +434,7 @@ def registrarse():
         guardar_funcion_proveniente("registro")
         return enviar_correo(correo_us)
     return "MMMMMMMMMMM sospechoso"
-
+ 
 @app.route("/api/ingresar_codigo_validacion", methods=["GET"])
 @necesita("codigo de validacion", lambda: session.get("codigo_validacion")!=None)
 def ingresar_codigo_validacion():
@@ -669,8 +664,8 @@ def historial_usuario():
     codigo_usuario=session["usuario"]["codigo_usuario"]
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia WHERE hl.codigo_usuario = %s ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
-            historias=cursor.fetchall()
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE hl.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, hl.tiempo_vista ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
+            historias=cursor.fetchall() 
     return jsonify(historias)
 
 #rutas de sagas --------------------------------------------------------------------------------------------------
