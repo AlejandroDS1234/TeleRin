@@ -108,3 +108,8 @@ export function useIsLg() {
 
     return isLg;
 }
+
+export function ColorRandom() {
+    const colores = ["#CBC0ADBF", "#86A397BF", "#B9CFD4BF", "#CEE0DCBF"];
+    return colores[Math.floor(Math.random() * colores.length)];
+}

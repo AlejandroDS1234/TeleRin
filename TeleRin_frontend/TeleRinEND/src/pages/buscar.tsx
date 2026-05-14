@@ -4,4 +4,4 @@ function Buscar( ) {
     )
 }
 
-export default Buscar //te estoy siguiendo llevame en un mometico
+export default Buscar 

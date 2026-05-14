@@ -713,18 +713,23 @@ def sagas_creadas(usuario):
         sagas_usuario=dato_en_db(usuario, "codigo_usuario", "saga")
         return jsonify(sagas_usuario)
         
-@app.route("/saga/<id_saga>")
-@necesita("usuario", lambda: session.get("usuario")!=None)
+@app.route("/api/saga_info/<id_saga>")
 def saga(id_saga):
-    saga=dato_en_db(id_saga, "id_saga", "saga")
-    if not saga:
-        abort(404) 
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.fecha_actualizacion, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia WHERE h.id_saga = %s AND h.visibilidad_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion ORDER BY h.fecha_actualizacion DESC""", (id_saga, True))
+            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros, u.nombre_usuario FROM "saga" s LEFT JOIN historias h ON s.id_saga = h.id_saga AND h.visibilidad_historia = %s JOIN "USUARIOS" u ON s.codigo_usuario = u.codigo_usuario WHERE s.id_saga = %s GROUP BY s.nombre_saga, s.id_saga, u.nombre_usuario""", (True, id_saga))
+            saga= cursor.fetchone()
+    if not saga:
+        return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Saga no encontrada", "tipo": "danger"}})
+    return saga
+
+@app.route("/api/sagas_historias/<id_saga>", methods=["POST"])
+def sagas_historias(id_saga):
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, TO_CHAR(h.fecha_actualizacion,'DD/MM/YYYY'), h.descripcion_historia, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia = %s AND id_saga = %s GROUP BY h.nombre_historia, h.id_historia,  u.nombre_usuario ORDER BY calificacion_p DESC""", (True, id_saga))
             historias=cursor.fetchall()
-    autor = dato_en_db(saga[0]["codigo_usuario"], "codigo_usuario", "USUARIOS")
-    return render_template("pagina/saga.html", saga=saga[0], historias=historias, autor=autor[0])
+    return jsonify(historias)
 
 @app.route("/api/Fotos/fotos_sagas/<filename>")
 def fotos_saga(filename):

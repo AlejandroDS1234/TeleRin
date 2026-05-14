@@ -12,7 +12,11 @@ import RutaProtegida from './rutaProtegida.tsx';
 import RutasSinSesion from './rutasSinSesion.tsx';
 import PaginaEditor from '../pages/crear_historia.tsx'
 import Historias from '../pages/historias.tsx'
+import Sagas from '../pages/sagas.tsx'
 import { Routes, Route } from "react-router-dom";
+
+
+
 
 
 function RutasIngresar() {
@@ -30,18 +34,21 @@ function RutasIngresar() {
                 <Route element={<RutaProtegida verificarUrl="/api/cambiar_contraseña" />}>
                     <Route path="/cambiar_contraseña" element={<CambiarContraseña />} />
                 </Route>
+                
             </Route>
 
-
-            <Route element={<RutaProtegida verificarUrl="/api/necesita_usuario" />}>
-                <Route element={<RutasUsuario />}>
-                    <Route path="/inicio" element={<Inicio />} />
-                    <Route path='/perfil' element={<Perfil />} />
-                    <Route path='/buscar' element={<Buscar />} />
-                    <Route path='/editor' element={<PaginaEditor />} />
-                    <Route path='/historia/:id_historia' element={<Historias />} />
+          
+                <Route element={<RutaProtegida verificarUrl="/api/necesita_usuario" />}>
+                    <Route element={<RutasUsuario />}>
+                        <Route path="/inicio" element={<Inicio />} />
+                        <Route path='/perfil' element={<Perfil />} />
+                        <Route path='/buscar' element={<Buscar />} />
+                        <Route path='/editor' element={<PaginaEditor />} />
+                        <Route path='/historia/:id_historia' element={<Historias />} />
+                        <Route path="/sagas/:id_saga" element={<Sagas />} />
+                    </Route>
                 </Route>
-            </Route>
+     
         </Routes>
     )
 }

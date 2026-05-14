@@ -2,6 +2,7 @@ import { Book, BookHeart, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { ColorRandom } from "../../function_generales";
 
 type LineasProps = {
     grosor: string;
@@ -46,10 +47,10 @@ function Lineas({ grosor, espaciado, cantidad = 2 }: LineasProps) {
 
 export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardProps) {
     const [imagenCargada, setImagenCargada] = useState(false);
-    const colores = ["#CBC0ADBF", "#86A397BF", "#B9CFD4BF", "#CEE0DCBF"]
+    
 
     return (
-        <Link to={ids}
+        <Link to={`/sagas/${encodeURIComponent(ids)}`}
             className="relative p-4 bg-[#e4e0d6] flex flex-col border-2 border-black border-double h-70 flex-none w-50 sm:w-full"
         >
             <div>
@@ -69,7 +70,7 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
             </div>
 
             <div className="relative mt-auto h-43 w-full"
-                style={{ backgroundColor: colores[Math.floor(Math.random() * colores.length)] }}
+                style={{ backgroundColor: ColorRandom()  }}
             >
                 {/* Placeholder borroso (imagen reducida) */}
                 <img

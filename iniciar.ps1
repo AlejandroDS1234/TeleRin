@@ -39,15 +39,17 @@ function Get-WifiIp {
 }
 
 function Ensure-DockerServices {
-    $serviceCount = docker compose -f $composeFile ps -a --services 2>$null | Measure-Object | Select-Object -ExpandProperty Count
+    Write-Host "Levantando servicios con docker compose up -d..." -ForegroundColor Cyan
+    docker compose -f $composeFile up -d --build | Out-Host
 
-    if ($serviceCount -gt 0) {
-        Write-Host "Iniciando contenedores existentes con docker compose start..." -ForegroundColor Cyan
-        docker compose -f $composeFile start | Out-Host
-    }
-    else {
-        Write-Host "Creando contenedores con docker compose up -d..." -ForegroundColor Cyan
-        docker compose -f $composeFile up -d | Out-Host
+    $running = docker compose -f $composeFile ps --services --filter "status=running" | Select-String "^telerin$"
+
+    if (-not $running) {
+        Write-Host ""
+        Write-Host "ERROR: El servicio 'telerin' no esta corriendo." -ForegroundColor Red
+        Write-Host "Revisa los logs para detectar el problema." -ForegroundColor Yellow
+        docker compose -f $composeFile logs telerin | Out-Host
+        exit 1
     }
 }
 

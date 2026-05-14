@@ -3,13 +3,17 @@ import { UserProvider, useUser } from '../assets/componentes/userContext.tsx'
 import Header from '../header.tsx';
 import { Outlet } from "react-router-dom";
 import { Loader } from 'lucide-react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+const queryClient = new QueryClient();
 
 function RutasUsuario() {
     return (
+        <QueryClientProvider client={queryClient}>
         <UserProvider>
             <RutasConSesion />
         </UserProvider>
+        </QueryClientProvider>
     )
 }
 
@@ -30,13 +34,13 @@ function RutasConSesion() {
 
     return (
         <>
-            <div className="absolute w-full insert-0 lg:pl-[60px] z-30">
+            <div className="absolute w-full insert-0 lg:pl-15 z-30">
                 <Header url="/inicio" />
             </div>
-            <div className="w-full min-h-screen pt-27 pb-20 lg:pb-6 lg:pl-[85px]">
+            <div className="w-full min-h-screen pt-27 pb-20 lg:pb-6 lg:pl-21.25">
                 <Outlet />
             </div>
-            <div className="fixed bottom-0 left-0 w-[100%] lg:top-0 lg:bottom-auto lg:h-[100vh] lg:w-[80px] insert-0 z-30">
+            <div className="fixed bottom-0 left-0 w-full lg:top-0 lg:bottom-auto lg:h-screen lg:w-20 insert-0 z-30">
                 <Navbar />
             </div>
         </>

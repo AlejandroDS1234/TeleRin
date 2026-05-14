@@ -25,10 +25,58 @@ function HistoriasPrincipales() {
     )
 }
 
+function MasSagasCard({ onClick }) {
+    return (
+        <button
+            onClick={onClick}
+            className="relative p-4 bg-[#e4e0d6] flex flex-col justify-center items-center border-2 border-black border-double h-70 w-40 flex-none"
+        >
+            <h3 className="font-bold text-2xl font-serif text-center">
+                Más sagas
+            </h3>
+        </button>
+    );
+}
+
+function ModalSagas({ sagas, cerrar }) {
+  return (
+    <div className="fixed inset-0 bg-black/70 z-50">
+
+      {/* Mobile */}
+      <div className="block lg:hidden p-3">
+        <div className="grid grid-cols-2 gap-8 h-[calc(100vh-80px)] w-full pt-24 overflow-y-auto p-3 z-70" onClick={cerrar}>
+            <div
+                onClick={(e) => e.stopPropagation()}
+            ></div>
+            {sagas.map((saga) => (
+                <div key={saga.id_saga}>
+                <Sagacard
+                    ids={saga.id_saga}
+                    img={saga.imagen_saga}
+                    descripcion={saga.descripcion_saga}
+                    titulo={saga.nombre_saga}
+                    libros={saga.libros ?? 0}
+                />
+                </div>
+            ))}
+        </div>
+      </div>
+
+      {/* Desktop */}
+      <div className="hidden lg:block">
+        {/* Próximamente showcase */}
+      </div>
+
+    </div>
+  );
+}
+
 function Sagas() {
     const [sagas, setSagas] = useState<Saga[]>([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(false);
+    const sagasPreview = sagas.slice(0, 15);
+    const [modalAbierto, setModalAbierto] = useState(false);
 
     useEffect(() => {
         const sagasBack = async () => {
@@ -55,12 +103,12 @@ function Sagas() {
                     <SagaCardCargando key={i} />
                 ))}
             </>
-        );
+        );   
     }
 
     return (
         <>
-            {sagas.map((saga) => (
+            {sagasPreview.map((saga) => (
                 <Sagacard
                     key={saga.id_saga}
                     ids={saga.id_saga}
@@ -70,6 +118,8 @@ function Sagas() {
                     libros={saga.libros ?? 0}
                 />
             ))}
+            <MasSagasCard onClick={() => setModalAbierto(true)} />
+            {modalAbierto && <ModalSagas sagas={sagas} cerrar={() => setModalAbierto(false)} />}
         </>
     )
 }
@@ -153,7 +203,7 @@ function Inicio() {
             </div>
             <br />
 
-            <div className="relative z-20 font-serif text-gray-900">
+            <div className="relative z-10 font-serif text-gray-900">
                 <section className="p-2">
                     <h4 className="text-2xl font-bold border-b border-black mb-2 uppercase tracking-wide">Historias Recomendadas</h4>
                     <div className="flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">

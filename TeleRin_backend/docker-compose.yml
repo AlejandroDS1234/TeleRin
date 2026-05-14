@@ -7,6 +7,7 @@ services:
     volumes:
       - .:/TELERIN
     environment:
+      PYTHONUNBUFFERED: 1
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: TeleRin
