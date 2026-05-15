@@ -329,12 +329,10 @@ def paleta_en_base(paleta: dict, codigo_usuario: str):
 def guardar_historial(id_historia: str):
     codigo_usuario=session["usuario"]["codigo_usuario"]
     tiempo=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    if dato_en_db(None, {"codigo_usuario": codigo_usuario, "id_historia": id_historia}, "historial"):
-        actualizar_datos("historial", {"tiempo_vista": tiempo}, {"codigo_usuario": codigo_usuario, "id_historia": id_historia})
-        print("actualizado", random.randint(100000,999999))
-        return
-    print("insertado", random.randint(100000,999999))
-    insertar_db("historial", {"codigo_usuario": codigo_usuario, "tiempo_vista": tiempo, "id_historia": id_historia})
+    with conectar() as db:
+        with db.cursor() as cursor:
+            cursor.execute('INSERT INTO "historial" (codigo_usuario, id_historia, tiempo_vista) VALUES (%s, %s, %s) ON CONFLICT (codigo_usuario, id_historia) DO UPDATE SET tiempo_vista = EXCLUDED.tiempo_vista', (codigo_usuario, id_historia, tiempo))
+    return jsonify(["guardado #no se usa"])
 
 def hashtag_db(texto: str, id: str, tabla_campo: str):
     hashtags=obtener_hashtags(texto)
@@ -622,13 +620,13 @@ def crear_historia():
 
 @app.route("/api/historia/<id_historia>", methods=["POST"])
 def historia(id_historia):
-    historia=dato_en_db(id_historia, "id_historia", "historias")
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia, h.contenido_historia ,TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia = %s AND h.id_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario ORDER BY calificacion_p DESC LIMIT 20""", (True, id_historia))
+            historia=cursor.fetchone()
     if not historia:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
-    if historia[0]["visibilidad_historia"] == 0:
-        return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
-    historia[0]["fecha_actualizacion"]=historia[0]["fecha_actualizacion"].strftime("%d/%m/%Y")
-    return jsonify({"historia": historia[0]})
+    return jsonify(historia)
 
 @app.route("/api/calificar_historia/<id_historia>", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
@@ -653,7 +651,7 @@ def calificar_historia(id_historia):
         return jsonify({"fin": "calificacion cambiada", "tipo": "success"})
     insertar_db("calificacion_historia", {"id_historia": id_historia, "calificacion": calificacion, "codigo_usuario": id_usuario})
     return jsonify({"fin": "calificacion cambiada", "tipo": "success"})
-
+  
 @app.route("/api/calificacion_historia/<id_historia>", methods=["POST"])
 def calificacion_historia(id_historia):
     calificacion = dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "calificacion_historia")

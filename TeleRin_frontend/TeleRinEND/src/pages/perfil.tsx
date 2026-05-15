@@ -382,7 +382,6 @@ function Perfil() {
             <div className="flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
                 <Historial />   
             </div>
-            <iframe src="https://www.xvideos.com/embedframe/ouolcha9432" width={510} height={400}></iframe>
         </div>
     )
 }

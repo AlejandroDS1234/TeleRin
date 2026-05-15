@@ -1,11 +1,11 @@
 services:
   telerin:
-    build: .
+    build: ./TeleRin_backend
     container_name: telerin
     ports:
       - "1240:1240"
     volumes:
-      - .:/TELERIN
+      - ./TeleRin_backend:/TELERIN
     environment:
       PYTHONUNBUFFERED: 1
       POSTGRES_USER: postgres
@@ -18,12 +18,12 @@ services:
     tty: true
 
   frontend:
-    build: ../TeleRin_frontend/TeleRinEND
+    build: ./TeleRin_frontend/TeleRinEND
     container_name: telerin_frontend
     ports:
       - "4210:4210"
     volumes:
-      - ../TeleRin_frontend/TeleRinEND:/TELERINFRONTEND
+      - ./TeleRin_frontend/TeleRinEND:/TELERINFRONTEND
       - /TELERINFRONTEND/node_modules
     environment:
       - VITE_API_URL=http://telerin:1240
@@ -32,6 +32,7 @@ services:
     restart: always
     stdin_open: true
     tty: true
+
   db:
     image: postgres:18
     container_name: database
@@ -42,17 +43,8 @@ services:
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: TeleRin
     volumes:
-      - ./db-init:/docker-entrypoint-initdb.d
+      - ./TeleRin_backend/db-init:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql
 
 volumes:
   postgres_data:
-
-    # ejecutar por primera vez: docker compose up
-
-    #iniciar despues de la primera vez: docker compose start
-
-
-    # actualizar codigo
-
-    #1 docker compose

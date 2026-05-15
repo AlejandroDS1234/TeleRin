@@ -1,0 +1,1 @@
+es una carpeta para llamadas al servidor, es para una actualizacion en el futuro

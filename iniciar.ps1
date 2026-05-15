@@ -7,7 +7,7 @@ chcp 65001 > $null
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $backendPath = Join-Path $root "TeleRin_backend"
-$composeFile = Join-Path $backendPath "docker-compose.yml"
+$composeFile = Join-Path $root "docker-compose.yml"
 function Get-WifiIp { 
     $priorityPatterns = @("Wi-Fi", "WLAN", "Wireless", "802.11")
 
@@ -39,18 +39,36 @@ function Get-WifiIp {
 }
 
 function Ensure-DockerServices {
-    Write-Host "Levantando servicios con docker compose up -d..." -ForegroundColor Cyan
-    docker compose -f $composeFile up -d --build | Out-Host
+    $definedServices = docker compose -f $composeFile config --services 2>$null
+    $existingServices = docker compose -f $composeFile ps -a --services 2>$null
 
-    $running = docker compose -f $composeFile ps --services --filter "status=running" | Select-String "^telerin$"
-
-    if (-not $running) {
-        Write-Host ""
-        Write-Host "ERROR: El servicio 'telerin' no esta corriendo." -ForegroundColor Red
-        Write-Host "Revisa los logs para detectar el problema." -ForegroundColor Yellow
-        docker compose -f $composeFile logs telerin | Out-Host
-        exit 1
+    if (-not $definedServices) {
+        throw "No se pudieron leer los servicios definidos en $composeFile."
     }
+
+    $missingServices = @($definedServices | Where-Object { $_ -notin $existingServices })
+
+    if ($existingServices -and $missingServices.Count -eq 0) {
+        Write-Host "Iniciando contenedores existentes con docker compose start..." -ForegroundColor Cyan
+        docker compose -f $composeFile start | Out-Host
+    }
+    else {
+        if ($missingServices.Count -gt 0) {
+            Write-Host "Faltan servicios por crear: $($missingServices -join ', ')" -ForegroundColor Yellow
+        }
+        Write-Host "Creando o completando contenedores con docker compose up -d..." -ForegroundColor Cyan
+        docker compose -f $composeFile up -d | Out-Host
+    }
+}
+
+function Test-ServiceRunning {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ServiceName
+    )
+
+    $runningServices = docker compose -f $composeFile ps --services --status running 2>$null
+    return $ServiceName -in $runningServices
 }
 
 function Start-DockerLogsWindow {
@@ -77,6 +95,12 @@ function Show-Qr {
     Write-Host "  Ctrl+Shift+R -> regenerar QR manualmente" -ForegroundColor DarkGray
     Write-Host "  Ctrl+Shift+Q -> salir" -ForegroundColor DarkGray
     Write-Host ""
+
+    if (-not (Test-ServiceRunning -ServiceName "telerin")) {
+        Write-Host "El servicio 'telerin' no esta corriendo. Revisa 'docker compose logs telerin'." -ForegroundColor Red
+        return
+    }
+
     docker compose -f $composeFile exec -T telerin python generarQR.py --url $url | Out-Host
 }
 

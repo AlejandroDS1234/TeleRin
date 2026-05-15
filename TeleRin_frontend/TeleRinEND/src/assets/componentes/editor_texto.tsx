@@ -89,11 +89,7 @@ function renderToolbarItem(item: ToolbarItem, index: number) {
   }
 
   return (
-    <div
-      key={`${item.label ?? item.value}-${index}`}
-      className={item.className}
-      style={item.style}
-    >
+    <div key={`${item.label ?? item.value}-${index}`} className={item.className} style={item.style}>
       {item.content ?? item.label}
     </div>
   );
