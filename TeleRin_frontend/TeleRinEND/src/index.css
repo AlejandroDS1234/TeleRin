@@ -1,82 +1,93 @@
 @import "tailwindcss";
 
-
 @font-face {
-    font-family: "fuente";
-    src: url("./assets/fonts/Bukhari Script.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "fuente";
+  src: url("./assets/fonts/Bukhari Script.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: "fuente2";
-    src: url("./assets/fonts/LeagueSpartan-VariableFont_wght.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "fuente2";
+  src: url("./assets/fonts/LeagueSpartan-VariableFont_wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: "sloganGrande";
-    src: url("./assets/fonts/handelson-two.otf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "sloganGrande";
+  src: url("./assets/fonts/handelson-two.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: "sloganPequeño";
-    src: url("./assets/fonts/FingerPaint-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "sloganPequeño";
+  src: url("./assets/fonts/FingerPaint-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: "titulo";
-    src: url("./assets/fonts/Lato-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "titulo";
+  src: url("./assets/fonts/Lato-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @layer base {
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-    input[type='number']::-webkit-outer-spin-button,
-    input[type='number']::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-
-    input[type='number'] {
-        -moz-appearance: textfield;
-        appearance: textfield;
-    }
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
 }
 
 .scroll-suave {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(120, 120, 120, .45) transparent;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color_bordes_claro) transparent;
 }
 
 .scroll-suave::-webkit-scrollbar {
-    width: 666px;
+  width: 666px;
 }
 
 .scroll-suave::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .scroll-suave::-webkit-scrollbar-thumb {
-    background: rgba(120, 120, 120, .45);
-    border-radius: 999px;
+  background: var(--color_bordes_claro);
+  border-radius: 999px;
 }
 
 .scroll-suave::-webkit-scrollbar-thumb:hover {
-    background: rgba(120, 120, 120, .7);
+  background: var(--color_bordes_claro);
 }
 
 :root {
-    --color_principal: #f5f1e8;
-    --color_bordes: #000000;
-    --color_texto: #000000;
-    --warning: #FF0000;
-    --success: #01af02;
-    --danger: #FF8000;
+  --color_texto_claro: #ffffff;
+  --color_texto_oscuro: #000000;
+  --color_principal: #f5f1e8;
+  --color_bordes_claro: rgba(120, 120, 120, 0.45);
+  --color_bordes: #000000;
+  --color_bordes_presionado: #f97316;
+  --color_texto: #000000;
+  --warning: #ff0000;
+  --success: #01af02;
+  --danger: #ff8000;
+  --color_botones: #f97316;
+  --color_botones_presionado: #ea580c;
+  --color_texto_botones: #ffffff;
+  --color_principal_claro: #ffffff4d;
+  --color_principal_oscuro: #f4e2b6;
+  --color_principal_opaco: #e4e0d6;
+  --fondo_modal: #b3000000;
+  --color_fondo_transparente: #ffffff4d;
+  --color_seleccionado: #ff0000;
 }

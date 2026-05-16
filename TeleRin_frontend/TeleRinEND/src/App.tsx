@@ -1,9 +1,9 @@
-import './App.css'
-import RutasIngresar from './rutas/rutasIngresar.tsx';
+import "./App.css";
+import RutasIngresar from "./rutas/rutasIngresar.tsx";
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#f5f1e8] relative">
+    <div className="min-h-screen bg-(--color_principal) relative">
       <div className="absolute inset-0 bg-[url('./assets/imagenes/texturas/ruido.png')] opacity-10 pointer-events-none"></div>
       <div className="relative z-30">
         <RutasIngresar />
@@ -12,5 +12,4 @@ function App() {
   );
 }
 
- 
-export default App
+export default App;

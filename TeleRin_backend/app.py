@@ -672,7 +672,7 @@ def historial_usuario():
 def crear_saga():
     nombre_saga=request.form["nombre_saga"].strip()
     descripcion_saga=request.form["descripcion_saga"].strip()
-    imagen_saga=request.files.get("foto_saga", None)
+    imagen_saga=request.files.get("imagen_saga", None)
     id_saga=f"""-inicio-{session["usuario"]["codigo_usuario"]}-{nombre_saga.strip()}"""
     if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen_saga.filename == "":
         return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
@@ -696,14 +696,17 @@ def crear_saga():
     ruta_reducida = imagen_saga_ruta.replace(".jpg", "_reducida.jpg")
     reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
     
-    insertar_db("saga", {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]})
+    saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]}
+    insertar_db("saga", saga)
     hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})
-    return jsonify({"mensaje": "Saga creada", "tipo": "success"})
+    return jsonify({"mensaje": "Saga creada", "tipo": "success", "saga": saga})
 
 @app.route("/api/sagas_creadas/<usuario>", methods=["POST"])
 def sagas_creadas(usuario):
     if request.method=="POST":
         sagas_usuario=dato_en_db(usuario, "codigo_usuario", "saga")
+        if not sagas_usuario:
+            return jsonify([])
         return jsonify(sagas_usuario)
         
 @app.route("/api/saga_info/<id_saga>")

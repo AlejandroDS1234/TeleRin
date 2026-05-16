@@ -1,6 +1,6 @@
 import Editor from "../assets/componentes/editor_texto.tsx";
 import { useUser } from "../assets/componentes/userContext.tsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../assets/componentes/modal.tsx";
 import InputWithIcon from "../assets/componentes/inputWithIcon.tsx";
@@ -15,6 +15,7 @@ import { enviarInfoServer, redirigir } from "../function_generales.tsx";
 import type { ApiMessage } from "../types";
 import { useNavigate } from "react-router-dom";
 import { MensajePlano } from "../assets/componentes/mensaje.tsx";
+import { useQuery } from "@tanstack/react-query";
 
 type EditorContenido = {
   html: string;
@@ -35,10 +36,9 @@ type GuardarHistoriaDatos = {
   saga_historia: string | null;
   historia: Object | null;
   texto_historia: string;
-}
+};
 
 type SeleccionarSagaProps = {
-  nuevaSaga: boolean;
   error?: { message?: string } | null;
   abrirCrearSaga: () => void;
   sagaSeleccionada: (value: string) => void;
@@ -50,56 +50,41 @@ type GuardarHistoriaProps = {
   contenido: EditorContenido | null;
 };
 
-function SeleccionarSaga({ nuevaSaga, error, abrirCrearSaga, sagaSeleccionada }: SeleccionarSagaProps) {
+function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada }: SeleccionarSagaProps) {
   const { usuario } = useUser();
   const [sagaSeleccion, setSagaSeleccion] = useState("");
-  const [sagas, setSagas] = useState<Saga[]>([]);
 
-  useEffect(() => {
-    if (!usuario) {
-      return;
-    }
-
-    const fetchSagas = async () => {
-      try {
-        const res = await fetch(`/api/sagas_creadas/${usuario.codigo_usuario}`, {
-          method: "POST",
-          credentials: "include",
-        });
-        const sagas = await res.json();
-        setSagas(sagas as Saga[]);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetchSagas();
-  }, [nuevaSaga, usuario]);
-
-  if (!usuario) {
-    return null;
-  }
+  const { data = [] } = useQuery({
+    queryKey: ["sagas_creadas", usuario?.codigo_usuario],
+    queryFn: async () => {
+      const res = await fetch(`/api/sagas_creadas/${usuario?.codigo_usuario}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      return data;
+    },
+  });
 
   return (
     <>
       <CustomSelect
+        key={data.length}
         titulo="Seleccionar saga"
         options={[
           {
             value: "__crear__",
             label: (
-              <button className="hover:cursor-pointer font-[sloganGrande] text-center text-3xl text-orange-500 w-full">
+              <button className="hover:cursor-pointer font-[sloganGrande] text-center text-3xl text-(--color_botones_presionado) w-full">
                 Crear Saga
               </button>
-            )
+            ),
           },
           {
             value: "",
-            label: (
-              <p className="text-center text-gray-500 w-full">Sin saga</p>
-            )
+            label: <p className="text-center text-(--color_texto_oscuro) w-full">Sin saga</p>,
           },
-          ...sagas.map((saga) => ({
+          ...data.map((saga: Saga) => ({
             value: saga.id_saga,
             label: (
               <SagasCardHorizontal
@@ -107,8 +92,8 @@ function SeleccionarSaga({ nuevaSaga, error, abrirCrearSaga, sagaSeleccionada }:
                 titulo={saga.nombre_saga}
                 className="h-15"
               />
-            )
-          }))
+            ),
+          })),
         ]}
         value={sagaSeleccion}
         onChange={(value) => {
@@ -123,14 +108,18 @@ function SeleccionarSaga({ nuevaSaga, error, abrirCrearSaga, sagaSeleccionada }:
         }}
         className="w-64"
       />
-      {error?.message && <p className="text-red-500 text-sm">{error.message}</p>}
+      {error?.message && <p className="text-(--warning) text-sm">{error.message}</p>}
     </>
   );
 }
 
+function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<GuardarHistoriaForm>();
 
-function Guardar_historia({ nuevaSaga, abrirCrearSaga, contenido }: GuardarHistoriaProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<GuardarHistoriaForm>();
   const [sagaSeleccion, setSagaSeleccion] = useState("");
   const [res, setRes] = useState<ApiMessage | null>(null);
   const navigate = useNavigate();
@@ -145,7 +134,10 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga, contenido }: GuardarHisto
       texto_historia: contenido?.texto ?? "",
     };
     try {
-      const resp = await enviarInfoServer<ApiMessage, GuardarHistoriaDatos>("/api/crear_historia", payload);
+      const resp = await enviarInfoServer<ApiMessage, GuardarHistoriaDatos>(
+        "/api/crear_historia",
+        payload
+      );
       resp.redirigir && sessionStorage.removeItem("contenido_historia");
       redirigir(navigate, resp);
       setRes(resp);
@@ -154,12 +146,11 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga, contenido }: GuardarHisto
     } finally {
       setCargando(false);
     }
-
   };
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-      <h3>Guardar historia</h3>
+      <h3 className="text-(--color_texto_oscuro)">Guardar historia</h3>
       <InputWithIcon
         placeholder="Nombre de la historia"
         register={register("nombre_historia", {
@@ -168,7 +159,7 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga, contenido }: GuardarHisto
         icon={<NotebookPen />}
       />
       {errors.nombre_historia && (
-        <p className="text-red-500 text-sm">{errors.nombre_historia.message}</p>
+        <p className="text-(--warning) text-sm">{errors.nombre_historia.message}</p>
       )}
 
       <InputWithIcon
@@ -180,25 +171,31 @@ function Guardar_historia({ nuevaSaga, abrirCrearSaga, contenido }: GuardarHisto
       />
 
       {errors.descripcion_historia && (
-        <p className="text-red-500 text-sm">{errors.descripcion_historia.message}</p>
+        <p className="text-(--warning) text-sm">{errors.descripcion_historia.message}</p>
       )}
 
       <Suiche label="Publico" register={register("visibilidad_historia")} />
 
       <SeleccionarSaga
-        nuevaSaga={nuevaSaga}
-        error={null}
         abrirCrearSaga={abrirCrearSaga}
         sagaSeleccionada={(value) => setSagaSeleccion(value)}
       />
 
       <button
         type="submit"
-        className="flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition"
+        className="flex items-center justify-center gap-2 bg-(--color_botones) text-(--color_texto_botones) py-2 rounded-lg hover:bg-(--color_botones_presionado) transition"
       >
-        {cargando ? <><p>Guardando</p><Loader className="animate-spin" /></> : <p>Guardar</p>}
+        {cargando ? (
+          <p className="flex gap-2 items-center text-(--color_texto_oscuro)">
+            Guardando <Loader className="animate-spin" />
+          </p>
+        ) : (
+          <p className="text-(--color_texto_oscuro)">Guardar</p>
+        )}
       </button>
-      {res && <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />}
+      {res && (
+        <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />
+      )}
     </form>
   );
 }
@@ -208,11 +205,14 @@ function PaginaEditor() {
   const delta = contenidoGuardado ? JSON.parse(contenidoGuardado).delta : null;
 
   const [nuevaSaga, setNuevaSaga] = useState(false);
-  const [crearSaga, setCrearSaga] = useState(false);
-  const [contenido, setContenido] = useState<EditorContenido | null>(contenidoGuardado ? JSON.parse(contenidoGuardado) : null);
-  const [abrirModal, setAbrirModal] = useState(false);
-  const [crearSagaMostrar, setCrearSagaMostrar] = useState(false);
 
+  const [crearSaga, setCrearSaga] = useState(false); // flecha
+  const [crearSagaMostrar, setCrearSagaMostrar] = useState(false); //mostrar crear saga
+  const [abrirModal, setAbrirModal] = useState(false);
+
+  const [contenido, setContenido] = useState<EditorContenido | null>(
+    contenidoGuardado ? JSON.parse(contenidoGuardado) : null
+  );
 
   return (
     <div className="flex justify-center lg:items-center">
@@ -239,7 +239,8 @@ function PaginaEditor() {
               abrirCrearSaga={() => {
                 setCrearSagaMostrar(true);
                 setCrearSaga(true);
-              }} />
+              }}
+            />
           </div>
 
           <div
@@ -283,7 +284,10 @@ function PaginaEditor() {
               value: "titulo",
               className: "",
               content: (
-                <button className="font-bold hover:cursor-pointer" onClick={() => setAbrirModal(true)}>
+                <button
+                  className="font-bold hover:cursor-pointer"
+                  onClick={() => setAbrirModal(true)}
+                >
                   <p className="hidden sm:block">Guardar</p>
                   <Save className="block sm:hidden" />
                 </button>
