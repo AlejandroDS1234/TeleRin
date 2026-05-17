@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useUser } from "../componentes/userContext";
+import { useSesion } from "../../pages/hook/usuario/hookSesion";
 import { useState } from "react";
 import { Search, DoorClosed, Feather, Landmark } from "lucide-react";
 import { motion } from "framer-motion";
@@ -9,7 +9,7 @@ import CerrarSesion from "./cerrar_sesion";
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { usuario } = useUser();
+  const { data: usuario } = useSesion();
   const [abierta, setabierta] = useState(false);
   const [imagenPerfilCargada, setImagenPerfilCargada] = useState(false);
   const isLg = useIsLg();
@@ -24,12 +24,12 @@ function Navbar() {
 
   const iconos = {
     cerrada: {
-      x: 15
+      x: 15,
     },
     abierta: {
-      x: -1
-    }
-  }
+      x: -1,
+    },
+  };
 
   const textos = {
     cerrada: {
@@ -39,8 +39,8 @@ function Navbar() {
       opacity: 0,
       display: "none",
       transition: {
-        duration: 0.12
-      }
+        duration: 0.12,
+      },
     },
     abierta: {
       x: 10,
@@ -48,9 +48,8 @@ function Navbar() {
       height: "auto",
       width: "auto",
       display: "block",
-
-    }
-  }
+    },
+  };
 
   if (!usuario) {
     return null;
@@ -66,9 +65,9 @@ function Navbar() {
         abierta: {
           width: isLg ? 180 : "100%",
           transition: {
-            staggerChildren: 0.07
-          }
-        }
+            staggerChildren: 0.07,
+          },
+        },
       }}
       animate={abierta ? "abierta" : "cerrada"}
     >
@@ -80,11 +79,11 @@ function Navbar() {
         <motion.div
           variants={{
             cerrada: {
-              x: 6
+              x: 6,
             },
             abierta: {
-              x: -1
-            }
+              x: -1,
+            },
           }}
           className="w-10 h-10 flex justify-center items-center relative"
         >
@@ -100,15 +99,19 @@ function Navbar() {
             className="h-10 aspect-square rounded-full border-2 transition-opacity duration-300"
             style={{
               borderColor: resaltado === "/perfil" ? "#FF0000" : "#000",
-              opacity: imagenPerfilCargada ? 1 : 0
+              opacity: imagenPerfilCargada ? 1 : 0,
             }}
             src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
             onLoad={() => setImagenPerfilCargada(true)}
           />
         </motion.div>
 
-        <motion.p variants={textos}
-          className={`hidden lg:block lg:whitespace-nowrap ${resaltado === "/perfil" ? "text-[#FF0000]" : ""} `}>Perfil</motion.p>
+        <motion.p
+          variants={textos}
+          className={`hidden lg:block lg:whitespace-nowrap ${resaltado === "/perfil" ? "text-[#FF0000]" : ""} `}
+        >
+          Perfil
+        </motion.p>
       </motion.button>
 
       {items.map(({ ruta, Icono, Texto }) => (
@@ -118,14 +121,15 @@ function Navbar() {
           onClick={() => navigate(ruta)}
           whileHover={{ scale: 1.05 }}
         >
-          <motion.div
-            variants={iconos}
-            className="w-min h-min"
-          >
+          <motion.div variants={iconos} className="w-min h-min">
             <Icono color={resaltado === ruta ? "#FF0000" : "#000"} />
           </motion.div>
-          <motion.p variants={textos}
-            className={`hidden lg:block lg:whitespace-nowrap ${resaltado === ruta ? "text-[#FF0000]" : ""} `}>{Texto}</motion.p>
+          <motion.p
+            variants={textos}
+            className={`hidden lg:block lg:whitespace-nowrap ${resaltado === ruta ? "text-[#FF0000]" : ""} `}
+          >
+            {Texto}
+          </motion.p>
         </motion.button>
       ))}
       <CerrarSesion
@@ -134,14 +138,12 @@ function Navbar() {
             className={`justify-center lg:justify-start lg:w-[90%] hover:cursor-pointer flex flex-1 flex-row items-center`}
             whileHover={{ scale: 1.05 }}
           >
-            <motion.div
-              variants={iconos}
-              className="w-min h-min"
-            >
+            <motion.div variants={iconos} className="w-min h-min">
               <DoorClosed />
             </motion.div>
-            <motion.p variants={textos}
-              className={`hidden lg:block lg:whitespace-nowrap `}>Salir</motion.p>
+            <motion.p variants={textos} className={`hidden lg:block lg:whitespace-nowrap `}>
+              Salir
+            </motion.p>
           </motion.button>
         }
       />

@@ -1,5 +1,5 @@
 import Editor from "../assets/componentes/editor_texto.tsx";
-import { useUser } from "../assets/componentes/userContext.tsx";
+import { useSesion } from "./hook/usuario/hookSesion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../assets/componentes/modal.tsx";
@@ -11,11 +11,11 @@ import { CustomSelect } from "../assets/componentes/CustomSelect.tsx";
 import { SagasCardHorizontal } from "../assets/componentes/sagas&historias_cards.tsx";
 import type { Saga } from "../types";
 import type Delta from "quill-delta";
-import { enviarInfoServer, redirigir } from "../function_generales.tsx";
-import type { ApiMessage } from "../types";
+import { redirigir } from "../function_generales.tsx";
 import { useNavigate } from "react-router-dom";
 import { MensajePlano } from "../assets/componentes/mensaje.tsx";
-import { useQuery } from "@tanstack/react-query";
+import { useCrearHistoria } from "./hook/historias/hookCrearHistoria.ts";
+import { useSagasCreadas } from "../pages/hook/sagas/hookSagasCreadas.ts";
 
 type EditorContenido = {
   html: string;
@@ -29,14 +29,14 @@ type GuardarHistoriaForm = {
   visibilidad_historia: boolean;
 };
 
-type GuardarHistoriaDatos = {
-  nombre_historia: string;
-  descripcion_historia: string;
-  visibilidad_historia: boolean;
-  saga_historia: string | null;
-  historia: Object | null;
-  texto_historia: string;
-};
+// type GuardarHistoriaDatos = {
+//   nombre_historia: string;
+//   descripcion_historia: string;
+//   visibilidad_historia: boolean;
+//   saga_historia: string | null;
+//   historia: Object | null;
+//   texto_historia: string;
+// };
 
 type SeleccionarSagaProps = {
   error?: { message?: string } | null;
@@ -51,20 +51,10 @@ type GuardarHistoriaProps = {
 };
 
 function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada }: SeleccionarSagaProps) {
-  const { usuario } = useUser();
+  const { data: usuario } = useSesion();
   const [sagaSeleccion, setSagaSeleccion] = useState("");
 
-  const { data = [] } = useQuery({
-    queryKey: ["sagas_creadas", usuario?.codigo_usuario],
-    queryFn: async () => {
-      const res = await fetch(`/api/sagas_creadas/${usuario?.codigo_usuario}`, {
-        method: "POST",
-        credentials: "include",
-      });
-      const data = await res.json();
-      return data;
-    },
-  });
+  const { data = [] } = useSagasCreadas(usuario?.codigo_usuario);
 
   return (
     <>
@@ -120,33 +110,21 @@ function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
     formState: { errors },
   } = useForm<GuardarHistoriaForm>();
 
+  const mutatecrearHistoria = useCrearHistoria();
   const [sagaSeleccion, setSagaSeleccion] = useState("");
-  const [res, setRes] = useState<ApiMessage | null>(null);
   const navigate = useNavigate();
-  const [cargando, setCargando] = useState(false);
 
   const onSubmit = async (data: GuardarHistoriaForm) => {
-    setCargando(true);
     const payload = {
       ...data,
       saga_historia: sagaSeleccion,
       historia: contenido?.delta ?? null,
       texto_historia: contenido?.texto ?? "",
     };
-    try {
-      const resp = await enviarInfoServer<ApiMessage, GuardarHistoriaDatos>(
-        "/api/crear_historia",
-        payload
-      );
-      resp.redirigir && sessionStorage.removeItem("contenido_historia");
-      redirigir(navigate, resp);
-      setRes(resp);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setCargando(false);
-    }
+    mutatecrearHistoria.mutate(payload);
   };
+
+  redirigir(navigate, mutatecrearHistoria.data);
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -185,7 +163,7 @@ function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
         type="submit"
         className="flex items-center justify-center gap-2 bg-(--color_botones) text-(--color_texto_botones) py-2 rounded-lg hover:bg-(--color_botones_presionado) transition"
       >
-        {cargando ? (
+        {mutatecrearHistoria.isPending ? (
           <p className="flex gap-2 items-center text-(--color_texto_oscuro)">
             Guardando <Loader className="animate-spin" />
           </p>
@@ -193,8 +171,21 @@ function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
           <p className="text-(--color_texto_oscuro)">Guardar</p>
         )}
       </button>
-      {res && (
-        <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />
+      {mutatecrearHistoria.data && (
+        <MensajePlano
+          mensaje={mutatecrearHistoria.data.mensaje}
+          tipo={mutatecrearHistoria.data.tipo}
+          id={1}
+          onHide={() => mutatecrearHistoria.reset()}
+        />
+      )}
+      {mutatecrearHistoria.error && (
+        <MensajePlano
+          mensaje={mutatecrearHistoria.error.message}
+          tipo="danger"
+          id={1}
+          onHide={() => mutatecrearHistoria.reset()}
+        />
       )}
     </form>
   );

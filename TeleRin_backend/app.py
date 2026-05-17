@@ -11,7 +11,7 @@ import socket
 import random
 import smtplib
 import datetime 
-
+import itertools
 
 import psycopg2 as ps
 import psycopg2.extras
@@ -86,6 +86,12 @@ def necesita(nombre: str, validacion: bool, redireccion: str = "/"):
     return decorador
 
 #utilidades --------------------------------------------------------------------------------------------------
+def hay_caracteres_repetidos(texto: str, maximo: int = 5) -> bool:
+    for caracter, grupo in itertools.groupby(texto):
+        if sum(1 for _ in grupo) > maximo:
+            return True
+    return False
+
 def encriptar(dato: str | int) -> str:
     return generate_password_hash(str(dato))
 
@@ -133,7 +139,10 @@ def es_color_claro(color: str):
     return luminancia > 186  # claro
 
 def detectar_idioma(texto):
-    idioma = detect(texto)
+    try:
+        idioma = detect(texto)
+    except:
+        idioma = "es"
     return idiomas_soportados.get(idioma, 'spanish')
 
 #validar archivos e imagenes --------------------------------------------------------------------------------------------------
@@ -409,8 +418,10 @@ def cambiar_contraseña_comprobador(_=None):
 #Rutas de sesion --------------------------------------------------------------------------------------------------
 @app.route("/api/sesion", methods=["POST"])
 def sesion():
-    datos_indefinidos(session["usuario"])
-    return jsonify({"usuario": session.get("usuario")})
+    sesion = session.get("usuario", None)
+    if sesion:
+        datos_indefinidos(sesion)
+    return jsonify(sesion)
 
 @app.route("/api/registrarse", methods=["POST", "GET"])
 def registrarse():
@@ -528,25 +539,61 @@ def api_generos():
     actualizar_sesion(session["usuario"]["correo_usuario"])
     generos =dato_en_db("1", "1", "generos")
     return jsonify(generos)
-    
-@app.route("/api/perfil", methods=["POST", "GET"])
+
+#verificaciones del perfil -------
+def verficar_nombre_usuario(data):
+    if not data:
+        return {"mensaje": "El nombre no puede estar vacio", "tipo": "warning"}
+    en_db = dato_en_db(data, "nombre_usuario")
+    if en_db and en_db[0]["nombre_usuario"] != session["usuario"]["nombre_usuario"]:
+        return {"mensaje": "Nombre ya registrado", "tipo": "warning"}
+    if hay_caracteres_repetidos(data):
+        return {"mensaje": "Nombre no valido", "tipo": "warning"}
+    if len(data)>30 or len(data.split(" "))>4:
+        return {"mensaje": "Nombre muy largo", "tipo": "warning"}
+    return {"mensaje": "Nombre actualizado", "tipo": "success"}
+
+def verificar_descripcion_usuario(data):
+    if not data:
+        return {"mensaje": "La descripcion no puede estar vacia", "tipo": "warning"}
+    if hay_caracteres_repetidos(data):
+        return {"mensaje": "Descripcion no valida", "tipo": "warning"}
+    if len(data)>500 or len(data.split(" "))>200:
+        return {"mensaje": "Descripcion muy larga", "tipo": "warning"}
+    return {"mensaje": "Descripcion actualizada", "tipo": "success"}
+
+def verificar_pais_usuario(data):
+    if not data:
+        return {"mensaje": "El pais no puede estar vacio", "tipo": "warning"}
+    en_db = dato_en_db(data, "id_pais", "paises")
+    if not en_db:
+        return {"mensaje": "Pais no registrado", "tipo": "warning"}
+    return {"mensaje": "Pais actualizado", "tipo": "success"}
+
+def verificar_genero_usuario(data):
+    if not data:
+        return {"mensaje": "El genero no puede estar vacio", "tipo": "warning"}
+    en_db = dato_en_db(data, "id_genero", "generos")
+    if not en_db:
+        return {"mensaje": "Genero no registrado", "tipo": "warning"}
+    return {"mensaje": "Genero actualizado", "tipo": "success"}
+#fin verficaciones ----------------
+
+@app.route("/api/perfil", methods=["POST"])
 def perfil():
-    if request.method=="POST":
-        form = request.get_json()
-        mensaje=form["mensaje"]
-        if form.get("nombre_usuario", False) and dato_en_db(form["nombre_usuario"], 'nombre_usuario') and form.get("nombre_usuario", False) != session["usuario"]["nombre_usuario"]:
-            return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
-        if form.get("id_pais", False) and not dato_en_db(form["id_pais"], "id_pais", "paises"):
-            return jsonify({"mensaje":"Pais no registrado", "tipo":"warning"})
-        if form.get("id_genero", False) and not dato_en_db(form["id_genero"], "id_genero", "generos"):
-            return jsonify({"mensaje":"Genero no registrado", "tipo":"warning"})
-        datos_indefinidos(session["usuario"])
-        form.pop("mensaje")
-        actualizar_datos("USUARIOS", form, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
+    verificaciones = {"nombre_usuario": verficar_nombre_usuario, "descripcion_personal": verificar_descripcion_usuario, "id_pais": verificar_pais_usuario, "id_genero": verificar_genero_usuario}
+    form = request.get_json()
+    print(form)
+    clave, dato =  list(form.items())[0]
+    dato = dato.strip()
+    print(clave, dato)
+    mensaje=verificaciones[clave](dato)
+    if mensaje["tipo"] == "success":
+        actualizar_datos("USUARIOS", {clave: dato}, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
         actualizar_sesion(session["usuario"]["correo_usuario"])
-        return jsonify({"mensaje": mensaje, "tipo":"success"})
-    return jsonify({"mm": "Investigando? :)"})
-        
+    datos_indefinidos(session["usuario"])
+    return jsonify(mensaje)
+   
 @app.route("/api/guardar_foto_perfil", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def guardar_foto_perfil():
@@ -665,6 +712,15 @@ def historial_usuario():
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE hl.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, hl.tiempo_vista ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
             historias=cursor.fetchall() 
     return jsonify(historias)
+
+@app.route("/api/historias_creadas/<codigo_usuario>", methods=["POST"])
+def historias_creadas(codigo_usuario):
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario ORDER BY calificacion_p DESC LIMIT 20""", (codigo_usuario,))
+            historias=cursor.fetchall()
+    return jsonify(historias)
+
 
 #rutas de sagas --------------------------------------------------------------------------------------------------
 @app.route("/api/crear_saga", methods=["POST"])

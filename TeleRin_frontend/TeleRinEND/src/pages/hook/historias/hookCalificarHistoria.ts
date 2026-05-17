@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { enviarCalificacion } from "../api/historias/apiCalificarhistoria.ts";
+import { enviarCalificacion } from "../../api/historias/apiCalificarhistoria.ts";
 
 export function useCalificarHistoria() {
   const queryClient = useQueryClient();

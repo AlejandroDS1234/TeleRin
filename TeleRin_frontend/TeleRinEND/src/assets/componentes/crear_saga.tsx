@@ -4,7 +4,7 @@ import InputWithIcon from "./inputWithIcon";
 import { MensajePlano } from "./mensaje";
 import { SquareLibrary, SquareX } from "lucide-react";
 import type { ApiMessage } from "../../types";
-import { useCrearSaga } from "../../pages/hook/hookCrearSaga";
+import { useCrearSaga } from "../../pages/hook/sagas/hookCrearSaga";
 
 type CrearSagaForm = {
   nombre_saga: string;

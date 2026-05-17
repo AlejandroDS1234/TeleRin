@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { crearSaga } from "../api/sagas/apiCrearSaga";
-import type { MessageType, Saga } from "../../types";
-import { useUser } from "../../assets/componentes/userContext";
+import { crearSaga } from "../../api/sagas/apiCrearSaga";
+import type { MessageType, Saga } from "../../../types";
+import { useSesion } from "../usuario/hookSesion";
 
 type CrearSagaData = {
   mensaje: string;
@@ -10,7 +10,7 @@ type CrearSagaData = {
 };
 
 export function useCrearSaga() {
-  const { usuario } = useUser();
+  const { data: usuario } = useSesion();
   const queryClient = useQueryClient();
 
   return useMutation<CrearSagaData, Error, FormData>({
