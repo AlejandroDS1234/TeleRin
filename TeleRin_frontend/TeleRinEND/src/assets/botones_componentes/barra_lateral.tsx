@@ -52,12 +52,12 @@ function Navbar() {
   };
 
   if (!usuario) {
-    return null;
+    return <p>pito</p>;
   }
 
   return (
     <motion.div
-      className="flex top-0 left-0 h-16 bg-white/30 w-full backdrop-blur-md items-center justify-evenly z-50 shadow-md lg:flex-col lg:py-4 lg:h-full lg:justify-evenly lg:items-center"
+      className="flex top-0 left-0 h-16 bg-(--bg-glass) w-full backdrop-blur-md items-center justify-evenly z-50 shadow-md lg:flex-col lg:py-4 lg:h-full lg:justify-evenly lg:items-center"
       onMouseEnter={() => isLg && setabierta(true)}
       onMouseLeave={() => isLg && setabierta(false)}
       variants={{
@@ -98,7 +98,8 @@ function Navbar() {
           <motion.img
             className="h-10 aspect-square rounded-full border-2 transition-opacity duration-300"
             style={{
-              borderColor: resaltado === "/perfil" ? "#FF0000" : "#000",
+              borderColor:
+                resaltado === "/perfil" ? "var(--interactive-selected)" : "var(--border-default)",
               opacity: imagenPerfilCargada ? 1 : 0,
             }}
             src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
@@ -108,7 +109,7 @@ function Navbar() {
 
         <motion.p
           variants={textos}
-          className={`hidden lg:block lg:whitespace-nowrap ${resaltado === "/perfil" ? "text-[#FF0000]" : ""} `}
+          className={`hidden lg:block lg:whitespace-nowrap ${resaltado === "/perfil" ? "text-(--interactive-selected)" : ""} `}
         >
           Perfil
         </motion.p>
@@ -122,11 +123,13 @@ function Navbar() {
           whileHover={{ scale: 1.05 }}
         >
           <motion.div variants={iconos} className="w-min h-min">
-            <Icono color={resaltado === ruta ? "#FF0000" : "#000"} />
+            <Icono
+              color={resaltado === ruta ? "var(--interactive-selected)" : "var(--border-default)"}
+            />
           </motion.div>
           <motion.p
             variants={textos}
-            className={`hidden lg:block lg:whitespace-nowrap ${resaltado === ruta ? "text-[#FF0000]" : ""} `}
+            className={`hidden lg:block lg:whitespace-nowrap ${resaltado === ruta ? "text-(--interactive-selected)" : ""} `}
           >
             {Texto}
           </motion.p>

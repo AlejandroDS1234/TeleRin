@@ -84,7 +84,7 @@ export function CustomSelect({ titulo, options, value, onChange, className = "w-
             {open && !isMobile && (
                 <div
                     className={`
-                        absolute z-50 w-full border rounded bg-[#f1e9d6] shadow scroll-suave
+                        absolute z-50 w-full border rounded bg-(--bg-surface-soft) shadow scroll-suave
                         ${openUp ? "bottom-full mb-2" : "top-full mt-2"}
                     `}
                     style={{
@@ -99,7 +99,7 @@ export function CustomSelect({ titulo, options, value, onChange, className = "w-
                                 onChange(opt.value);
                                 setOpen(false);
                             }}
-                            className={`py-2 cursor-pointer hover:bg-[#ddd6c4] ${value === opt.value ? "bg-gray-200" : ""}`}
+                            className={`py-2 cursor-pointer hover:bg-(--bg-surface-hover) ${value === opt.value ? "bg-(--bg-surface)" : ""}`}
                         >
                             {opt.label}
                         </div>
@@ -111,9 +111,9 @@ export function CustomSelect({ titulo, options, value, onChange, className = "w-
                 MOBILE REAL (solo si es móvil)
             ========================== */}
             {open && isMobile && (
-                <div className=" fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
+                <div className=" fixed inset-0 z-50 bg-(--bg-overlay-soft) flex justify-center items-center">
 
-                    <div className="bg-[#f1e9d6] w-full rounded-t-xl p-4 max-h-[80vh] overflow-y-auto ">
+                    <div className="bg-(--bg-surface-soft) w-full rounded-t-xl p-4 max-h-[80vh] overflow-y-auto ">
 
                         <div className="text-center font-semibold mb-3">
                             {titulo}
@@ -134,7 +134,7 @@ export function CustomSelect({ titulo, options, value, onChange, className = "w-
 
                         <button
                             onClick={() => setOpen(false)}
-                            className="mt-4 w-full py-2 bg-gray-200 rounded"
+                            className="mt-4 w-full py-2 bg-(--bg-surface) rounded"
                         >
                             Cancelar
                         </button>

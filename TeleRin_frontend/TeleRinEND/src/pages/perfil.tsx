@@ -174,11 +174,16 @@ function Imagen() {
               onClick={async () => {
                 const data = new FormData();
                 data.append("imagen", nuevaFoto);
-                mutateSesion.mutate(data);
-                setTimeout(() => {
-                  limpiarSeleccionFoto();
-                  setAbrirModal(false);
-                }, 1500);
+                mutateSesion.mutate(data, {
+                  onSuccess: (data) => {
+                    if (data.tipo == "success") {
+                      setTimeout(() => {
+                        limpiarSeleccionFoto();
+                        setAbrirModal(false);
+                      }, 1500);
+                    }
+                  },
+                });
               }}
             />
             <SquareX

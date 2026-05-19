@@ -122,6 +122,9 @@ function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
       texto_historia: contenido?.texto ?? "",
     };
     mutatecrearHistoria.mutate(payload);
+    if (mutatecrearHistoria.data?.tipo === "success") {
+      sessionStorage.removeItem("contenido_historia");
+    }
   };
 
   redirigir(navigate, mutatecrearHistoria.data);

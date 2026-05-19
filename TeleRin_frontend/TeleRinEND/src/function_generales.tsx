@@ -92,7 +92,7 @@ export function Suiche({ label, register }: SuicheProps) {
   return (
     <label className="inline-flex items-center gap-3 cursor-pointer">
       <input type="checkbox" className="sr-only peer" {...register} />
-      <div className="relative w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-(--color_botones) after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-(--color_texto_botones) after:h-5 after:w-5 after:rounded-full after:transition-all peer-checked:after:translate-x-5" />
+      <div className="relative w-11 h-6 bg-(--color_bordes_claro) rounded-full peer-checked:bg-(--color_botones) after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-(--color_texto_botones) after:h-5 after:w-5 after:rounded-full after:transition-all peer-checked:after:translate-x-5" />
       <span>{label}</span>
     </label>
   );

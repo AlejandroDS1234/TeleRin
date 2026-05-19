@@ -580,7 +580,7 @@ def verificar_genero_usuario(data):
 #fin verficaciones ----------------
 
 @app.route("/api/perfil", methods=["POST"])
-def perfil():
+def perfil(): 
     verificaciones = {"nombre_usuario": verficar_nombre_usuario, "descripcion_personal": verificar_descripcion_usuario, "id_pais": verificar_pais_usuario, "id_genero": verificar_genero_usuario}
     form = request.get_json()
     print(form)

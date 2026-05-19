@@ -1,0 +1,568 @@
+REVISION PRIORITARIA DE SEGURIDAD Y OPTIMIZACION - TELERIN
+Fecha: 2026-05-18
+
+==================================================
+1. CRITICO - SESION GUARDANDO EL USUARIO COMPLETO
+==================================================
+
+Ubicacion principal:
+- TeleRin_backend/app.py
+
+Que pasa:
+- El backend guarda session["usuario"] = usuario completo.
+- En Flask, la sesion por defecto se guarda en cookie firmada del lado del cliente.
+- Eso hace fragil la persistencia y puede producir errores como /api/sesion devolviendo null.
+
+Por que es grave:
+- Ya esta rompiendo funcionalidad real: la barra lateral desaparece porque useSesion() recibe null.
+- Guardar un objeto completo en sesion es mas fragil que guardar solo un identificador.
+- Puede desincronizarse con la base de datos.
+- Hace mas dificil depurar.
+
+Que deberia hacerse:
+- Guardar solo session["codigo_usuario"] o session["correo_usuario"].
+- Crear una funcion helper tipo obtener_usuario_actual().
+- Esa funcion deberia leer el identificador desde session y consultar la DB.
+- /api/sesion y /api/necesita_usuario deberian usar esa funcion.
+
+Ventajas:
+- Sesion mas estable.
+- Menos bugs raros.
+- Mejor practica.
+- Datos siempre frescos desde DB.
+
+Desventajas:
+- Mas consultas a DB.
+- Pero normalmente el costo es pequeño y vale la pena.
+
+Prioridad:
+- MAXIMA
+
+Dificultad:
+- MEDIA / ALTA
+
+
+==================================================
+2. CRITICO - SECRETOS HARDCodeados EN EL CODIGO
+==================================================
+
+Ubicaciones:
+- TeleRin_backend/app.py -> app.secret_key
+- TeleRin_backend/app.py -> password de correo
+- docker-compose.yml -> credenciales de postgres
+
+Que pasa:
+- Hay claves sensibles escritas directamente en el codigo.
+
+Por que es grave:
+- Si el repo se comparte o se filtra, se comprometen sesiones, correo y DB.
+- No permite rotar secretos facilmente.
+- Es mala practica de seguridad.
+
+Que deberia hacerse:
+- Mover secret_key, password del correo y credenciales DB a variables de entorno.
+- Leer con os.getenv().
+- Opcionalmente usar un archivo .env para desarrollo.
+
+Ventajas:
+- Mejor seguridad.
+- Configuracion mas profesional.
+- Facil rotacion de claves.
+
+Desventajas:
+- Hay que configurar entorno.
+- Puede ser un poco mas trabajo al arrancar el proyecto.
+
+Prioridad:
+- MAXIMA
+
+Dificultad:
+- BAJA / MEDIA
+
+
+==================================================
+3. CRITICO - FALTA DE PROTECCION CSRF
+==================================================
+
+Ubicaciones:
+- Multiples rutas POST del backend
+- Frontend usa credentials: "include"
+
+Que pasa:
+- El sistema usa cookies de sesion.
+- Hay POST autenticados.
+- No se ve proteccion CSRF explicita.
+
+Por que es grave:
+- Un sitio externo podria intentar disparar requests autenticados desde el navegador del usuario.
+
+Que deberia hacerse:
+- Implementar CSRF token.
+- O minimo endurecer cookies y validar Origin/Referer si no se va a meter una solucion completa.
+
+Ventajas:
+- Reduce mucho el riesgo de ataques CSRF.
+
+Desventajas:
+- Añade complejidad al flujo frontend-backend.
+
+Prioridad:
+- MAXIMA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+4. ALTA - SQL DINAMICO CON TABLAS/CAMPOS POR STRING
+==================================================
+
+Ubicacion:
+- TeleRin_backend/app.py
+- Funciones tipo dato_en_db, insertar_db, actualizar_datos
+
+Que pasa:
+- Los valores parecen parametrizados, pero los nombres de tabla/campo se construyen por string.
+
+Por que importa:
+- Si algun nombre llega a estar mal controlado, abre riesgo de SQL injection estructural.
+- Hace el codigo mas dificil de auditar.
+
+Que deberia hacerse:
+- Limitar tablas y campos a listas blancas.
+- O reemplazar helpers genericos por consultas explicitas en zonas sensibles.
+
+Ventajas:
+- Menor riesgo.
+- Codigo mas claro.
+
+Desventajas:
+- Menos “comodidad” que helpers genericos.
+- Puede requerir mas codigo repetido.
+
+Prioridad:
+- ALTA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+5. ALTA - DUPLICIDAD ENTRE /api/sesion Y /api/necesita_usuario
+==================================================
+
+Ubicaciones:
+- TeleRin_backend/app.py
+- TeleRin_frontend/TeleRinEND/src/rutas/rutasIngresar.tsx
+
+Que pasa:
+- Primero se valida acceso.
+- Luego se vuelve a consultar sesion.
+- Si una cosa responde distinto a la otra, aparecen estados raros.
+
+Ejemplo:
+- La ruta deja pasar.
+- Pero luego el navbar no aparece porque /api/sesion devuelve null.
+
+Que deberia hacerse:
+- Unificar la fuente de verdad de autenticacion.
+- Lo ideal: /api/sesion deberia bastar para saber si hay usuario o no.
+
+Ventajas:
+- Menos complejidad.
+- Menos requests redundantes.
+- Menos bugs raros.
+
+Desventajas:
+- Hay que reorganizar el flujo del frontend.
+
+Prioridad:
+- ALTA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+6. ALTA - DEMASIADAS CONSULTAS REPETIDAS DE SESION/USUARIO
+==================================================
+
+Ubicaciones:
+- TeleRin_backend/app.py
+- actualizar_sesion()
+- rutas que llaman datos_indefinidos() + actualizar_sesion()
+
+Que pasa:
+- actualizar_sesion hace 2 SELECT del mismo usuario.
+- varias rutas vuelven a refrescar sesion aunque no siempre hace falta.
+
+Por que importa:
+- Mas carga en DB.
+- Mas latencia.
+- Mas complejidad.
+- Mas riesgo de estados inconsistentes.
+
+Que deberia hacerse:
+- Reducir a un solo SELECT cuando sea posible.
+- Separar la logica de “normalizar defaults” de la logica de “leer usuario”.
+- No refrescar sesion completa en cada endpoint si no hace falta.
+
+Ventajas:
+- Mejor rendimiento.
+- Backend mas limpio.
+
+Desventajas:
+- Requiere revisar varias rutas.
+
+Prioridad:
+- ALTA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+7. ALTA - CORS Y COOKIES DEBERIAN ENDURECERSE
+==================================================
+
+Ubicacion:
+- TeleRin_backend/app.py
+
+Que pasa:
+- CORS con supports_credentials=True.
+- Permitido para varios origenes locales.
+- No se vio configuracion fuerte de cookies tipo Secure/SameSite/HttpOnly mas alla del default.
+
+Por que importa:
+- En desarrollo puede estar bien.
+- En produccion deberia estar mucho mas cerrado.
+
+Que deberia hacerse:
+- Separar configuracion de desarrollo y produccion.
+- Revisar SESSION_COOKIE_SECURE.
+- Revisar SESSION_COOKIE_SAMESITE.
+- Revisar SESSION_COOKIE_HTTPONLY.
+- Mantener origins permitidos bien controlados.
+
+Ventajas:
+- Mejor seguridad de sesion.
+
+Desventajas:
+- Puede complicar pruebas locales si no se configura bien.
+
+Prioridad:
+- ALTA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+8. ALTA - /api/sesion DEVUELVE DEMASIADO DATO
+==================================================
+
+Ubicacion:
+- TeleRin_backend/app.py
+
+Que pasa:
+- /api/sesion devuelve el usuario entero.
+
+Por que importa:
+- Se exponen campos que quizas el frontend no necesita.
+- Aumenta acoplamiento entre frontend y DB.
+- Aumenta el tamaño de la respuesta.
+
+Que deberia hacerse:
+- Crear una respuesta minima para el frontend.
+- Ejemplo: codigo_usuario, nombre_usuario, foto_perfil_usuario, id_paleta, idioma_usuario, etc.
+- No devolver todo el registro bruto.
+
+Ventajas:
+- Menos datos expuestos.
+- Mejor mantenimiento.
+- Respuestas mas ligeras.
+
+Desventajas:
+- Hay que mapear manualmente los campos utiles.
+
+Prioridad:
+- ALTA
+
+Dificultad:
+- BAJA / MEDIA
+
+
+==================================================
+9. MEDIA-ALTA - CODIGOS E IDS CON random.randint
+==================================================
+
+Ubicaciones:
+- Codigos de verificacion
+- Algunos ids y paletas
+
+Que pasa:
+- Se usa random.randint para cosas que tienen impacto en autenticacion o identificacion.
+
+Por que importa:
+- random no es ideal para seguridad.
+- Para tokens/codigos es mejor usar secrets.
+
+Que deberia hacerse:
+- Reemplazar por secrets.randbelow() o secrets.token_urlsafe() donde aplique.
+
+Ventajas:
+- Mejor seguridad.
+
+Desventajas:
+- Hay que revisar donde importa de verdad y donde no.
+
+Prioridad:
+- MEDIA-ALTA
+
+Dificultad:
+- BAJA
+
+
+==================================================
+10. MEDIA-ALTA - FALTA RATE LIMITING EN LOGIN Y CODIGOS
+==================================================
+
+Ubicaciones:
+- /api/iniciar_sesion
+- envio de correo de validacion
+- validacion de codigo
+
+Que pasa:
+- No se ve limite de intentos ni cooldown.
+
+Por que importa:
+- Riesgo de fuerza bruta.
+- Riesgo de spam de correos.
+- Riesgo de abuso del sistema.
+
+Que deberia hacerse:
+- Limite por IP.
+- Limite por correo.
+- Cooldown temporal.
+- Bloqueo progresivo o retraso entre intentos.
+
+Ventajas:
+- Mucha mejora de seguridad operativa.
+
+Desventajas:
+- Hay que calibrar para no molestar usuarios legitimos.
+
+Prioridad:
+- MEDIA-ALTA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+11. MEDIA-ALTA - HTML DEL EDITOR DEBERIA SANITIZARSE
+==================================================
+
+Ubicacion:
+- editor_texto.tsx
+- flujo de historias
+
+Que pasa:
+- Se usa quill.root.innerHTML.
+- Si luego se renderiza ese HTML sin sanitizar, puede haber XSS.
+
+Por que importa:
+- El HTML generado por usuarios siempre es zona sensible.
+
+Que deberia hacerse:
+- Sanitizar antes de guardar o antes de renderizar.
+- O guardar Delta y renderizar de forma controlada.
+
+Ventajas:
+- Mejor seguridad contra XSS.
+
+Desventajas:
+- Requiere revisar flujo de contenido y render.
+
+Prioridad:
+- MEDIA-ALTA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+12. MEDIA - USO EXCESIVO DE SELECT *
+==================================================
+
+Ubicacion:
+- TeleRin_backend/app.py
+- helpers y consultas varias
+
+Que pasa:
+- Muchas consultas traen todas las columnas.
+
+Por que importa:
+- Traes mas datos de los necesarios.
+- Mas acoplamiento.
+- Puede crecer mal con el tiempo.
+
+Que deberia hacerse:
+- Seleccionar solo columnas necesarias, al menos en endpoints mas usados.
+
+Ventajas:
+- Respuestas mas ligeras.
+- Mejor claridad.
+
+Desventajas:
+- Mas trabajo manual.
+
+Prioridad:
+- MEDIA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+13. MEDIA - MANEJO DE ERRORES FETCH MEJORABLE
+==================================================
+
+Ubicaciones:
+- frontend function_generales.tsx
+- apiSesion.ts
+- varios fetch/json
+
+Que pasa:
+- Muchas respuestas se parsean como json sin validar fuerte response.ok.
+
+Por que importa:
+- Puede haber errores silenciosos.
+- Estados raros en frontend.
+- Depuracion mas dificil.
+
+Que deberia hacerse:
+- Manejar mejor estados no-OK.
+- Lanzar errores consistentes.
+- Unificar helper fetch mas robusto.
+
+Ventajas:
+- Mejor depuracion.
+- UX mas clara.
+
+Desventajas:
+- Hay que adaptar varios endpoints/frontend calls.
+
+Prioridad:
+- MEDIA
+
+Dificultad:
+- MEDIA
+
+
+==================================================
+14. MEDIA - CACHE DE IMAGENES ROTA POR Date.now()
+==================================================
+
+Ubicacion:
+- barra_lateral.tsx
+- imagenes de perfil con ?t=Date.now()
+
+Que pasa:
+- Se fuerza recarga de imagen en cada render.
+
+Por que importa:
+- Rompe cache del navegador.
+- Mas peticiones de red.
+- Peor rendimiento visual.
+
+Que deberia hacerse:
+- Usar una version/hash solo cuando la imagen cambie realmente.
+- No usar Date.now() en cada render.
+
+Ventajas:
+- Mejor rendimiento.
+- Menos trafico.
+
+Desventajas:
+- Hay que llevar control de actualizacion de foto.
+
+Prioridad:
+- MEDIA
+
+Dificultad:
+- BAJA / MEDIA
+
+
+==================================================
+15. MEDIA - FRONTEND NO MANEJA BIEN useSesion() === null
+==================================================
+
+Ubicaciones:
+- rutasConSesion.tsx
+- barra_lateral.tsx
+
+Que pasa:
+- Si useSesion devuelve null, navbar desaparece silenciosamente.
+- No hay fallback claro para “sesion invalida” o “sesion perdida”.
+
+Por que importa:
+- UX mala.
+- Depurar se vuelve dificil.
+- Parece un bug visual cuando en realidad es bug de sesion.
+
+Que deberia hacerse:
+- Manejar el caso data === null explicitamente.
+- Mostrar mensaje o redireccionar.
+- No depender de que Navbar haga return null silencioso.
+
+Ventajas:
+- Mejor experiencia.
+- Menos confusion.
+
+Desventajas:
+- No arregla la causa raiz, solo la hace visible.
+
+Prioridad:
+- MEDIA
+
+Dificultad:
+- BAJA
+
+
+==================================================
+ORDEN RECOMENDADO DE TRABAJO
+==================================================
+
+Fase 1 - Urgente
+1. Cambiar arquitectura de sesion: guardar solo identificador.
+2. Mover secretos a variables de entorno.
+3. Revisar CSRF y endurecimiento de cookies.
+4. Unificar flujo de /api/sesion y autorizacion.
+
+Fase 2 - Importante
+5. Reducir consultas redundantes de actualizar_sesion y rutas relacionadas.
+6. Blindar helpers SQL dinamicos.
+7. Añadir rate limiting en login y codigos.
+8. Dejar /api/sesion devolviendo solo campos minimos.
+
+Fase 3 - Importante pero no bloqueante
+9. Sanitizar HTML del editor.
+10. Reducir SELECT *.
+11. Mejorar manejo de errores fetch.
+12. Arreglar cache de imagenes.
+13. Manejar null de useSesion de forma explicita en frontend.
+
+==================================================
+NOTA FINAL
+==================================================
+
+El problema mas urgente ahora no es micro-optimizar, sino corregir la arquitectura de sesion.
+Esa sola pieza toca:
+- seguridad
+- estabilidad
+- comportamiento del navbar
+- consistencia del frontend
+- mantenibilidad general
+
+Si se arregla bien la sesion, muchas rarezas del flujo actual deberian disminuir bastante.

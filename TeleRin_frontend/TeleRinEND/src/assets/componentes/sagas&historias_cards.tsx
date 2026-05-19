@@ -51,12 +51,12 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
 
     return (
         <Link to={`/sagas/${encodeURIComponent(ids)}`}
-            className="relative p-4 bg-[#e4e0d6] flex flex-col border-2 border-black border-double h-70 flex-none w-50 sm:w-full"
+            className="relative p-4 bg-(--bg-surface) flex flex-col border-2 border-(--border-default) border-double h-70 flex-none w-50 sm:w-full"
         >
             <div>
                 <div className="flex flex-col w-full justify-center items-center gap-px">
-                    <div className="bg-black w-full border-black h-[1.5px]" />
-                    <div className="bg-black w-[98%] border-black h-px" />
+                    <div className="bg-(--border-default) w-full border-(--border-default) h-[1.5px]" />
+                    <div className="bg-(--border-default) w-[98%] border-(--border-default) h-px" />
                 </div>
 
                 <h3
@@ -64,8 +64,8 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
                 >{titulo}</h3>
 
                 <div className="flex flex-col w-full justify-center items-center gap-px">
-                    <div className="bg-black w-[98%] border-black h-px" />
-                    <div className="bg-black w-full border-black h-[1.5px]" />
+                    <div className="bg-(--border-default) w-[98%] border-(--border-default) h-px" />
+                    <div className="bg-(--border-default) w-full border-(--border-default) h-[1.5px]" />
                 </div>
             </div>
 
@@ -92,7 +92,7 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
                 <div>{libros} libros</div>
             </small>
             <Lineas grosor="0.1px" espaciado="1px" cantidad={2} />
-            <motion.div className="absolute bottom-0 right-0 left-0 w-full h-[80%] bg-[#e4e0d6]/80 p-4"
+            <motion.div className="absolute bottom-0 right-0 left-0 w-full h-[80%] bg-(--bg-surface)/80 p-4"
                 initial={{ opacity: 0, y: 10 }}
                 whileHover={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
@@ -104,24 +104,24 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
 export function SagaCardCargando() {
     return (
         <div
-            className="relative p-4 bg-[#e4e0d6] flex flex-col border-2 border-black border-double h-70 flex-none w-50 sm:w-full"
+            className="relative p-4 bg-(--bg-surface) flex flex-col border-2 border-(--border-default) border-double h-70 flex-none w-50 sm:w-full"
         >
             <div>
                 <div className="flex flex-col w-full justify-center items-center gap-px">
-                    <div className="bg-black w-full border-black h-[1.5px]" />
-                    <div className="bg-black w-[98%] border-black h-px" />
+                    <div className="bg-(--border-default) w-full border-(--border-default) h-[1.5px]" />
+                    <div className="bg-(--border-default) w-[98%] border-(--border-default) h-px" />
                 </div>
 
                 <h3 className="truncate w-full font-bold text-2xl font-serif h-min text-center"
                 ></h3>
 
                 <div className="flex flex-col w-full justify-center items-center gap-px">
-                    <div className="bg-black w-[98%] border-black h-px" />
-                    <div className="bg-black w-full border-black h-[1.5px]" />
+                    <div className="bg-(--border-default) w-[98%] border-(--border-default) h-px" />
+                    <div className="bg-(--border-default) w-full border-(--border-default) h-[1.5px]" />
                 </div>
             </div>
 
-            <div className="relative mt-auto h-43 w-full bg-[#CDB2ABBF]"
+            <div className="relative mt-auto h-43 w-full bg-(--bg-surface-muted)"
             >
             </div>
 
@@ -142,7 +142,7 @@ export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }: 
         <MotionLink
             whileHover={{ scale: 0.95 }}
             to={`/historia/${encodeURIComponent(idh)}`}
-            className="bg-[#e4e0d6] flex flex-col gap-4 border border-black border-dotted flex-none w-50 sm:w-full h-50 p-4"
+            className="bg-(--bg-surface) flex flex-col gap-4 border border-(--border-default) border-dotted flex-none w-50 sm:w-full h-50 p-4"
         >
             <h3 className="font-bold w-full line-clamp-2">{titulo}</h3>
             <div className="w-full line-clamp-3">
@@ -175,7 +175,7 @@ export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }: 
                                             scale: [1, 1.15, 1],
                                         }
                                     }}
-                                    color="#FF0000" /> :
+                                    color="var(--interactive-selected)" /> :
                                 <Book />}
                         </span>
                     ))}
@@ -190,7 +190,7 @@ export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }: 
 export function HistoriaCardCargando() {
     return (
         <div
-            className="bg-[#e4e0d6] flex flex-col gap-4 border border-black border-dotted flex-none w-50 sm:w-full h-50 p-4"
+            className="bg-(--bg-surface) flex flex-col gap-4 border border-(--border-default) border-dotted flex-none w-50 sm:w-full h-50 p-4"
         >
             <h3 className="font-bold w-full line-clamp-2">...</h3>
             <div className="w-full line-clamp-3">
