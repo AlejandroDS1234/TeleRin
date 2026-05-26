@@ -13,6 +13,7 @@ import RutasSinSesion from "./rutasSinSesion.tsx";
 import PaginaEditor from "../pages/crear_historia.tsx";
 import Historias from "../pages/historias.tsx";
 import Sagas from "../pages/sagas.tsx";
+import PanelAdmin from "../pages/admin/panelAdmin.tsx";
 import { Routes, Route } from "react-router-dom";
 
 function RutasIngresar() {
@@ -39,6 +40,7 @@ function RutasIngresar() {
           <Route path="/editor" element={<PaginaEditor />} />
           <Route path="/historia/:id_historia" element={<Historias />} />
           <Route path="/sagas/:id_saga" element={<Sagas />} />
+          <Route path="/admin" element={<PanelAdmin />} />
         </Route>
       </Route>
     </Routes>
