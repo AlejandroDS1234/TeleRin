@@ -76,13 +76,6 @@ export function cambiarTamañoBarraContraseña(input: string) {
   const width = `${porcentaje}%`;
   return { width, color };
 }
-
-export async function actualizarSesion() {
-  const pro = await fetch("/api/sesion", { method: "POST", credentials: "include" });
-  const res = await pro.json();
-  return res;
-}
-
 type SuicheProps = {
   label: string;
   register: FormRegisterLike;

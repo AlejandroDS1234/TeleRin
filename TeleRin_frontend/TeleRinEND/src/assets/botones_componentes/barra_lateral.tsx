@@ -91,7 +91,7 @@ function Navbar() {
         >
           {/* Placeholder borroso (imagen reducida) */}
           <img
-            src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?size=reducida&t=${Date.now()}`}
+            src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?size=reducida&t=${usuario.refrescado ?? 0}`}
             className="absolute inset-0 w-full h-full object-cover rounded-full border-2 border-black"
             style={{ opacity: !imagenPerfilCargada ? 1 : 0 }}
           />
@@ -104,7 +104,7 @@ function Navbar() {
                 resaltado === "/perfil" ? "var(--interactive-selected)" : "var(--border-default)",
               opacity: imagenPerfilCargada ? 1 : 0,
             }}
-            src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${Date.now()}`}
+            src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${usuario.refrescado ?? 0}`}
             onLoad={() => setImagenPerfilCargada(true)}
           />
         </motion.div>

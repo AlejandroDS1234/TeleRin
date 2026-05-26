@@ -6,7 +6,7 @@ type PerfilPayload = Partial<
   Pick<Usuario, "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero">
 > & { mensaje?: string };
 
-export function useSesion(columnas: string) {
+export function useSesion(columnas?: string) {
   return useQuery({
     queryKey: ["sesion", columnas],
     queryFn: () => sesion(columnas),
@@ -18,8 +18,12 @@ export function useEditarSesion() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: PerfilPayload) => editarSesion(data),
-    onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["sesion"] });
+    onSuccess: (res) => {
+      queryClient.setQueryData(["sesion", res.dato.clave], () => ({
+        [res.dato.clave]: res.dato.valor,
+        refrescado: Date.now(),
+      }));
+      queryClient.refetchQueries({ queryKey: ["sesion", res.dato.clave] });
     },
   });
 }
@@ -28,8 +32,11 @@ export function useEditarFotoSesion() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: FormData) => cambiarFoto(data),
-    onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["sesion"] });
+    onSuccess: (res) => {
+      queryClient.setQueryData(["sesion", "foto_perfil_usuario"], () => ({
+        foto_perfil_usuario: res.foto_perfil_usuario,
+        refrescado: Date.now(),
+      }));
     },
   });
 }

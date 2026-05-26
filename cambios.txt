@@ -1,47 +1,46 @@
-REVISION PRIORITARIA DE SEGURIDAD Y OPTIMIZACION - TELERIN
-Fecha: 2026-05-18
+                        REVISION PRIORITARIA DE SEGURIDAD Y OPTIMIZACION - TELERIN
+                        Fecha: 2026-05-18
 
-==================================================
-1. CRITICO - SESION GUARDANDO EL USUARIO COMPLETO
-==================================================
+                        ==================================================
+                        1. CRITICO - SESION GUARDANDO EL USUARIO COMPLETO
+                        ==================================================
 
-Ubicacion principal:
-- TeleRin_backend/app.py
+                        Ubicacion principal:
+                        - TeleRin_backend/app.py
 
-Que pasa:
-- El backend guarda session["usuario"] = usuario completo.
-- En Flask, la sesion por defecto se guarda en cookie firmada del lado del cliente.
-- Eso hace fragil la persistencia y puede producir errores como /api/sesion devolviendo null.
+                        Que pasa:
+                        - El backend guarda session["usuario"] = usuario completo.
+                        - En Flask, la sesion por defecto se guarda en cookie firmada del lado del cliente.
+                        - Eso hace fragil la persistencia y puede producir errores como /api/sesion devolviendo null.
 
-Por que es grave:
-- Ya esta rompiendo funcionalidad real: la barra lateral desaparece porque useSesion() recibe null.
-- Guardar un objeto completo en sesion es mas fragil que guardar solo un identificador.
-- Puede desincronizarse con la base de datos.
-- Hace mas dificil depurar.
+                        Por que es grave:
+                        - Ya esta rompiendo funcionalidad real: la barra lateral desaparece porque useSesion() recibe null.
+                        - Guardar un objeto completo en sesion es mas fragil que guardar solo un identificador.
+                        - Puede desincronizarse con la base de datos.
+                        - Hace mas dificil depurar.
 
-Que deberia hacerse:
-- Guardar solo session["codigo_usuario"] o session["correo_usuario"].
-- Crear una funcion helper tipo obtener_usuario_actual().
-- Esa funcion deberia leer el identificador desde session y consultar la DB.
-- /api/sesion y /api/necesita_usuario deberian usar esa funcion.
+                        Que deberia hacerse:
+                        - Guardar solo session["codigo_usuario"] o session["correo_usuario"].
+                        - Crear una funcion helper tipo obtener_usuario_actual().
+                        - Esa funcion deberia leer el identificador desde session y consultar la DB.
+                        - /api/sesion y /api/necesita_usuario deberian usar esa funcion.
 
-Ventajas:
-- Sesion mas estable.
-- Menos bugs raros.
-- Mejor practica.
-- Datos siempre frescos desde DB.
+                        Ventajas:
+                        - Sesion mas estable.
+                        - Menos bugs raros.
+                        - Mejor practica.
+                        - Datos siempre frescos desde DB.
 
-Desventajas:
-- Mas consultas a DB.
-- Pero normalmente el costo es pequeño y vale la pena.
+                        Desventajas:
+                        - Mas consultas a DB.
+                        - Pero normalmente el costo es pequeño y vale la pena.
 
-Prioridad:
-- MAXIMA
+                        Prioridad:
+                        - MAXIMA
 
-Dificultad:
-- MEDIA / ALTA
-
-
+                        Dificultad:
+                        - MEDIA / ALTA
+   
 ==================================================
 2. CRITICO - SECRETOS HARDCodeados EN EL CODIGO
 ==================================================

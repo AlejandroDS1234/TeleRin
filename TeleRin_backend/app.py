@@ -266,6 +266,27 @@ def guardar_temporalmente_datos(datos: dict):
             
 def guardar_funcion_proveniente(nombre_funcion: str):
     session["funcion_proveniente"]=nombre_funcion
+
+def guardar_sesion(correo: str):
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT codigo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+            codigo_usuario=cursor.fetchone()
+            if codigo_usuario:
+                session["codigo_usuario"] = codigo_usuario["codigo_usuario"]
+
+def obtener_usuario():
+    codigo = session.get("codigo_usuario")
+    if not codigo:
+        return None
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT * FROM "USUARIOS" WHERE codigo_usuario = %s', (codigo,))
+            usuario=cursor.fetchone()
+            return usuario
+
+def sesion_iniciada():
+    return session.get("codigo_usuario") != None
     
 def obtener_ip():
     ip_local = socket.gethostbyname(socket.gethostname())
@@ -287,27 +308,17 @@ def verificar_ip(correo: str):
     return False
 
 @app.route("/api/usuario", methods=["POST", "GET"])
-@necesita("usuario", lambda: session.get("usuario")!=None)
+@necesita("usuario", sesion_iniciada)
 def sesion_usuario():
     columnas = request.get_json(silent=True) or ["correo_usuario", "codigo_usuario"]
     faltantes = any(col not in ["nombre_usuario", "correo_usuario", "descripcion_personal", "id_pais", "id_genero", "foto_perfil_usuario", "codigo_usuario"] for col in columnas)
     if faltantes:
         return jsonify({"mensaje": f"error", "tipo": "danger"})
-    colums = ", ".join(f"{col}" for col in columnas)
-    with conectar() as db:
-        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            print(colums)
-            cursor.execute(f'SELECT {colums} FROM public."USUARIOS" WHERE correo_usuario = %s', (session["usuario"]["correo_usuario"],))
-            usuario=cursor.fetchone()
-            print(usuario)
-            return jsonify(usuario)
-
-def guardar_sesion(correo: str):
-    with conectar() as db:
-        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT codigo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
-            codigo_usuario=cursor.fetchone()
-            session["usuario"] = {"correo_usuario": correo, "codigo_usuario": codigo_usuario["codigo_usuario"]}
+    usuario = obtener_usuario()
+    if not usuario:
+        return jsonify({"mensaje": "usuario no encontrado", "tipo": "danger"})
+    usuario_filtrado = {columna: usuario[columna] for columna in columnas}
+    return jsonify(usuario_filtrado)
         
 def guardar_ip(correo: str):
     dispositivo=obtener_ip()
@@ -332,7 +343,10 @@ def paleta_en_base(paleta: dict, codigo_usuario: str):
 
 @app.route("/api/guardar_historial/<id_historia>", methods=["POST"])
 def guardar_historial(id_historia: str):
-    codigo_usuario=session["usuario"]["codigo_usuario"]
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
+    codigo_usuario=usuario_actual["codigo_usuario"]
     tiempo=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with conectar() as db:
         with db.cursor() as cursor:
@@ -500,17 +514,21 @@ def cambiar_contraseña():
 
 @app.route("/api/cerrar_sesion", methods=["GET", "POST"])
 def cerrar_sesion():
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        session.clear()
+        return jsonify({"redirigir": "/", "mensaje_redirigir": {"mensaje": "SesiÃ³n cerrada", "tipo": "success"}})
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             ip = obtener_ip()
-            cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (session["usuario"]["correo_usuario"],))
+            cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (usuario_actual["correo_usuario"],))
             ips = cursor.fetchone()
             hash = None
             for ip_usuario in ips["ip_usuario"]:
                 if check_password_hash(ip_usuario, ip):
                     hash = ip_usuario
                     break 
-            cursor.execute('UPDATE "USUARIOS" SET ip_usuario = array_remove(ip_usuario, %s) WHERE correo_usuario = %s', (hash, session["usuario"]["correo_usuario"]))
+            cursor.execute('UPDATE "USUARIOS" SET ip_usuario = array_remove(ip_usuario, %s) WHERE correo_usuario = %s', (hash, usuario_actual["correo_usuario"]))
             session.clear()
     return jsonify({"redirigir": "/", "mensaje_redirigir": {"mensaje": "Sesión cerrada", "tipo": "success"}})
 
@@ -529,8 +547,11 @@ def api_generos():
 def verficar_nombre_usuario(data):
     if not data:
         return {"mensaje": "El nombre no puede estar vacio", "tipo": "warning"}
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return {"mensaje": "Necesitas usuario para acceder", "tipo": "warning"}
     en_db = dato_en_db(data, "nombre_usuario")
-    if en_db and en_db[0]["nombre_usuario"] != session["usuario"]["nombre_usuario"]:
+    if en_db and en_db[0]["nombre_usuario"] != usuario_actual["nombre_usuario"]:
         return {"mensaje": "Nombre ya registrado", "tipo": "warning"}
     if hay_caracteres_repetidos(data):
         return {"mensaje": "Nombre no valido", "tipo": "warning"}
@@ -567,26 +588,34 @@ def verificar_genero_usuario(data):
 @app.route("/api/perfil", methods=["POST"])
 def perfil(): 
     verificaciones = {"nombre_usuario": verficar_nombre_usuario, "descripcion_personal": verificar_descripcion_usuario, "id_pais": verificar_pais_usuario, "id_genero": verificar_genero_usuario}
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     form = request.get_json()
     print(form)
     clave, dato =  list(form.items())[0]
     dato = dato.strip()
     print(clave, dato)
     mensaje=verificaciones[clave](dato)
+    print(mensaje)
     if mensaje["tipo"] == "success":
-        actualizar_datos("USUARIOS", {clave: dato}, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
-    return jsonify(mensaje)
+        actualizar_datos("USUARIOS", {clave: dato}, {"codigo_usuario": usuario_actual["codigo_usuario"]})
+        print("actualizado")
+    return jsonify({"mensaje": mensaje, "dato": {"clave": clave, "valor": dato}})
    
 @app.route("/api/guardar_foto_perfil", methods=["POST"])
-@necesita("usuario", lambda: session.get("usuario")!=None)
+@necesita("usuario", sesion_iniciada)
 def guardar_foto_perfil():
     if request.method=="POST":
+        usuario_actual = obtener_usuario()
+        if not usuario_actual:
+            return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
         print(request.files)
         imagen=request.files['imagen']
         mensaje, resultado = validar_imagen_completa(imagen)
         if resultado:
             return jsonify({"mensaje": mensaje, "tipo": "danger"})
-        nombre_archivo, ruta=ruta_guardado(session["usuario"]["codigo_usuario"], "_perfil", "Fotos/perfil")
+        nombre_archivo, ruta=ruta_guardado(usuario_actual["codigo_usuario"], "_perfil", "Fotos/perfil")
         imagen.save(ruta)
         
         # Generar y guardar versión reducida
@@ -596,12 +625,12 @@ def guardar_foto_perfil():
         ruta_reducida = ruta.replace(".jpg", "_reducida.jpg")
         reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
         
-        actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": session["usuario"]["correo_usuario"]})
+        actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": usuario_actual["correo_usuario"]})
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
 
 @app.route("/api/Fotos/perfil/<filename>")
 def perfil_img(filename):
-    if "usuario" not in session:
+    if not sesion_iniciada():
         abort(403)
     # Obtener el parámetro "size" del URL
     size = request.args.get('size', 'full')  # default: 'full'
@@ -613,8 +642,11 @@ def perfil_img(filename):
 
 #rutas de historias --------------------------------------------------------------------------------------------------
 @app.route("/api/crear_historia", methods=["POST"])
-@necesita("usuario", lambda: session.get("usuario")!=None)
+@necesita("usuario", sesion_iniciada)
 def crear_historia():
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje":"Necesitas usuario para acceder","tipo": "warning"})
     form = request.get_json()
     nombre_historia=form["nombre_historia"].strip()
     descripcion_historia=form["descripcion_historia"].strip()
@@ -623,8 +655,8 @@ def crear_historia():
     texto_historia=form["texto_historia"]
     visivilidad_historia=form["visibilidad_historia"] 
     fecha_actualizacion=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    id_historia=f"""-historia-{session["usuario"]["codigo_usuario"]}-{saga_historia}-{nombre_historia.strip()}"""
-    id_usuario_saga=dato_en_db(None, {"codigo_usuario": session["usuario"]["codigo_usuario"], "id_saga": saga_historia}, "saga")
+    id_historia=f"""-historia-{usuario_actual["codigo_usuario"]}-{saga_historia}-{nombre_historia.strip()}"""
+    id_usuario_saga=dato_en_db(None, {"codigo_usuario": usuario_actual["codigo_usuario"], "id_saga": saga_historia}, "saga")
     if not id_usuario_saga and not saga_historia.strip() == "":
         return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "warning"})
     if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
@@ -633,12 +665,12 @@ def crear_historia():
         return jsonify({"mensaje": "El nombre de la historia es muy largo","tipo": "warning"})
     if len(descripcion_historia.split(" "))>200 or len(descripcion_historia)>500:
         return jsonify({"mensaje":"La descripcion de la historia es muy larga","tipo": "warning"})
-    if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]} , "historias"):
+    if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia, "codigo_usuario": usuario_actual["codigo_usuario"]} , "historias"):
         return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "warning"})
     if len(texto_historia.replace(" ", ""))<500 or len(texto_historia)<1000: 
         return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
     idioma = detectar_idioma(texto_historia)
-    insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"], "idioma": idioma})
+    insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": usuario_actual["codigo_usuario"], "idioma": idioma})
     hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
     redirigir = f"/historia/{id_historia}"
     if not visivilidad_historia:
@@ -656,11 +688,14 @@ def historia(id_historia):
     return jsonify(historia)
 
 @app.route("/api/calificar_historia/<id_historia>", methods=["POST"])
-@necesita("usuario", lambda: session.get("usuario")!=None)
+@necesita("usuario", sesion_iniciada)
 def calificar_historia(id_historia):
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     form = request.get_json()
     calificacion = form.get("calificacion")
-    id_usuario = session["usuario"]["codigo_usuario"]
+    id_usuario = usuario_actual["codigo_usuario"]
     historia = dato_en_db(id_historia, "id_historia", "historias")
     if not historia:
         return jsonify({"mensaje": "Historia no encontrada", "tipo": "danger"})
@@ -681,12 +716,18 @@ def calificar_historia(id_historia):
   
 @app.route("/api/calificacion_historia/<id_historia>", methods=["POST"])
 def calificacion_historia(id_historia):
-    calificacion = dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "calificacion_historia")
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
+    calificacion = dato_en_db(None, {"id_historia": id_historia, "codigo_usuario": usuario_actual["codigo_usuario"]}, "calificacion_historia")
     return jsonify(calificacion[0]["calificacion"] if calificacion else 0)
-
+  
 @app.route("/api/historial_usuario", methods=["POST"])
 def historial_usuario():
-    codigo_usuario=session["usuario"]["codigo_usuario"]
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
+    codigo_usuario=usuario_actual["codigo_usuario"]
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE hl.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, hl.tiempo_vista ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
@@ -704,15 +745,18 @@ def historias_creadas(codigo_usuario):
 
 #rutas de sagas --------------------------------------------------------------------------------------------------
 @app.route("/api/crear_saga", methods=["POST"])
-@necesita("usuario", lambda: session.get("usuario")!=None)
+@necesita("usuario", sesion_iniciada)
 def crear_saga():
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     nombre_saga=request.form["nombre_saga"].strip()
     descripcion_saga=request.form["descripcion_saga"].strip()
     imagen_saga=request.files.get("imagen_saga", None)
-    id_saga=f"""-inicio-{session["usuario"]["codigo_usuario"]}-{nombre_saga.strip()}"""
+    id_saga=f"""-inicio-{usuario_actual["codigo_usuario"]}-{nombre_saga.strip()}"""
     if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen_saga.filename == "":
         return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
-    sagas_con_mismo_nombre=dato_en_db(None, {"nombre_saga": nombre_saga, "codigo_usuario": session["usuario"]["codigo_usuario"]}, "saga")
+    sagas_con_mismo_nombre=dato_en_db(None, {"nombre_saga": nombre_saga, "codigo_usuario": usuario_actual["codigo_usuario"]}, "saga")
     if sagas_con_mismo_nombre:
         return jsonify({"mensaje": "Ya existe una saga con ese nombre", "tipo": "danger"})
     mensaje, resultado = validar_imagen_completa(imagen_saga)
@@ -731,7 +775,7 @@ def crear_saga():
     ruta_reducida = imagen_saga_ruta.replace(".jpg", "_reducida.jpg")
     reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
     
-    saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": session["usuario"]["codigo_usuario"]}
+    saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": usuario_actual["codigo_usuario"]}
     insertar_db("saga", saga)
     hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})
     return jsonify({"mensaje": "Saga creada", "tipo": "success", "saga": saga})
@@ -764,7 +808,7 @@ def sagas_historias(id_saga):
 
 @app.route("/api/Fotos/fotos_sagas/<filename>")
 def fotos_saga(filename):
-    if "usuario" not in session:
+    if not sesion_iniciada():
         abort(403)
     # Obtener el parámetro "size" del URL
     size = request.args.get('size', 'full')  # default: 'full'
@@ -775,6 +819,9 @@ def fotos_saga(filename):
 #rutas paletas de colores --------------------------------------------------------------------------------------------------
 @app.route("/guardar_paleta_personalizada", methods=["POST"])
 def guardar_paleta_personalizada():
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     form = request.get_json()
     color1 = form["color1original"]["value"]
     color2 = form["color2original"]["value"]
@@ -787,38 +834,45 @@ def guardar_paleta_personalizada():
         color_texto = "#FFFFFF"
     if not es_color_claro(color2):
         color_texto_fondo = "#FFFFFF"
-    id_paleta = paleta_en_base({"color1": color1, "color2": color2, "color3": color3}, session["usuario"]["codigo_usuario"])
+    id_paleta = paleta_en_base({"color1": color1, "color2": color2, "color3": color3}, usuario_actual["codigo_usuario"])
     if not id_paleta:
         id_paleta = random.randint(100000,999999)
-        insertar_db("paletas", {"color1": color1, "color2": color2, "color3": color3, "color_letra": color_texto, "color_letra_fondo": color_texto_fondo,"id_paleta": id_paleta, "codigo_usuario": session["usuario"]["codigo_usuario"]})
-    actualizar_datos("USUARIOS", {"id_paleta": id_paleta}, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
-    actualizar_sesion(session["usuario"]["correo_usuario"])
+        insertar_db("paletas", {"color1": color1, "color2": color2, "color3": color3, "color_letra": color_texto, "color_letra_fondo": color_texto_fondo,"id_paleta": id_paleta, "codigo_usuario": usuario_actual["codigo_usuario"]})
+    actualizar_datos("USUARIOS", {"id_paleta": id_paleta}, {"codigo_usuario": usuario_actual["codigo_usuario"]})
     return redirect(request.referrer)
     
 @app.route("/guardar_paleta", methods=["POST"])
 def guardar_paleta():
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     form = request.get_json()
     id_paleta = form["id_paleta"]
     id_paletas = dato_en_db(id_paleta, "id_paleta", "paletas")
     if not id_paletas:
         return jsonify({"mensaje": "Paleta no valida", "tipo": "danger"})
-    actualizar_datos("USUARIOS", {"id_paleta": id_paleta}, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
-    actualizar_sesion(session["usuario"]["correo_usuario"])
+    actualizar_datos("USUARIOS", {"id_paleta": id_paleta}, {"codigo_usuario": usuario_actual["codigo_usuario"]})
     return redirect(request.referrer)
 
 @app.route("/paletas", methods=["POST"])
 def paletas():
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT * FROM paletas WHERE codigo_usuario = %s OR codigo_usuario IS NULL', (session["usuario"]["codigo_usuario"],))
+            cursor.execute('SELECT * FROM paletas WHERE codigo_usuario = %s OR codigo_usuario IS NULL', (usuario_actual["codigo_usuario"],))
             paletas=cursor.fetchall()
     return jsonify(paletas)
 
 @app.route("/paleta_usuario", methods=["POST"])
 def paleta_usuario():
+    usuario_actual = obtener_usuario()
+    if not usuario_actual:
+        return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM paletas p WHERE p.id_paleta = %s', (session["usuario"]["id_paleta"],))
+            cursor.execute('SELECT p.color1, p.color2, p.color3, p.color_letra, p.color_letra_fondo FROM paletas p WHERE p.id_paleta = %s', (usuario_actual["id_paleta"],))
             paleta=cursor.fetchone()
     return jsonify(paleta)
 

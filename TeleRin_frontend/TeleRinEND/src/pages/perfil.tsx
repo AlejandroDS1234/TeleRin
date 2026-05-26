@@ -54,8 +54,8 @@ function Nombre() {
       </p>
       {mutateSesion.data && (
         <MensajePlano
-          mensaje={mutateSesion.data.mensaje}
-          tipo={mutateSesion.data.tipo}
+          mensaje={mutateSesion.data.mensaje.mensaje}
+          tipo={mutateSesion.data.mensaje.tipo}
           id={1}
           onHide={() => mutateSesion.reset()}
         />
@@ -108,8 +108,8 @@ function Descripcion() {
       </p>
       {mutateSesion.data && (
         <MensajePlano
-          mensaje={mutateSesion.data.mensaje}
-          tipo={mutateSesion.data.tipo}
+          mensaje={mutateSesion.data.mensaje.mensaje}
+          tipo={mutateSesion.data.mensaje.tipo}
           id={1}
           onHide={() => mutateSesion.reset()}
         />
@@ -208,7 +208,7 @@ function Imagen() {
       <div className="relative w-40 h-40 cursor-pointer" onClick={() => setAbrirModal(true)}>
         {/* Placeholder borroso (imagen reducida) */}
         <img
-          src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?size=reducida&t=${Date.now()}`}
+          src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?size=reducida&t=${usuario?.refrescado ?? 0}`}
           className="absolute inset-0 w-full h-full object-cover border-2 border-black"
           style={{ opacity: !imagenPerfilCargada ? 1 : 0 }}
         />
@@ -217,7 +217,7 @@ function Imagen() {
         <img
           className="w-40 h-40 object-cover border-2 border-black hover:cursor-pointer transition-opacity duration-300"
           style={{ opacity: imagenPerfilCargada ? 1 : 0 }}
-          src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?t=${Date.now()}`}
+          src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?t=${usuario?.refrescado ?? 0}`}
           onLoad={() => setImagenPerfilCargada(true)}
         />
       </div>
@@ -230,6 +230,10 @@ function Pais() {
   const mutateSesion = useEditarSesion();
   const [paisUsuario, setPaisUsuario] = useState(usuario?.id_pais ?? "");
   const { data: paises, isLoading } = usePaises();
+
+  useEffect(() => {
+    setPaisUsuario(usuario?.id_pais ?? "");
+  }, [usuario?.id_pais]);
 
   if (isLoading)
     return (
@@ -261,8 +265,8 @@ function Pais() {
       </select>
       {mutateSesion.data && (
         <MensajePlano
-          mensaje={mutateSesion.data.mensaje}
-          tipo={mutateSesion.data.tipo}
+          mensaje={mutateSesion.data.mensaje.mensaje}
+          tipo={mutateSesion.data.mensaje.tipo}
           id={1}
           onHide={() => mutateSesion.reset()}
         />
@@ -276,6 +280,10 @@ function Genero() {
   const mutateSesion = useEditarSesion();
   const { data: generos, isLoading } = useGeneros();
   const [generoUsuario, setGeneroUsuario] = useState(usuario?.id_genero ?? "");
+
+  useEffect(() => {
+    setGeneroUsuario(usuario?.id_genero ?? "");
+  }, [usuario?.id_genero]);
 
   if (isLoading)
     return (
@@ -307,8 +315,8 @@ function Genero() {
       </select>
       {mutateSesion.data && (
         <MensajePlano
-          mensaje={mutateSesion.data.mensaje}
-          tipo={mutateSesion.data.tipo}
+          mensaje={mutateSesion.data.mensaje.mensaje}
+          tipo={mutateSesion.data.mensaje.tipo}
           id={1}
           onHide={() => mutateSesion.reset()}
         />

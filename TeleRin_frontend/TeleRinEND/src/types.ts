@@ -20,6 +20,7 @@ export type Usuario = {
   foto_perfil_usuario: string;
   id_pais: string;
   id_genero: string;
+  refrescado?: number;
 };
 
 export type Saga = {

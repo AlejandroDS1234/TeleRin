@@ -6,8 +6,12 @@ type PerfilPayload = Partial<
   Pick<Usuario, "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero">
 > & { mensaje?: string };
 type FotoPerfilResponse = ApiMessage & { foto_perfil_usuario?: string };
+type EditarSesionResponse = {
+  mensaje: ApiMessage;
+  dato: { clave: "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero"; valor: any };
+};
 
-export async function sesion(columnas: string): Promise<Usuario | null> {
+export async function sesion(columnas?: string): Promise<Usuario | null> {
   const response = await fetch("/api/usuario", {
     method: "POST",
     credentials: "include",
@@ -22,7 +26,7 @@ export async function sesion(columnas: string): Promise<Usuario | null> {
 }
 
 export async function editarSesion(dato: PerfilPayload) {
-  const res = await enviarInfoServer<ApiMessage, PerfilPayload>("/api/perfil", dato);
+  const res = await enviarInfoServer<EditarSesionResponse, PerfilPayload>("/api/perfil", dato);
   return res;
 }
 
