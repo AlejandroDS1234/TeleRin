@@ -6,10 +6,10 @@ type PerfilPayload = Partial<
   Pick<Usuario, "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero">
 > & { mensaje?: string };
 
-export function useSesion() {
+export function useSesion(columnas: string) {
   return useQuery({
-    queryKey: ["sesion"],
-    queryFn: sesion,
+    queryKey: ["sesion", columnas],
+    queryFn: () => sesion(columnas),
     staleTime: 1000 * 60 * 5,
   });
 }

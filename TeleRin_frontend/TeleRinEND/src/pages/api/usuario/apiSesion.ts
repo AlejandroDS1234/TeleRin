@@ -7,12 +7,18 @@ type PerfilPayload = Partial<
 > & { mensaje?: string };
 type FotoPerfilResponse = ApiMessage & { foto_perfil_usuario?: string };
 
-export async function sesion(): Promise<Usuario | null> {
-  const response = await fetch("/api/sesion", {
+export async function sesion(columnas: string): Promise<Usuario | null> {
+  const response = await fetch("/api/usuario", {
     method: "POST",
     credentials: "include",
+    body: JSON.stringify([columnas]),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
-  return await response.json();
+  const data = await response.json();
+  console.log("Respuesta del servidor:", data, "Columna solicitada:", columnas);
+  return data;
 }
 
 export async function editarSesion(dato: PerfilPayload) {

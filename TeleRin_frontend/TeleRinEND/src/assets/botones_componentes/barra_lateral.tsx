@@ -9,7 +9,7 @@ import CerrarSesion from "./cerrar_sesion";
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("foto_perfil_usuario");
   const [abierta, setabierta] = useState(false);
   const [imagenPerfilCargada, setImagenPerfilCargada] = useState(false);
   const isLg = useIsLg();
@@ -52,7 +52,9 @@ function Navbar() {
   };
 
   if (!usuario) {
-    return <p>pito</p>;
+    return (
+      <div className="flex top-0 left-0 h-16 bg-(--bg-glass) w-full backdrop-blur-md items-center justify-evenly z-50 shadow-md lg:flex-col lg:py-4 lg:h-full lg:justify-evenly lg:items-center" />
+    );
   }
 
   return (

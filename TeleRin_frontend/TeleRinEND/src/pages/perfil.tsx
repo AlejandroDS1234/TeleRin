@@ -12,7 +12,7 @@ import { usePaises } from "./hook/hookPaises";
 import { useGeneros } from "./hook/hookGeneros";
 
 function Nombre() {
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("nombre_usuario");
   const mutateSesion = useEditarSesion();
   const [nombre, setNombre] = useState("");
 
@@ -65,7 +65,7 @@ function Nombre() {
 }
 
 function Descripcion() {
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("descripcion_personal");
   const mutateSesion = useEditarSesion();
   const [descripcion, setDescripcion] = useState("");
 
@@ -119,7 +119,7 @@ function Descripcion() {
 }
 
 function Imagen() {
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("foto_perfil_usuario");
   const mutateSesion = useEditarFotoSesion();
   const [abrirModal, setAbrirModal] = useState(false);
   const [nuevaFoto, setNuevaFoto] = useState<File | null>(null);
@@ -226,7 +226,7 @@ function Imagen() {
 }
 
 function Pais() {
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("id_pais");
   const mutateSesion = useEditarSesion();
   const [paisUsuario, setPaisUsuario] = useState(usuario?.id_pais ?? "");
   const { data: paises, isLoading } = usePaises();
@@ -272,7 +272,7 @@ function Pais() {
 }
 
 function Genero() {
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("id_genero");
   const mutateSesion = useEditarSesion();
   const { data: generos, isLoading } = useGeneros();
   const [generoUsuario, setGeneroUsuario] = useState(usuario?.id_genero ?? "");
@@ -380,7 +380,7 @@ function Historial() {
 }
 
 function HistoriasUsuario() {
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("codigo_usuario");
   const { isLoading, error, data } = useHistoriasUsuario(usuario?.codigo_usuario);
 
   if (isLoading) {
@@ -398,7 +398,7 @@ function HistoriasUsuario() {
 
   return (
     <>
-      {data.length ? (
+      {data?.length ? (
         data.map((historia: any) => (
           <HistoriaCard
             key={historia.id_historia}

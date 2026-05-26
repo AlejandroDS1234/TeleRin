@@ -281,51 +281,47 @@ def verificar_ip(correo: str):
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
             ip=cursor.fetchone()
-            if check_password_hash(ip["ip_usuario"], dispositivo):
+            ips_verificar = [check_password_hash(ip, dispositivo) for ip in ip["ip_usuario"]]
+            if any(ips_verificar):
                 return True
     return False
 
-def datos_indefinidos(usuario: dict):
-    if usuario["foto_perfil_usuario"] == None:
-        ruta_guardado="predefinido.jpg"
-        actualizar_datos("USUARIOS", {"foto_perfil_usuario": ruta_guardado}, {"correo_usuario": usuario["correo_usuario"]})
-    generos=dato_en_db(1, "1", "generos")
-    id_genero=[genero["id_genero"] for genero in generos]
-    if usuario["id_genero"] == None or usuario["id_genero"] not in id_genero:
-        id_genero=0
-        actualizar_datos("USUARIOS", {"id_genero": id_genero}, {"correo_usuario": usuario["correo_usuario"]})
-    paises=dato_en_db(1, "1", "paises")
-    id_pais=[pais["id_pais"] for pais in paises]
-    if usuario["id_pais"] == None or usuario["id_pais"] not in id_pais:
-        id_pais=0
-        actualizar_datos("USUARIOS", {"id_pais": id_pais}, {"correo_usuario": usuario["correo_usuario"]})
-    if usuario["id_paleta"] == None:
-        actualizar_datos("USUARIOS", {"id_paleta": "1"}, {"correo_usuario": usuario["correo_usuario"]})
-    if usuario["idioma_usuario"] == None:
-        idioma = request.accept_languages.best_match(idiomas_soportados.keys())
-        idioma_usuario = idiomas_soportados.get(idioma, "es")
-        actualizar_datos("USUARIOS", {"idioma_usuario": idioma_usuario}, {"correo_usuario": usuario["correo_usuario"]})
-
-def actualizar_sesion(correo: str):
+@app.route("/api/usuario", methods=["POST", "GET"])
+@necesita("usuario", lambda: session.get("usuario")!=None)
+def sesion_usuario():
+    columnas = request.get_json(silent=True) or ["correo_usuario", "codigo_usuario"]
+    faltantes = any(col not in ["nombre_usuario", "correo_usuario", "descripcion_personal", "id_pais", "id_genero", "foto_perfil_usuario", "codigo_usuario"] for col in columnas)
+    if faltantes:
+        return jsonify({"mensaje": f"error", "tipo": "danger"})
+    colums = ", ".join(f"{col}" for col in columnas)
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute('SELECT * FROM public."USUARIOS" WHERE correo_usuario = %s', (correo,))
+            print(colums)
+            cursor.execute(f'SELECT {colums} FROM public."USUARIOS" WHERE correo_usuario = %s', (session["usuario"]["correo_usuario"],))
             usuario=cursor.fetchone()
-            datos_indefinidos(usuario)
-            cursor.execute('SELECT * FROM public."USUARIOS" WHERE correo_usuario = %s', (correo,))
-            usuario=cursor.fetchone()
-            session["usuario"]=usuario
+            print(usuario)
+            return jsonify(usuario)
 
+def guardar_sesion(correo: str):
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute('SELECT codigo_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
+            codigo_usuario=cursor.fetchone()
+            session["usuario"] = {"correo_usuario": correo, "codigo_usuario": codigo_usuario["codigo_usuario"]}
+        
 def guardar_ip(correo: str):
     dispositivo=obtener_ip()
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (correo,))
             ip=cursor.fetchone()
-            if ip["ip_usuario"] == None or check_password_hash(ip["ip_usuario"], dispositivo)==False:
+            ips = ip["ip_usuario"]
+            ips_verificar=[]
+            if ips is not None:
+                ips_verificar=[check_password_hash(ip, dispositivo) for ip in ips ]
+            if ip["ip_usuario"] == None or any(ips_verificar)==False:
                 dispositivo=encriptar(dispositivo)
-                actualizar_datos("USUARIOS", {"ip_usuario": dispositivo}, {"correo_usuario": correo})
-    return actualizar_sesion(correo)
+                cursor.execute('UPDATE "USUARIOS" SET ip_usuario = array_append(ip_usuario, %s) WHERE correo_usuario = %s', (dispositivo, correo) )
 
 #logica de aplicacion --------------------------------------------------------------------------------------------------
 def paleta_en_base(paleta: dict, codigo_usuario: str):
@@ -400,14 +396,14 @@ def registro(form: dict):
     contraseña_encriptada=encriptar(f"{correo_us}{contraseña_us}")
     insertar_db("USUARIOS",{"nombre_usuario": nombre_us, "correo_usuario": correo_us, "contraseña_usuario": contraseña_encriptada, "codigo_usuario": codigo_us})
     guardar_ip(correo_us)
-    actualizar_sesion(correo_us)
+    guardar_sesion(correo_us)
     return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Registrado exitosamente", "tipo": "success"}})
         
 @registrar_funcion("iniciar_sesion_dispositivo_nuevo")
 def iniciar_sesion_dispositivo_nuevo(dato: dict | str):
     correo = dato["correo_usuario"] if isinstance(dato, dict) else dato
     guardar_ip(correo)
-    actualizar_sesion(correo)
+    guardar_sesion(correo)
     return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Inicio de sesión exitoso", "tipo": "success"}})
 
 @registrar_funcion("cambiar_contraseña_comprobador")
@@ -416,33 +412,24 @@ def cambiar_contraseña_comprobador(_=None):
     return jsonify({"redirigir": "/cambiar_contraseña", "mensaje_redirigir": {"mensaje": "Cambia tu contraseña", "tipo": "success"}})
 
 #Rutas de sesion --------------------------------------------------------------------------------------------------
-@app.route("/api/sesion", methods=["POST"])
-def sesion():
-    sesion = session.get("usuario", None)
-    if sesion:
-        datos_indefinidos(sesion)
-    return jsonify(sesion)
-
-@app.route("/api/registrarse", methods=["POST", "GET"])
+@app.route("/api/registrarse", methods=["POST"])
 def registrarse():
-    if request.method=="POST":
-        form = request.get_json()
-        nombre_us=form["nombre_usuario"]
-        correo_us=form["correo_usuario"]
-        contraseña_us=form["contraseña_usuario"]
-        email=validar_email(correo_us)
-        if not email:
-            return jsonify({"mensaje":"Correo no valido", "tipo":"danger"})
-        if dato_en_db(email, 'correo_usuario'):
-            return jsonify({"mensaje":"Correo ya registrado", "tipo":"warning"})
-        if dato_en_db(nombre_us, 'nombre_usuario'):
-            return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
-        if not comprobar_contraseña(contraseña_us):
-            return jsonify({"mensaje":"Ponga una contraseña mas segura (8 caracteres, 3 mayusculas, 3 minusculas, 2 numeros)", "tipo":"danger"})
-        guardar_temporalmente_datos(form)
-        guardar_funcion_proveniente("registro")
-        return enviar_correo(correo_us)
-    return "MMMMMMMMMMM sospechoso"
+    form = request.get_json()
+    nombre_us=form["nombre_usuario"]
+    correo_us=form["correo_usuario"]
+    contraseña_us=form["contraseña_usuario"]
+    email=validar_email(correo_us)
+    if not email:
+        return jsonify({"mensaje":"Correo no valido", "tipo":"danger"})
+    if dato_en_db(email, 'correo_usuario'):
+        return jsonify({"mensaje":"Correo ya registrado", "tipo":"warning"})
+    if dato_en_db(nombre_us, 'nombre_usuario'):
+        return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
+    if not comprobar_contraseña(contraseña_us):
+        return jsonify({"mensaje":"Ponga una contraseña mas segura (8 caracteres, 3 mayusculas, 3 minusculas, 2 numeros)", "tipo":"danger"})
+    guardar_temporalmente_datos(form)
+    guardar_funcion_proveniente("registro")
+    return enviar_correo(correo_us)
  
 @app.route("/api/ingresar_codigo_validacion", methods=["GET"])
 @necesita("codigo de validacion", lambda: session.get("codigo_validacion")!=None)
@@ -460,83 +447,81 @@ def validar_codigo():
         return funciones[session["funcion_proveniente"]](session["datos_temporales"])
     return jsonify({"mensaje":"Codigo de validacion incorrecto", "tipo":"danger"})
 
-@app.route("/api/iniciar_sesion", methods=["GET", "POST"])
+@app.route("/api/iniciar_sesion", methods=["POST"])
 def iniciar_sesion():
-    if request.method=="POST":
-        form = request.get_json()
-        correo=form["correo_usuario"]
-        contraseña=form["contraseña_usuario"]
-        contraseña_encriptada=f"{correo}{contraseña}"
-        with conectar() as db:
-            with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-                usuario=dato_en_db(correo, "correo_usuario")
-                if not usuario:
-                    return jsonify({"mensaje":"Correo no registrado", "tipo":"warning"})
-                if not check_password_hash(usuario[0]["contraseña_usuario"], contraseña_encriptada):
-                    return jsonify({"mensaje":"Contraseña incorrecta", "tipo":"danger"})
-                if not verificar_ip(correo):
-                    guardar_temporalmente_datos({"correo_usuario": correo})
-                    guardar_funcion_proveniente("iniciar_sesion_dispositivo_nuevo")
-                    return enviar_correo(correo)
-                return iniciar_sesion_dispositivo_nuevo(correo)
-    return "Que intentas? 😏"
+    form = request.get_json()
+    correo=form["correo_usuario"]
+    contraseña=form["contraseña_usuario"]
+    contraseña_encriptada=f"{correo}{contraseña}"
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            usuario=dato_en_db(correo, "correo_usuario")
+            if not usuario:
+                return jsonify({"mensaje":"Correo no registrado", "tipo":"warning"})
+            if not check_password_hash(usuario[0]["contraseña_usuario"], contraseña_encriptada):
+                return jsonify({"mensaje":"Contraseña incorrecta", "tipo":"danger"})
+            if not verificar_ip(correo):
+                guardar_temporalmente_datos({"correo_usuario": correo})
+                guardar_funcion_proveniente("iniciar_sesion_dispositivo_nuevo")
+                return enviar_correo(correo)
+            return iniciar_sesion_dispositivo_nuevo(correo)
 
-@app.route("/api/codigo_verificacion_cambiar_contrasena", methods=["GET", "POST"])
+@app.route("/api/codigo_verificacion_cambiar_contrasena", methods=["POST"])
 def codigo_verificacion_cambiar_contraseña():
-    if request.method=="POST":
-        form = request.get_json()
-        correo=form["correo_para_codigo_usuario"]
-        email=validar_email(correo)
-        if not email:
-            return jsonify({"mensaje":"Correo no valido", "tipo":"danger"})
-        usuario=dato_en_db(email, "correo_usuario")
-        if not usuario:
-            return jsonify({"mensaje":"Correo no registrado", "tipo":"warning"})
-        guardar_temporalmente_datos({"correo_usuario": correo})
-        guardar_funcion_proveniente("cambiar_contraseña_comprobador")
-        return enviar_correo(correo)
-    return "No se que poner 😝"
+    form = request.get_json()
+    correo=form["correo_para_codigo_usuario"]
+    email=validar_email(correo)
+    if not email:
+        return jsonify({"mensaje":"Correo no valido", "tipo":"danger"})
+    usuario=dato_en_db(email, "correo_usuario")
+    if not usuario:
+        return jsonify({"mensaje":"Correo no registrado", "tipo":"warning"})
+    guardar_temporalmente_datos({"correo_usuario": correo})
+    guardar_funcion_proveniente("cambiar_contraseña_comprobador")
+    return enviar_correo(correo)
 
-@app.route("/api/cambiar_contraseña", methods=["GET", "POST"])
+@app.route("/api/cambiar_contraseña", methods=["POST", "GET"])
 @necesita("verificar tu usuario", lambda: session.get("cambiar_contraseña_usuario"))
 def cambiar_contraseña():
-    if request.method=="POST":
-        form = request.get_json()
-        correo=session["datos_temporales"]["correo_usuario"]
-        contraseña_nueva=form["contraseña_usuario_nueva"]
-        contraseña_nueva_confirmacion=form["contraseña_usuario_nueva_confirmacion"]
-        if contraseña_nueva != contraseña_nueva_confirmacion:
-            return jsonify({"mensaje":"Las contraseñas nuevas no coinciden", "tipo":"danger"})
-        if not comprobar_contraseña(contraseña_nueva):
-            return jsonify({"mensaje":"Ponga una contraseña mas segura (8 caracteres, 3 mayusculas, 3 minusculas, 2 numeros)", "tipo":"danger"})
-        contraseña_nueva_encriptada=encriptar(f"{correo}{contraseña_nueva}")
-        actualizar_datos("USUARIOS", {"contraseña_usuario": contraseña_nueva_encriptada}, {"correo_usuario": correo})
-        session.pop("cambiar_contraseña_usuario")
-        return jsonify({"redirigir": "/iniciar_sesion", "mensaje_redirigir": {"mensaje": "Contraseña cambiada exitosamente, inicia sesión de nuevo", "tipo": "success"}})
-    return jsonify({"mmm": "No te creo 😑"})
+    if request.method!="POST":
+        return jsonify({"status": True})
+    form = request.get_json()
+    correo=session["datos_temporales"]["correo_usuario"]
+    contraseña_nueva=form["contraseña_usuario_nueva"]
+    contraseña_nueva_confirmacion=form["contraseña_usuario_nueva_confirmacion"]
+    if contraseña_nueva != contraseña_nueva_confirmacion:
+        return jsonify({"mensaje":"Las contraseñas nuevas no coinciden", "tipo":"danger"})
+    if not comprobar_contraseña(contraseña_nueva):
+        return jsonify({"mensaje":"Ponga una contraseña mas segura (8 caracteres, 3 mayusculas, 3 minusculas, 2 numeros)", "tipo":"danger"})
+    contraseña_nueva_encriptada=encriptar(f"{correo}{contraseña_nueva}")
+    actualizar_datos("USUARIOS", {"contraseña_usuario": contraseña_nueva_encriptada}, {"correo_usuario": correo})
+    session.pop("cambiar_contraseña_usuario")
+    return jsonify({"redirigir": "/iniciar_sesion", "mensaje_redirigir": {"mensaje": "Contraseña cambiada exitosamente, inicia sesión de nuevo", "tipo": "success"}})
 
 @app.route("/api/cerrar_sesion", methods=["GET", "POST"])
 def cerrar_sesion():
-    session.clear()
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            ip = obtener_ip()
+            cursor.execute('SELECT ip_usuario FROM "USUARIOS" WHERE correo_usuario = %s', (session["usuario"]["correo_usuario"],))
+            ips = cursor.fetchone()
+            hash = None
+            for ip_usuario in ips["ip_usuario"]:
+                if check_password_hash(ip_usuario, ip):
+                    hash = ip_usuario
+                    break 
+            cursor.execute('UPDATE "USUARIOS" SET ip_usuario = array_remove(ip_usuario, %s) WHERE correo_usuario = %s', (hash, session["usuario"]["correo_usuario"]))
+            session.clear()
     return jsonify({"redirigir": "/", "mensaje_redirigir": {"mensaje": "Sesión cerrada", "tipo": "success"}})
-
-@app.route("/api/necesita_usuario")
-@necesita("usuario", lambda: session.get("usuario")!=None)
-def necesita_usuario():
-    return jsonify({"mm": "okey"})
 
 #funciones del usuario personalizacion --------------------------------------------------------------------------------------------------
 @app.route("/api/paises", methods=["POST"])
 def api_paises():
-    datos_indefinidos(session["usuario"])
-    actualizar_sesion(session["usuario"]["correo_usuario"])
     paises=dato_en_db("1", "1", "paises")
     return jsonify(paises)
 
 @app.route("/api/generos", methods=["POST"])
 def api_generos():
-    datos_indefinidos(session["usuario"])
-    actualizar_sesion(session["usuario"]["correo_usuario"])
     generos =dato_en_db("1", "1", "generos")
     return jsonify(generos)
 
@@ -590,8 +575,6 @@ def perfil():
     mensaje=verificaciones[clave](dato)
     if mensaje["tipo"] == "success":
         actualizar_datos("USUARIOS", {clave: dato}, {"codigo_usuario": session["usuario"]["codigo_usuario"]})
-        actualizar_sesion(session["usuario"]["correo_usuario"])
-    datos_indefinidos(session["usuario"])
     return jsonify(mensaje)
    
 @app.route("/api/guardar_foto_perfil", methods=["POST"])
@@ -629,41 +612,38 @@ def perfil_img(filename):
     return send_from_directory("Fotos/perfil", filename)
 
 #rutas de historias --------------------------------------------------------------------------------------------------
-@app.route("/api/crear_historia", methods=["GET","POST"])
+@app.route("/api/crear_historia", methods=["POST"])
 @necesita("usuario", lambda: session.get("usuario")!=None)
 def crear_historia():
-    if request.method=="POST":
-        form = request.get_json()
-        print(form)
-        nombre_historia=form["nombre_historia"].strip()
-        descripcion_historia=form["descripcion_historia"].strip()
-        saga_historia=form["saga_historia"]
-        historia=Json(form["historia"])
-        texto_historia=form["texto_historia"]
-        visivilidad_historia=form["visibilidad_historia"] 
-        fecha_actualizacion=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        id_historia=f"""-historia-{session["usuario"]["codigo_usuario"]}-{saga_historia}-{nombre_historia.strip()}"""
-        id_usuario_saga=dato_en_db(None, {"codigo_usuario": session["usuario"]["codigo_usuario"], "id_saga": saga_historia}, "saga")
-        if not id_usuario_saga and not saga_historia.strip() == "":
-            return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "warning"})
-        if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
-            return jsonify({"mensaje":"Llena todos los datos","tipo": "warning"})
-        if len(nombre_historia.split(" "))>8 or len(nombre_historia)>50:
-            return jsonify({"mensaje": "El nombre de la historia es muy largo","tipo": "warning"})
-        if len(descripcion_historia.split(" "))>200 or len(descripcion_historia)>500:
-            return jsonify({"mensaje":"La descripcion de la historia es muy larga","tipo": "warning"})
-        if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]} , "historias"):
-            return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "warning"})
-        if len(texto_historia.replace(" ", ""))<500 or len(texto_historia)<1000: 
-            return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
-        idioma = detectar_idioma(texto_historia)
-        insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"], "idioma": idioma})
-        hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
-        redirigir = f"/historia/{id_historia}"
-        if not visivilidad_historia:
-            redirigir = "/perfil"
-        return jsonify({"redirigir": redirigir, "mensaje_redirigir": {"mensaje": "Historia creada exitosamente", "tipo": "success"}})
-    return jsonify({"mm": "Creando historia?"})
+    form = request.get_json()
+    nombre_historia=form["nombre_historia"].strip()
+    descripcion_historia=form["descripcion_historia"].strip()
+    saga_historia=form["saga_historia"]
+    historia=Json(form["historia"])
+    texto_historia=form["texto_historia"]
+    visivilidad_historia=form["visibilidad_historia"] 
+    fecha_actualizacion=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    id_historia=f"""-historia-{session["usuario"]["codigo_usuario"]}-{saga_historia}-{nombre_historia.strip()}"""
+    id_usuario_saga=dato_en_db(None, {"codigo_usuario": session["usuario"]["codigo_usuario"], "id_saga": saga_historia}, "saga")
+    if not id_usuario_saga and not saga_historia.strip() == "":
+        return jsonify({"mensaje":"No tienes acceso a esta saga","tipo": "warning"})
+    if nombre_historia.strip() == "" or descripcion_historia.strip() == "":
+        return jsonify({"mensaje":"Llena todos los datos","tipo": "warning"})
+    if len(nombre_historia.split(" "))>8 or len(nombre_historia)>50:
+        return jsonify({"mensaje": "El nombre de la historia es muy largo","tipo": "warning"})
+    if len(descripcion_historia.split(" "))>200 or len(descripcion_historia)>500:
+        return jsonify({"mensaje":"La descripcion de la historia es muy larga","tipo": "warning"})
+    if dato_en_db(None,{"nombre_historia": nombre_historia, "id_saga": saga_historia, "codigo_usuario": session["usuario"]["codigo_usuario"]} , "historias"):
+        return jsonify({"mensaje":"Ya existe una historia con ese nombre","tipo": "warning"})
+    if len(texto_historia.replace(" ", ""))<500 or len(texto_historia)<1000: 
+        return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
+    idioma = detectar_idioma(texto_historia)
+    insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": session["usuario"]["codigo_usuario"], "idioma": idioma})
+    hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
+    redirigir = f"/historia/{id_historia}"
+    if not visivilidad_historia:
+        redirigir = "/perfil"
+    return jsonify({"redirigir": redirigir, "mensaje_redirigir": {"mensaje": "Historia creada exitosamente", "tipo": "success"}})
 
 @app.route("/api/historia/<id_historia>", methods=["POST"])
 def historia(id_historia):
@@ -748,7 +728,6 @@ def crear_saga():
     # Generar y guardar versión reducida
     imagen_saga.seek(0)  # Reset para poder leerla de nuevo
     reducida = generar_imagen_reducida(imagen_saga, 150, 150)
-    nombre_reducida = imagen_saga_nombre.replace(".jpg", "_reducida.jpg")
     ruta_reducida = imagen_saga_ruta.replace(".jpg", "_reducida.jpg")
     reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
     
