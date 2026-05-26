@@ -1,7 +1,7 @@
 import "./App.css";
 import RutasIngresar from "./rutas/rutasIngresar.tsx";
 import UseMensajeRedirigir from "./assets/componentes/mensajeRedirigir.tsx";
-
+//trabajando :(
 function App() {
   return (
     <div className="min-h-screen bg-(--color_principal) relative">
