@@ -44,7 +44,7 @@
 ==================================================
 2. CRITICO - SECRETOS HARDCodeados EN EL CODIGO
 ==================================================
-
+  
 Ubicaciones:
 - TeleRin_backend/app.py -> app.secret_key
 - TeleRin_backend/app.py -> password de correo
@@ -146,78 +146,78 @@ Dificultad:
 - MEDIA
 
 
-==================================================
-5. ALTA - DUPLICIDAD ENTRE /api/sesion Y /api/necesita_usuario
-==================================================
+                        ==================================================
+                        5. ALTA - DUPLICIDAD ENTRE /api/sesion Y /api/necesita_usuario
+                        ==================================================
 
-Ubicaciones:
-- TeleRin_backend/app.py
-- TeleRin_frontend/TeleRinEND/src/rutas/rutasIngresar.tsx
+                        Ubicaciones:
+                        - TeleRin_backend/app.py
+                        - TeleRin_frontend/TeleRinEND/src/rutas/rutasIngresar.tsx
 
-Que pasa:
-- Primero se valida acceso.
-- Luego se vuelve a consultar sesion.
-- Si una cosa responde distinto a la otra, aparecen estados raros.
+                        Que pasa:
+                        - Primero se valida acceso.
+                        - Luego se vuelve a consultar sesion.
+                        - Si una cosa responde distinto a la otra, aparecen estados raros.
 
-Ejemplo:
-- La ruta deja pasar.
-- Pero luego el navbar no aparece porque /api/sesion devuelve null.
+                        Ejemplo:
+                        - La ruta deja pasar.
+                        - Pero luego el navbar no aparece porque /api/sesion devuelve null.
 
-Que deberia hacerse:
-- Unificar la fuente de verdad de autenticacion.
-- Lo ideal: /api/sesion deberia bastar para saber si hay usuario o no.
+                        Que deberia hacerse:
+                        - Unificar la fuente de verdad de autenticacion.
+                        - Lo ideal: /api/sesion deberia bastar para saber si hay usuario o no.
 
-Ventajas:
-- Menos complejidad.
-- Menos requests redundantes.
-- Menos bugs raros.
+                        Ventajas:
+                        - Menos complejidad.
+                        - Menos requests redundantes.
+                        - Menos bugs raros.
 
-Desventajas:
-- Hay que reorganizar el flujo del frontend.
+                        Desventajas:
+                        - Hay que reorganizar el flujo del frontend.
 
-Prioridad:
-- ALTA
+                        Prioridad:
+                        - ALTA
 
-Dificultad:
-- MEDIA
+                        Dificultad:
+                        - MEDIA
 
 
-==================================================
-6. ALTA - DEMASIADAS CONSULTAS REPETIDAS DE SESION/USUARIO
-==================================================
+                        ==================================================
+                        6. ALTA - DEMASIADAS CONSULTAS REPETIDAS DE SESION/USUARIO
+                        ==================================================
 
-Ubicaciones:
-- TeleRin_backend/app.py
-- actualizar_sesion()
-- rutas que llaman datos_indefinidos() + actualizar_sesion()
+                        Ubicaciones:
+                        - TeleRin_backend/app.py
+                        - actualizar_sesion()
+                        - rutas que llaman datos_indefinidos() + actualizar_sesion()
 
-Que pasa:
-- actualizar_sesion hace 2 SELECT del mismo usuario.
-- varias rutas vuelven a refrescar sesion aunque no siempre hace falta.
+                        Que pasa:
+                        - actualizar_sesion hace 2 SELECT del mismo usuario.
+                        - varias rutas vuelven a refrescar sesion aunque no siempre hace falta.
 
-Por que importa:
-- Mas carga en DB.
-- Mas latencia.
-- Mas complejidad.
-- Mas riesgo de estados inconsistentes.
+                        Por que importa:
+                        - Mas carga en DB.
+                        - Mas latencia.
+                        - Mas complejidad.
+                        - Mas riesgo de estados inconsistentes.
 
-Que deberia hacerse:
-- Reducir a un solo SELECT cuando sea posible.
-- Separar la logica de “normalizar defaults” de la logica de “leer usuario”.
-- No refrescar sesion completa en cada endpoint si no hace falta.
+                        Que deberia hacerse:
+                        - Reducir a un solo SELECT cuando sea posible.
+                        - Separar la logica de “normalizar defaults” de la logica de “leer usuario”.
+                        - No refrescar sesion completa en cada endpoint si no hace falta.
 
-Ventajas:
-- Mejor rendimiento.
-- Backend mas limpio.
+                        Ventajas:
+                        - Mejor rendimiento.
+                        - Backend mas limpio.
 
-Desventajas:
-- Requiere revisar varias rutas.
+                        Desventajas:
+                        - Requiere revisar varias rutas.
 
-Prioridad:
-- ALTA
+                        Prioridad:
+                        - ALTA
 
-Dificultad:
-- MEDIA
+                        Dificultad:
+                        - MEDIA
 
 
 ==================================================
@@ -256,39 +256,39 @@ Dificultad:
 - MEDIA
 
 
-==================================================
-8. ALTA - /api/sesion DEVUELVE DEMASIADO DATO
-==================================================
+                ==================================================
+                8. ALTA - /api/sesion DEVUELVE DEMASIADO DATO
+                ==================================================
 
-Ubicacion:
-- TeleRin_backend/app.py
+                Ubicacion:
+                - TeleRin_backend/app.py
 
-Que pasa:
-- /api/sesion devuelve el usuario entero.
+                Que pasa:
+                - /api/sesion devuelve el usuario entero.
 
-Por que importa:
-- Se exponen campos que quizas el frontend no necesita.
-- Aumenta acoplamiento entre frontend y DB.
-- Aumenta el tamaño de la respuesta.
+                Por que importa:
+                - Se exponen campos que quizas el frontend no necesita.
+                - Aumenta acoplamiento entre frontend y DB.
+                - Aumenta el tamaño de la respuesta.
 
-Que deberia hacerse:
-- Crear una respuesta minima para el frontend.
-- Ejemplo: codigo_usuario, nombre_usuario, foto_perfil_usuario, id_paleta, idioma_usuario, etc.
-- No devolver todo el registro bruto.
+                Que deberia hacerse:
+                - Crear una respuesta minima para el frontend.
+                - Ejemplo: codigo_usuario, nombre_usuario, foto_perfil_usuario, id_paleta, idioma_usuario, etc.
+                - No devolver todo el registro bruto.
 
-Ventajas:
-- Menos datos expuestos.
-- Mejor mantenimiento.
-- Respuestas mas ligeras.
+                Ventajas:
+                - Menos datos expuestos.
+                - Mejor mantenimiento.
+                - Respuestas mas ligeras.
 
-Desventajas:
-- Hay que mapear manualmente los campos utiles.
+                Desventajas:
+                - Hay que mapear manualmente los campos utiles.
 
-Prioridad:
-- ALTA
+                Prioridad:
+                - ALTA
 
-Dificultad:
-- BAJA / MEDIA
+                Dificultad:
+                - BAJA / MEDIA
 
 
 ==================================================
