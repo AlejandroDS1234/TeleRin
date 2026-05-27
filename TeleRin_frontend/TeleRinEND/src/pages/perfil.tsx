@@ -168,24 +168,28 @@ function Imagen() {
         </label>
         {nuevaFoto && (
           <div className="flex gap-4">
-            <ThumbsUp
-              color="var(--success)"
-              className="hover:cursor-pointer"
-              onClick={async () => {
-                const data = new FormData();
-                data.append("imagen", nuevaFoto);
-                mutateSesion.mutate(data, {
-                  onSuccess: (data) => {
-                    if (data.tipo == "success") {
-                      setTimeout(() => {
-                        limpiarSeleccionFoto();
-                        setAbrirModal(false);
-                      }, 1500);
-                    }
-                  },
-                });
-              }}
-            />
+            {mutateSesion.isPending ? (
+              <Loader color="var(--success)" className="animate-spin" />
+            ) : (
+              <ThumbsUp
+                color="var(--success)"
+                className="hover:cursor-pointer"
+                onClick={async () => {
+                  const data = new FormData();
+                  data.append("imagen", nuevaFoto);
+                  mutateSesion.mutate(data, {
+                    onSuccess: (data) => {
+                      if (data.tipo == "success") {
+                        setTimeout(() => {
+                          limpiarSeleccionFoto();
+                          setAbrirModal(false);
+                        }, 1500);
+                      }
+                    },
+                  });
+                }}
+              />
+            )}
             <SquareX
               color="var(--warning)"
               className="hover:cursor-pointer"

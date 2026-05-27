@@ -1,5 +1,6 @@
 
 from flask import Blueprint, request, jsonify
+from PIL import Image
 import psycopg2.extras
 from servidor.core.db import conectar, dato_en_db, insertar_db
 from servidor.core.decoradores import necesita
@@ -37,13 +38,16 @@ def crear_saga():
     if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>500:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
-    imagen_saga.save(imagen_saga_ruta)
+    
+    # Guardar original como WebP
+    img_original = Image.open(imagen_saga)
+    img_original.save(imagen_saga_ruta, "WEBP", quality=85)
     
     # Generar y guardar versión reducida
     imagen_saga.seek(0)  # Reset para poder leerla de nuevo
     reducida = generar_imagen_reducida(imagen_saga, 150, 150)
-    ruta_reducida = imagen_saga_ruta.replace(".jpg", "_reducida.jpg")
-    reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
+    ruta_reducida = imagen_saga_ruta.replace(".webp", "_reducida.webp")
+    reducida.save(ruta_reducida, "WEBP", quality=40)  # Muy comprimida
     
     saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": usuario_actual["codigo_usuario"]}
     insertar_db("saga", saga)

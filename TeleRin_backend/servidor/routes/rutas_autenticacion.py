@@ -44,8 +44,6 @@ def registrarse():
         return jsonify({"mensaje":"Correo no valido", "tipo":"danger"})
     if dato_en_db(email, 'correo_usuario'):
         return jsonify({"mensaje":"Correo ya registrado", "tipo":"warning"})
-    if dato_en_db(nombre_us, 'nombre_usuario'):
-        return jsonify({"mensaje":"Nombre de usuario ya registrado", "tipo":"warning"})
     if not comprobar_contraseña(contraseña_us):
         return jsonify({"mensaje":"Ponga una contraseña mas segura (8 caracteres, 3 mayusculas, 3 minusculas, 2 numeros)", "tipo":"danger"})
     guardar_temporalmente_datos(form)

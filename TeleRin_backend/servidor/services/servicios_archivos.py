@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 
-def ruta_guardado(nombre_archivo, archivo_de_que, direccion, extension=".jpg"):
+def ruta_guardado(nombre_archivo, archivo_de_que, direccion, extension=".webp"):
     direccion_proyecto=os.getcwd()
     nombre_archivo=os.path.join(f"{nombre_archivo}{archivo_de_que}{extension}")
     ruta_completa=os.path.join(direccion_proyecto, direccion, nombre_archivo)

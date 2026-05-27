@@ -8,9 +8,6 @@ def verficar_nombre_usuario(data):
     usuario_actual = obtener_usuario()
     if not usuario_actual:
         return {"mensaje": "Necesitas usuario para acceder", "tipo": "warning"}
-    en_db = dato_en_db(data, "nombre_usuario")
-    if en_db and en_db[0]["nombre_usuario"] != usuario_actual["nombre_usuario"]:
-        return {"mensaje": "Nombre ya registrado", "tipo": "warning"}
     if hay_caracteres_repetidos(data):
         return {"mensaje": "Nombre no valido", "tipo": "warning"}
     if len(data)>30 or len(data.split(" "))>4:

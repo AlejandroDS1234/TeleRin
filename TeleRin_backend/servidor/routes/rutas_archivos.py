@@ -11,7 +11,7 @@ def perfil_img(filename):
     size = request.args.get('size', 'full')  # default: 'full'
     
     if size == 'reducida':
-        filename = filename.replace('.jpg', '_reducida.jpg')
+        filename = filename.replace('.webp', '_reducida.webp')
     
     return send_from_directory("Fotos/perfil", filename)
 
@@ -22,5 +22,5 @@ def fotos_saga(filename):
     # Obtener el parámetro "size" del URL
     size = request.args.get('size', 'full')  # default: 'full'
     if size == 'reducida':
-        filename = filename.replace('.jpg', '_reducida.jpg')
+        filename = filename.replace('.webp', '_reducida.webp')
     return send_from_directory("Fotos/fotos_sagas", filename)

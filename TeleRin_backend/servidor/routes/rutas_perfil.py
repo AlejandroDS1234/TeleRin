@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from PIL import Image
 
 from servidor.core.db import actualizar_datos
 from servidor.core.decoradores import necesita
@@ -48,14 +49,16 @@ def guardar_foto_perfil():
         if resultado:
             return jsonify({"mensaje": mensaje, "tipo": "danger"})
         nombre_archivo, ruta=ruta_guardado(usuario_actual["codigo_usuario"], "_perfil", "Fotos/perfil")
-        imagen.save(ruta)
+        
+        # Forzar conversión a WebP al guardar la original
+        img_original = Image.open(imagen)
+        img_original.save(ruta, "WEBP", quality=85)
         
         # Generar y guardar versión reducida
         imagen.seek(0)  # Reset para poder leerla de nuevo
         reducida = generar_imagen_reducida(imagen, 150, 150)
-        nombre_reducida = nombre_archivo.replace(".jpg", "_reducida.jpg")
-        ruta_reducida = ruta.replace(".jpg", "_reducida.jpg")
-        reducida.save(ruta_reducida, "JPEG", quality=40)  # Muy comprimida
+        ruta_reducida = ruta.replace(".webp", "_reducida.webp")
+        reducida.save(ruta_reducida, "WEBP", quality=40)  # Muy comprimida
         
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": usuario_actual["correo_usuario"]})
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
