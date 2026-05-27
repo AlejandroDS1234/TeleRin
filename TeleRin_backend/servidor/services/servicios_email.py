@@ -4,10 +4,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from flask import jsonify, session
 from servidor.services.servicios_texto import encriptar
+import os
 
 def enviar_correo_validacion(correo):
-    emisor="telerincontac@gmail.com"
-    verficacion="emej vpkm srqe rkzn"
+    emisor= os.getenv("MAIL_USER")
+    verficacion= os.getenv("MAIL_PASSWORD")
     server="smtp.gmail.com"
     port=587
     codigo=random.randint(100000,999999)

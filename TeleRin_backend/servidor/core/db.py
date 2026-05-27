@@ -6,8 +6,8 @@ from flask import redirect, url_for
 def conectar():
     try:
         db = ps.connect(
-            host="db",
-            port="5432",
+            host=os.getenv("POSTGRES_HOST", "localhost"),
+            port=os.getenv("POSTGRES_PORT", "5432"),
             user=os.getenv("POSTGRES_USER"),
             password=os.getenv("POSTGRES_PASSWORD"),
             database=os.getenv("POSTGRES_DB")
