@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useCerrarSesion } from "../../pages/hook/usuario/hookSesion";
 import { redirigir } from "../../function_generales";
 import { motion } from "framer-motion";
+import { Loader } from "lucide-react";
 
 type CerrarSesionProps = {
   boton: React.ReactElement;
@@ -43,7 +44,13 @@ function CerrarSesion({ boton }: CerrarSesionProps) {
               sessionStorage.clear();
             }}
           >
-            Salir
+            {cerrarSesion.isPending ? (
+              <p className="flex">
+                Saliendo <Loader className="animate-spin" />
+              </p>
+            ) : (
+              <p>Salir</p>
+            )}
           </motion.button>
         </div>
       </Modal>
