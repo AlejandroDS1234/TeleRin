@@ -16,7 +16,12 @@ from servidor.services.servicios_autenticacion import (
     verificar_ip,
     iniciar_sesion_dispositivo_nuevo,
     obtener_ip,
+    iniciar_sesion_google,
+    registrarse_google,
 )
+from google.oauth2 import id_token
+from google.auth.transport import requests
+import os
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -31,6 +36,7 @@ def sesion_usuario():
     if not usuario:
         return jsonify({"mensaje": "usuario no encontrado", "tipo": "danger"})
     usuario_filtrado = {columna: usuario[columna] for columna in columnas}
+    print("aaaaaaaaaaaaaaaaaaaaaaa ",usuario_filtrado)
     return jsonify(usuario_filtrado)
 
 @auth_bp.route("/api/registrarse", methods=["POST"])
@@ -117,12 +123,31 @@ def cambiar_contraseña():
     session.pop("cambiar_contraseña_usuario")
     return jsonify({"redirigir": "/iniciar_sesion", "mensaje_redirigir": {"mensaje": "Contraseña cambiada exitosamente, inicia sesión de nuevo", "tipo": "success"}})
 
+@auth_bp.route("/api/iniciar_google", methods=["POST"])
+def iniciar_google():
+    form = request.get_json()
+    creadenciales = form["token"]
+    id_info = id_token.verify_oauth2_token(creadenciales, requests.Request(), os.getenv("CLIENT_ID"), clock_skew_in_seconds=10)
+    email = id_info["email"]
+    mensaje = {}
+    if dato_en_db(email, "correo_usuario"):
+        mensaje = iniciar_sesion_google(email, id_info["sub"])
+    else:
+        mensaje = registrarse_google(id_info["name"], email, id_info["sub"], id_info["picture"])
+    return mensaje
+    
+        
+        
+
+
+
+
 @auth_bp.route("/api/cerrar_sesion", methods=["GET", "POST"])
 def cerrar_sesion():
     usuario_actual = obtener_usuario()
     if not usuario_actual:
         session.clear()
-        return jsonify({"redirigir": "/", "mensaje_redirigir": {"mensaje": "SesiÃ³n cerrada", "tipo": "success"}})
+        return jsonify({"redirigir": "/", "mensaje_redirigir": {"mensaje": "Sesión cerrada", "tipo": "success"}})
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             ip = obtener_ip()

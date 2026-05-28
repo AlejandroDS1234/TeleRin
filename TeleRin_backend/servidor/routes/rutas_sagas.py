@@ -9,6 +9,7 @@ from servidor.services.servicios_archivos import (
     ruta_guardado,
     validar_imagen_completa,
     generar_imagen_reducida,
+    guardar_imagen,
 )
 from servidor.routes.rutas_historias import hashtag_db
 
@@ -38,17 +39,7 @@ def crear_saga():
     if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>500:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
-    
-    # Guardar original como WebP
-    img_original = Image.open(imagen_saga)
-    img_original.save(imagen_saga_ruta, "WEBP", quality=85)
-    
-    # Generar y guardar versión reducida
-    imagen_saga.seek(0)  # Reset para poder leerla de nuevo
-    reducida = generar_imagen_reducida(imagen_saga, 150, 150)
-    ruta_reducida = imagen_saga_ruta.replace(".webp", "_reducida.webp")
-    reducida.save(ruta_reducida, "WEBP", quality=40)  # Muy comprimida
-    
+    guardar_imagen(imagen_saga, imagen_saga_ruta)
     saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": usuario_actual["codigo_usuario"]}
     insertar_db("saga", saga)
     hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})

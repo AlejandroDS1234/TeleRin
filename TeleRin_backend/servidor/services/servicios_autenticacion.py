@@ -4,15 +4,16 @@ from werkzeug.security import check_password_hash
 import random
 import psycopg2.extras
 
-from servidor.core.db import conectar, insertar_db
+from servidor.core.db import conectar, insertar_db, dato_en_db, actualizar_datos
 from servidor.core.decoradores import registrar_funcion
 from servidor.services.servicios_sesion import guardar_sesion
 from servidor.services.servicios_texto import encriptar
+from servidor.services.servicios_archivos import tratar_img_google
 
 def obtener_ip():
     ip_local = socket.gethostbyname(socket.gethostname())
     user_agent = request.headers.get("User-Agent", "")
-    lenguaje=request.headers.get("Accept-Lenguage", "")
+    lenguaje=request.headers.get("Accept-Language", "")
     encoding=request.headers.get("Accept-Encoding", "")
     dispositivo=f"{ip_local}--{user_agent}--{lenguaje}--{encoding}"
     return dispositivo
@@ -41,6 +42,7 @@ def guardar_ip(correo: str):
             if ip["ip_usuario"] == None or any(ips_verificar)==False:
                 dispositivo=encriptar(dispositivo)
                 cursor.execute('UPDATE "USUARIOS" SET ip_usuario = array_append(ip_usuario, %s) WHERE correo_usuario = %s', (dispositivo, correo) )
+                db.commit()
 
 @registrar_funcion("registro")
 def registro(form: dict):
@@ -66,3 +68,34 @@ def iniciar_sesion_dispositivo_nuevo(dato: dict | str):
 def cambiar_contraseña_comprobador(_=None):
     session["cambiar_contraseña_usuario"]=True
     return jsonify({"redirigir": "/cambiar_contraseña", "mensaje_redirigir": {"mensaje": "Cambia tu contraseña", "tipo": "success"}})
+
+def iniciar_sesion_google(correo: str, google_id: str):
+    usuario = dato_en_db(correo, "correo_usuario")
+    if not usuario:
+        return jsonify({"mensaje": "Correo no registrado", "tipo": "warning"})
+    if not usuario[0]["google_id"]:
+        actualizar_datos("USUARIOS", {"google_id": google_id}, {"correo_usuario": correo})
+    guardar_ip(correo)
+    guardar_sesion(correo)
+    return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Inicio de sesión exitoso", "tipo": "success"}})
+
+def registrarse_google(nombre: str, correo: str, google_id: str, imagen: str):
+    usuario = dato_en_db(correo, "correo_usuario")
+    if usuario:
+        return jsonify({"mensaje": "Correo ya registrado", "tipo": "warning"})
+    codigo_us_numero=random.randint(100000,999999)
+    codigo_us=f"{codigo_us_numero}{correo[0:5]}"
+    
+    tratada_img = tratar_img_google(imagen, codigo_us)
+    if not tratada_img:
+        tratada_img = "predefinido.webp"
+    insertar_db("USUARIOS",{"nombre_usuario": nombre, "correo_usuario": correo, "google_id": google_id, "foto_perfil_usuario": tratada_img, "codigo_usuario": codigo_us})
+    guardar_ip(correo)
+    guardar_sesion(correo)
+    return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Registrado exitosamente", "tipo": "success"}})
+
+    
+
+        
+        
+    

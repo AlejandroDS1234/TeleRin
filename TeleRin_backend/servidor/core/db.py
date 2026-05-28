@@ -12,11 +12,9 @@ def conectar():
             password=os.getenv("POSTGRES_PASSWORD"),
             database=os.getenv("POSTGRES_DB")
         )
-        if db is None:
-            return redirect(url_for("index"))
         return db
-    except:
-        print("Error al conectar")
+    except Exception as e:
+        print(f"Error crítico al conectar a la DB: {e}")
 
 def dato_en_db(dato: str | None, nombre_dato: str | dict, tabla: str = "USUARIOS") -> dict | None:
     with conectar() as db:

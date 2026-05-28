@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSesion } from "../../pages/hook/usuario/hookSesion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, DoorClosed, Feather, Landmark } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsLg } from "../../function_generales";
@@ -10,6 +10,7 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: usuario } = useSesion("foto_perfil_usuario");
+  const { data: codigo_usuario } = useSesion("codigo_usuario");
   const [abierta, setabierta] = useState(false);
   const [imagenPerfilCargada, setImagenPerfilCargada] = useState(false);
   const isLg = useIsLg();
@@ -91,20 +92,20 @@ function Navbar() {
         >
           {/* Placeholder borroso (imagen reducida) */}
           <img
-            src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?size=reducida&t=${usuario.refrescado ?? 0}`}
+            src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?size=reducida&t=${usuario?.refrescado ?? 0}`}
             className="absolute inset-0 w-full h-full object-cover rounded-full border-2 border-black"
             style={{ opacity: !imagenPerfilCargada ? 1 : 0 }}
           />
 
           {/* Imagen real con fade in */}
           <motion.img
-            className="h-10 aspect-square rounded-full border-2 transition-opacity duration-300"
+            className="h-10 aspect-square rounded-full border-2 transition-opacity duration-300 object-cover"
             style={{
               borderColor:
                 resaltado === "/perfil" ? "var(--interactive-selected)" : "var(--border-default)",
               opacity: imagenPerfilCargada ? 1 : 0,
             }}
-            src={`/api/Fotos/perfil/${usuario.foto_perfil_usuario}?t=${usuario.refrescado ?? 0}`}
+            src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?t=${usuario?.refrescado ?? 0}`}
             onLoad={() => setImagenPerfilCargada(true)}
           />
         </motion.div>

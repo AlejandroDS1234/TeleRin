@@ -1,5 +1,7 @@
 import os
 from PIL import Image
+from io import BytesIO
+import requests
 
 def ruta_guardado(nombre_archivo, archivo_de_que, direccion, extension=".webp"):
     direccion_proyecto=os.getcwd()
@@ -38,3 +40,26 @@ def generar_imagen_reducida(imagen_file, ancho=150, alto=150):
     if img.mode in ('RGBA', 'P'):
         img = img.convert('RGB')
     return img
+
+def guardar_imagen(imagen, ruta):
+    # Abrimos la imagen
+    img_pil = Image.open(imagen)
+    img_pil.save(ruta, "WEBP", quality=85)
+    imagen.seek(0) # Reiniciamos el stream original para generar la reducida
+    reducida = generar_imagen_reducida(imagen, 150, 150)
+    reducida.save(ruta.replace(".webp", "_reducida.webp"), "WEBP", quality=40)
+    
+def tratar_img_google(imagen, codigo_usuario):
+    foto = requests.get(imagen)
+    imagen = BytesIO(foto.content)
+    mensaje, resultado = validar_imagen_completa(imagen)
+    print(mensaje)
+    if resultado:
+        return False
+    nombre_archivo, ruta=ruta_guardado(codigo_usuario, "_perfil", "Fotos/perfil")
+    guardar_imagen(imagen, ruta)
+    return nombre_archivo
+    
+
+
+    

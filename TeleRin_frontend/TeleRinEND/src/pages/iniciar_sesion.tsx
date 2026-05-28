@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Mensaje } from "../assets/componentes/mensaje.tsx";
 import Sobrefondo_inicio_sesion from "../assets/sobre_fondos_de_menus/sobre_fondo_iniciar_sesion.tsx";
 import type { ApiMessage } from "../types.ts";
+import BotonGoogle from "../assets/botones_componentes/boton_iniciar_google.tsx";
 
 type IniciarSesionForm = {
   correo_usuario: string;
@@ -97,13 +98,13 @@ function Iniciar_sesion_Form() {
         )}
       </button>
 
+      <BotonGoogle />
       <Link
         to="/olvide_mi_contrasena"
         className="text-(--color_texto_oscuro) flex items-center justify-center gap-1 mt-2"
       >
         ¿Olvidaste tu contraseña?
       </Link>
-
       <UseMensajeRedirigir />
       {res && <Mensaje mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />}
     </form>

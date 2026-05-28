@@ -14,6 +14,7 @@ from servidor.services.servicios_archivos import (
     ruta_guardado,
     validar_imagen_completa,
     generar_imagen_reducida,
+    guardar_imagen,
 )
 
 perfil_bp = Blueprint("perfil", __name__)
@@ -49,16 +50,6 @@ def guardar_foto_perfil():
         if resultado:
             return jsonify({"mensaje": mensaje, "tipo": "danger"})
         nombre_archivo, ruta=ruta_guardado(usuario_actual["codigo_usuario"], "_perfil", "Fotos/perfil")
-        
-        # Forzar conversión a WebP al guardar la original
-        img_original = Image.open(imagen)
-        img_original.save(ruta, "WEBP", quality=85)
-        
-        # Generar y guardar versión reducida
-        imagen.seek(0)  # Reset para poder leerla de nuevo
-        reducida = generar_imagen_reducida(imagen, 150, 150)
-        ruta_reducida = ruta.replace(".webp", "_reducida.webp")
-        reducida.save(ruta_reducida, "WEBP", quality=40)  # Muy comprimida
-        
+        guardar_imagen(imagen, ruta)
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": usuario_actual["correo_usuario"]})
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})

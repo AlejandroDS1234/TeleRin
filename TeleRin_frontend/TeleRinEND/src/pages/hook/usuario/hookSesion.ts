@@ -46,7 +46,7 @@ export function useCerrarSesion() {
   return useMutation({
     mutationFn: cerrarSesion,
     onSuccess: () => {
-      queryClient.refetchQueries({ queryKey: ["sesion"] });
+      queryClient.invalidateQueries({ queryKey: ["sesion"] });
     },
   });
 }
