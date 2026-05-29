@@ -13,13 +13,12 @@ import { useGeneros } from "./hook/hookGeneros";
 
 function Nombre() {
   const { data: usuario } = useSesion("nombre_usuario");
-  const { data: codigo_usuario } = useSesion("codigo_usuario");
   const mutateSesion = useEditarSesion();
   const [nombre, setNombre] = useState("");
 
   useEffect(() => {
     setNombre(usuario?.nombre_usuario ?? "");
-  }, [codigo_usuario?.nombre_usuario, usuario?.nombre_usuario]);
+  }, [usuario?.nombre_usuario]);
 
   const nombreActualSesion = usuario?.nombre_usuario ?? "";
   const nombreLimpio = nombre.trim();

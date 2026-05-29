@@ -19,7 +19,8 @@ export function useEditarSesion() {
   return useMutation({
     mutationFn: (data: PerfilPayload) => editarSesion(data),
     onSuccess: (res) => {
-      queryClient.setQueryData(["sesion", res.dato.clave], () => ({
+      queryClient.setQueryData(["sesion", res.dato.clave], (oldData: any) => ({
+        ...oldData,
         [res.dato.clave]: res.dato.valor,
         refrescado: Date.now(),
       }));
@@ -46,7 +47,7 @@ export function useCerrarSesion() {
   return useMutation({
     mutationFn: cerrarSesion,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sesion"] });
+      queryClient.clear();
     },
   });
 }
