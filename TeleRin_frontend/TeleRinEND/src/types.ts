@@ -68,6 +68,7 @@ export type FormRegisterLike = UseFormRegisterReturn;
 export type InputWithIconBaseProps = {
   icon: ReactNode;
   register?: FormRegisterLike;
+  classNamePadre?: string;
 };
 
 export type SubmitHandlerData = Record<string, FormDataEntryValue | string | boolean>;

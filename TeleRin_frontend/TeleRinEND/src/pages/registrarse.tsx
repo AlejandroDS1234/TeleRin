@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Mensaje } from "../assets/componentes/mensaje";
+import { MensajePlano } from "../assets/componentes/mensaje";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { enviarInfoServer, redirigir, cambiarTamañoBarraContraseña } from "../function_generales";
@@ -50,101 +50,101 @@ function FormularioRegistro() {
   };
 
   return (
-    <div>
-      <form
-        className="flex flex-col gap-2 bg-(--color_principal) w-full"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <InputWithIcon
-          icon={<UserRoundPlus />}
-          autoComplete="off"
-          placeholder="Nombre"
-          register={register("nombre_usuario", {
-            required: "El nombre es obligatorio",
-          })}
-        />
-        {errors.nombre_usuario && (
-          <p className="text-(--danger) text-sm">{errors.nombre_usuario.message}</p>
-        )}
-        <InputWithIcon
-          icon={<Mail />}
-          placeholder="Correo"
-          register={register("correo_usuario", {
-            required: "El correo es obligatorio",
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "El correo no es válido",
-            },
-          })}
-        />
-        {errors.correo_usuario && (
-          <p className="text-(--danger) text-sm">{errors.correo_usuario.message}</p>
-        )}
+    <form
+      className="flex flex-col gap-2 bg-(--color_principal) w-full"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <InputWithIcon
+        icon={<UserRoundPlus />}
+        autoComplete="off"
+        placeholder="Nombre"
+        register={register("nombre_usuario", {
+          required: "El nombre es obligatorio",
+        })}
+      />
+      {errors.nombre_usuario && (
+        <p className="text-(--danger) text-sm">{errors.nombre_usuario.message}</p>
+      )}
+      <InputWithIcon
+        icon={<Mail />}
+        placeholder="Correo"
+        register={register("correo_usuario", {
+          required: "El correo es obligatorio",
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: "El correo no es válido",
+          },
+        })}
+      />
+      {errors.correo_usuario && (
+        <p className="text-(--danger) text-sm">{errors.correo_usuario.message}</p>
+      )}
 
-        <InputWithIcon
-          icon={
-            mostrarContraseña ? (
-              <Eye
-                onClick={() => setMostrarContraseña(false)}
-                className="hover:cursor-pointer animate-pulse"
-              />
-            ) : (
-              <EyeClosed
-                onClick={() => setMostrarContraseña(true)}
-                className="hover:cursor-pointer animate-pulse"
-              />
-            )
-          }
-          autoComplete="off"
-          type={mostrarContraseña ? "text" : "password"}
-          placeholder="Contraseña"
-          {...register("contraseña_usuario", {
-            required: "La contraseña es obligatoria",
-            minLength: {
-              value: 8,
-              message: "La contraseña debe tener al menos 8 caracteres",
-            },
-            pattern: {
-              value: /^(?=(?:.*[A-Z]){3,})(?=(?:.*[a-z]){3,})(?=(?:.*\d){1,}).{8,}$/,
-              message: "La contraseña debe tener al menos 3 mayúsculas, 3 minúsculas y un número",
-            },
-            onChange: (e) => {
-              handleContraseñaChange(e);
-            },
-          })}
-        />
-
-        <div className="h-4 bg-(--color_bordes_claro) rounded-full flex items-center px-2">
-          <div
-            className="h-2 rounded-full"
-            style={{ width: contraseñaSegura, backgroundColor: colorBarra }}
-          ></div>
-        </div>
-        {errors.contraseña_usuario && (
-          <p className="text-(--danger)">{errors.contraseña_usuario.message}</p>
-        )}
-
-        <button
-          type="submit"
-          disabled={cargando}
-          className="flex items-center justify-center gap-3 mt-4 bg-(--color_botones) text-(--color_texto_botones) py-2 rounded-lg hover:bg-(--color_botones_presionado) transition cursor-pointer"
-        >
-          {cargando ? (
-            <>
-              <p className="flex gap-2 text-(--color_texto_botones)">
-                Registrando <Loader className="animate-spin" />
-              </p>
-            </>
+      <InputWithIcon
+        icon={
+          mostrarContraseña ? (
+            <Eye
+              onClick={() => setMostrarContraseña(false)}
+              className="hover:cursor-pointer animate-pulse"
+            />
           ) : (
-            "Registrarse"
-          )}
-        </button>
+            <EyeClosed
+              onClick={() => setMostrarContraseña(true)}
+              className="hover:cursor-pointer animate-pulse"
+            />
+          )
+        }
+        autoComplete="off"
+        type={mostrarContraseña ? "text" : "password"}
+        placeholder="Contraseña"
+        {...register("contraseña_usuario", {
+          required: "La contraseña es obligatoria",
+          minLength: {
+            value: 8,
+            message: "La contraseña debe tener al menos 8 caracteres",
+          },
+          pattern: {
+            value: /^(?=(?:.*[A-Z]){3,})(?=(?:.*[a-z]){3,})(?=(?:.*\d){1,}).{8,}$/,
+            message: "La contraseña debe tener al menos 3 mayúsculas, 3 minúsculas y un número",
+          },
+          onChange: (e) => {
+            handleContraseñaChange(e);
+          },
+        })}
+      />
 
-        {res && (
-          <Mensaje mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />
+      <div className="h-4 bg-(--color_bordes_claro) rounded-full flex items-center px-2">
+        <div
+          className="h-2 rounded-full"
+          style={{ width: contraseñaSegura, backgroundColor: colorBarra }}
+        ></div>
+      </div>
+      {errors.contraseña_usuario && (
+        <p className="text-(--danger)">{errors.contraseña_usuario.message}</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={cargando}
+        className="flex items-center justify-center gap-3 mt-4 bg-(--color_botones) text-(--color_texto_botones) py-2 rounded-lg hover:bg-(--color_botones_presionado) transition cursor-pointer"
+      >
+        {cargando ? (
+          <>
+            <p className="flex gap-2 text-(--color_texto_botones)">
+              Registrando <Loader className="animate-spin" />
+            </p>
+          </>
+        ) : (
+          "Registrarse"
         )}
-      </form>
-    </div>
+      </button>
+
+      {res && (
+        <div className="flex items-center justify-center w-full">
+          <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />
+        </div>
+      )}
+    </form>
   );
 }
 

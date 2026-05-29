@@ -1,11 +1,10 @@
 import { Loader, EyeClosed, BookUser, Eye } from "lucide-react";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import { Link, useNavigate } from "react-router-dom";
-import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir.tsx";
 import { enviarInfoServer, redirigir } from "../function_generales.tsx";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { Mensaje } from "../assets/componentes/mensaje.tsx";
+import { MensajePlano } from "../assets/componentes/mensaje.tsx";
 import Sobrefondo_inicio_sesion from "../assets/sobre_fondos_de_menus/sobre_fondo_iniciar_sesion.tsx";
 import type { ApiMessage } from "../types.ts";
 import BotonGoogle from "../assets/botones_componentes/boton_iniciar_google.tsx";
@@ -105,8 +104,11 @@ function Iniciar_sesion_Form() {
       >
         ¿Olvidaste tu contraseña?
       </Link>
-      <UseMensajeRedirigir />
-      {res && <Mensaje mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />}
+      {res && (
+        <div className="flex justify-center bg-(--color_fondo_transparente) rounded-2xl">
+          <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />
+        </div>
+      )}
     </form>
   );
 }

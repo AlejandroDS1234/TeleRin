@@ -6,7 +6,6 @@ import {
   HistoriaCardCargando,
 } from "../assets/componentes/sagas&historias_cards";
 import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
-import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Historia, Saga } from "../types";
 

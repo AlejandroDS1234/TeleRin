@@ -83,8 +83,11 @@ def iniciar_sesion():
             usuario=dato_en_db(correo, "correo_usuario")
             if not usuario:
                 return jsonify({"mensaje":"Correo no registrado", "tipo":"warning"})
-            if not check_password_hash(usuario[0]["contraseña_usuario"], contraseña_encriptada):
-                return jsonify({"mensaje":"Contraseña incorrecta", "tipo":"danger"})
+            try:
+                if not check_password_hash(usuario[0]["contraseña_usuario"], contraseña_encriptada):
+                    return jsonify({"mensaje":"Contraseña incorrecta", "tipo":"danger"})
+            except AttributeError:
+                return jsonify({"mensaje":"Inicia sesion por google", "tipo":"danger"})
             if not verificar_ip(correo):
                 guardar_temporalmente_datos({"correo_usuario": correo})
                 guardar_funcion_proveniente("iniciar_sesion_dispositivo_nuevo")
