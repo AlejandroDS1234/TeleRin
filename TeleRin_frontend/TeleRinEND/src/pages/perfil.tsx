@@ -381,7 +381,11 @@ function Historial() {
             titulo={historia.nombre_historia}
             descripcion={historia.descripcion_historia}
             calificacion={historia.calificacion_p}
-            autor={historia.nombre_usuario}
+            autor={{
+              nombre_usuario: historia.nombre_usuario,
+              foto_perfil_usuario: historia.foto_perfil_usuario,
+              codigo_usuario: historia.codigo_usuario,
+            }}
           />
         ))
       ) : (
@@ -418,7 +422,11 @@ function HistoriasUsuario() {
             titulo={historia.nombre_historia}
             descripcion={historia.descripcion_historia}
             calificacion={historia.calificacion_p}
-            autor={historia.nombre_usuario}
+            autor={{
+              nombre_usuario: historia.nombre_usuario,
+              foto_perfil_usuario: historia.foto_perfil_usuario,
+              codigo_usuario: historia.codigo_usuario,
+            }}
           />
         ))
       ) : (

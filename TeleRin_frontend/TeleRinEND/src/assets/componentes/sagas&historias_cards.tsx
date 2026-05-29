@@ -1,4 +1,4 @@
-import { Book, BookHeart, Loader } from "lucide-react";
+import { Book, Loader, NotebookText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -23,7 +23,11 @@ type HistoriaCardProps = {
   titulo: string;
   descripcion: string;
   calificacion: string | number;
-  autor: string;
+  autor: {
+    nombre_usuario: string;
+    foto_perfil_usuario: string;
+    codigo_usuario: string;
+  };
 };
 
 type SagasCardHorizontalProps = {
@@ -32,7 +36,6 @@ type SagasCardHorizontalProps = {
   className?: string;
 };
 
-const MotionHeart = motion(BookHeart);
 const MotionLink = motion(Link);
 
 function Lineas({ grosor, espaciado, cantidad = 2 }: LineasProps) {
@@ -51,7 +54,7 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
   return (
     <Link
       to={`/sagas/${encodeURIComponent(ids)}`}
-      className="relative p-4 bg-(--bg-surface) flex flex-col border-2 border-(--border-default) border-double h-70 flex-none w-50 sm:w-full"
+      className="relative p-4 bg-(--bg-surface) flex flex-col border-2 border-[#6f675d]/50 border-double h-70 flex-none w-50 sm:w-full"
     >
       <div>
         <div className="flex flex-col w-full justify-center items-center gap-px">
@@ -129,56 +132,34 @@ export function SagaCardCargando() {
   );
 }
 
-export function HistoriaCard({ idh, titulo, descripcion, calificacion, autor }: HistoriaCardProps) {
-  const calificacionNumero = Number(calificacion);
+export function HistoriaCard({ idh, titulo, descripcion, autor }: HistoriaCardProps) {
+  const [imagenCargada, setImagenCargada] = useState(false);
 
   return (
     <MotionLink
-      whileHover={{ scale: 0.95 }}
+      whileHover={{ y: -2 }}
       to={`/historia/${encodeURIComponent(idh)}`}
-      className="bg-(--bg-surface) flex flex-col gap-4 border border-(--border-default) border-dotted flex-none w-50 sm:w-full h-50 p-4"
+      className="bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] border-[#6f675d]/50 flex flex-col gap-4 border border-dotted flex-none w-50 sm:w-full h-50 p-4 "
     >
-      <h3 className="font-bold w-full line-clamp-2">{titulo}</h3>
-      <div className="w-full line-clamp-3">
-        <p>{descripcion}</p>
-      </div>
-      <small className="mt-auto w-full flex justify-between">
-        <motion.div
-          className="flex gap-[0.5px]"
-          variants={{
-            normal: {},
-            marcado: {
-              transition: {
-                staggerChildren: 0.1,
-                delay: 1,
-              },
-            },
-          }}
-          initial="normal"
-          whileInView="marcado"
-          viewport={{ once: true, amount: 1 }}
-        >
-          {[...Array(3)].map((_, i) => (
-            <span key={i}>
-              {i < calificacionNumero ? (
-                <MotionHeart
-                  variants={{
-                    normal: {
-                      scale: 1,
-                    },
-                    marcado: {
-                      scale: [1, 1.15, 1],
-                    },
-                  }}
-                  color="var(--interactive-selected)"
-                />
-              ) : (
-                <Book />
-              )}
-            </span>
-          ))}
-        </motion.div>
-        <p className="font-bold truncate">--{autor}</p>
+      <h3 className="font-bold text-2xl w-full  line-clamp-3">{titulo}</h3>
+      <small className="mt-auto w-full h-8 flex gap-1 items-center justify-between">
+        <div className="flex gap-1 items-center w-[80%]">
+          <div className="aspect-square h-8 relative">
+            <img
+              src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
+              style={{ opacity: imagenCargada ? 0 : 1 }}
+              className="absolute object-cover rounded-full aspect-square w-full h-full"
+            />
+            <img
+              src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}`}
+              style={{ opacity: imagenCargada ? 1 : 0 }}
+              onLoad={() => setImagenCargada(true)}
+              className="object-cover rounded-full aspect-square w-full h-full"
+            />
+          </div>
+          <p className="font-bold truncate">{autor.nombre_usuario}</p>
+        </div>
+        <NotebookText />
       </small>
     </MotionLink>
   );

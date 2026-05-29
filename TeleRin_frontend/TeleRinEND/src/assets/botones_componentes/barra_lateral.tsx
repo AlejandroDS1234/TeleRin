@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSesion } from "../../pages/hook/usuario/hookSesion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, DoorClosed, Feather, Landmark } from "lucide-react";
 import { motion } from "framer-motion";
 import { useIsLg } from "../../function_generales";
@@ -10,7 +10,6 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: usuario } = useSesion("foto_perfil_usuario");
-  const { data: codigo_usuario } = useSesion("codigo_usuario");
   const [abierta, setabierta] = useState(false);
   const [imagenPerfilCargada, setImagenPerfilCargada] = useState(false);
   const isLg = useIsLg();

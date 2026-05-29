@@ -1,17 +1,24 @@
 import { GoogleLogin } from "@react-oauth/google";
-import { useState } from "react";
+import React, { useState } from "react";
 import type { ApiMessage } from "../../types";
 import { redirigir } from "../../function_generales";
 import { useNavigate } from "react-router-dom";
 import { MensajePlano } from "../../assets/componentes/mensaje";
 
-function BotonGoogle() {
+interface Props {
+  text: React.ComponentProps<typeof GoogleLogin>["text"];
+  size: React.ComponentProps<typeof GoogleLogin>["size"];
+}
+
+function BotonGoogle({ text, size }: Props) {
   const [res, setRes] = useState<ApiMessage | null>(null);
   const navigate = useNavigate();
 
   return (
     <>
       <GoogleLogin
+        text={text}
+        size={size}
         onSuccess={async (credentialResponse) => {
           const res = await fetch("/api/iniciar_google", {
             method: "POST",

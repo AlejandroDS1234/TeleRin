@@ -97,7 +97,7 @@ function Iniciar_sesion_Form() {
         )}
       </button>
 
-      <BotonGoogle />
+      <BotonGoogle text="signin_with" size="large" />
       <Link
         to="/olvide_mi_contrasena"
         className="text-(--color_texto_oscuro) flex items-center justify-center gap-1 mt-2"

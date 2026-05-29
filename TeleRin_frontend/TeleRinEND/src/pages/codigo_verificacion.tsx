@@ -1,4 +1,3 @@
-import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
 import { useForm } from "react-hook-form";
 import { enviarInfoServer, redirigir } from "../function_generales";
 import { Loader, Hash } from "lucide-react";
@@ -90,11 +89,6 @@ function CodigoVerificacion() {
               </div>
             )}
           </form>
-        </div>
-        <div className="fixed bottom-6 lg:bottom-10">
-          <div className="w-full bg-white/30">
-            <UseMensajeRedirigir />
-          </div>
         </div>
       </div>
     </div>

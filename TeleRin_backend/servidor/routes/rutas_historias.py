@@ -123,7 +123,7 @@ def historial_usuario():
     codigo_usuario=usuario_actual["codigo_usuario"]
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.nombre_historia, h.id_historia, TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE hl.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, hl.tiempo_vista ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario , ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p FROM "historias" h JOIN "historial" hl ON h.id_historia = hl.id_historia LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE hl.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, hl.tiempo_vista, u.foto_perfil_usuario, u.codigo_usuario ORDER BY hl.tiempo_vista DESC""", (codigo_usuario,))
             historias=cursor.fetchall() 
     return jsonify(historias)
 
@@ -131,6 +131,6 @@ def historial_usuario():
 def historias_creadas(codigo_usuario):
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario ORDER BY calificacion_p DESC LIMIT 20""", (codigo_usuario,))
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY calificacion_p DESC LIMIT 20""", (codigo_usuario,))
             historias=cursor.fetchall()
     return jsonify(historias)

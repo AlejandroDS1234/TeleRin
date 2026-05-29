@@ -11,7 +11,7 @@ function App() {
         <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
           <RutasIngresar />
         </GoogleOAuthProvider>
-        <div className="z-30 fixed bottom-18 lg:bottom-18 bg-(--color_principal_opaco)">
+        <div className="z-30 fixed left-1/2 -translate-x-1/2 bottom-20 lg:bottom-10 bg-(--color_principal_opaco)">
           <UseMensajeRedirigir />
         </div>
       </div>

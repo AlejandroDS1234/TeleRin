@@ -36,7 +36,9 @@ export type Historia = {
   nombre_historia: string;
   descripcion_historia: string;
   calificacion_p: number | string;
+  codigo_usuario: string;
   nombre_usuario: string;
+  foto_perfil_usuario: string;
   contenido_historia?: unknown;
 };
 

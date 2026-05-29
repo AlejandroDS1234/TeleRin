@@ -5,7 +5,6 @@ import {
   HistoriaCard,
   HistoriaCardCargando,
 } from "../assets/componentes/sagas&historias_cards";
-import UseMensajeRedirigir from "../assets/componentes/mensajeRedirigir";
 import { motion } from "framer-motion";
 import type { Historia, Saga } from "../types";
 
@@ -175,7 +174,11 @@ function Historias() {
           titulo={historia.nombre_historia}
           descripcion={historia.descripcion_historia}
           calificacion={historia.calificacion_p}
-          autor={historia.nombre_usuario}
+          autor={{
+            nombre_usuario: historia.nombre_usuario,
+            foto_perfil_usuario: historia.foto_perfil_usuario,
+            codigo_usuario: historia.codigo_usuario,
+          }}
         />
       ))}
     </>
@@ -225,9 +228,6 @@ function Inicio() {
             <Historias />
           </div>
         </section>
-      </div>
-      <div className="z-30 fixed bottom-18 lg:bottom-18 bg-(--color_principal_opaco)">
-        <UseMensajeRedirigir />
       </div>
     </motion.div>
   );

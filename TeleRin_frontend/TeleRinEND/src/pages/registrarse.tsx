@@ -7,7 +7,7 @@ import { EyeClosed, Eye, Loader, Mail, UserRoundPlus } from "lucide-react";
 import Sobrefondo_registro from "../assets/sobre_fondos_de_menus/sobre_fondo_registro";
 import InputWithIcon from "../assets/componentes/inputWithIcon";
 import type { ApiMessage } from "../types";
-
+import BotonGoogle from "../assets/botones_componentes/boton_iniciar_google";
 type RegistroForm = {
   nombre_usuario: string;
   correo_usuario: string;
@@ -138,7 +138,7 @@ function FormularioRegistro() {
           "Registrarse"
         )}
       </button>
-
+      <BotonGoogle text="signup_with" size="large" />
       {res && (
         <div className="flex items-center justify-center w-full">
           <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />
