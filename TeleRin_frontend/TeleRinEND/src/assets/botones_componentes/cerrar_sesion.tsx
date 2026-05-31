@@ -5,6 +5,7 @@ import { useCerrarSesion } from "../../pages/hook/usuario/hookSesion";
 import { redirigir } from "../../function_generales";
 import { motion } from "framer-motion";
 import { Loader } from "lucide-react";
+import Morris_salir from "../componentes/morris_salir";
 
 type CerrarSesionProps = {
   boton: React.ReactElement;
@@ -27,6 +28,9 @@ function CerrarSesion({ boton }: CerrarSesionProps) {
         className="bg-(--color_principal) p-6 w-full m-5 flex justify-center items-center flex-col gap-4 aspect-video sm:w-auto"
       >
         <p>¿Deseas cerrar sesión?</p>
+        <div className="flex justify-center items-center overflow-hidden w-[30vh] h-[22vh] lg:w-[45vh] lg:h-[35vh]">
+          <Morris_salir />
+        </div>
         <div className="flex flex-col gap-5 sm:flex-row w-full justify-center items-center sm:w-auto">
           <motion.button
             className="bg-(--warning) text-(--color_texto_botones) px-4 py-2 rounded cursor-pointer w-40"
