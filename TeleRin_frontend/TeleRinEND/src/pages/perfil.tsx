@@ -5,7 +5,11 @@ import type { ChangeEvent } from "react";
 import { MensajePlano } from "../assets/componentes/mensaje";
 import Modal from "../assets/componentes/modal";
 import type { Genero, Pais } from "../types";
-import { HistoriaCard, HistoriaCardCargando } from "../assets/componentes/sagas&historias_cards";
+import {
+  HistoriaCard,
+  HistoriaCardCargando,
+  HistoriaCardEditar,
+} from "../assets/componentes/sagas&historias_cards";
 import { useHistorial } from "./hook/historias/hookHistorial";
 import { useHistoriasUsuario } from "./hook/historias/hookHistoriasUsuario";
 import { usePaises } from "./hook/hookPaises";
@@ -416,7 +420,7 @@ function HistoriasUsuario() {
     <>
       {data?.length ? (
         data.map((historia: any) => (
-          <HistoriaCard
+          <HistoriaCardEditar
             key={historia.id_historia}
             idh={historia.id_historia}
             titulo={historia.nombre_historia}
@@ -442,12 +446,12 @@ function Perfil() {
       <PerfilInfo />
       <br />
       <h2>Historial</h2>
-      <div className="flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
+      <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
         <Historial />
       </div>
       <br />
       <h2>Historias Usuario</h2>
-      <div className="flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
+      <div className="flex overflow-x-auto overflow-y-visible sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
         <HistoriasUsuario />
       </div>
     </div>

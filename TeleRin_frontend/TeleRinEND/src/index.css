@@ -48,6 +48,10 @@
   }
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 .scroll-suave {
   scrollbar-width: thin;
   scrollbar-color: var(--color_bordes_claro) transparent;

@@ -219,12 +219,12 @@ function Inicio() {
       </div>
       <br />
 
-      <div className="relative z-10 font-serif text-(--color_texto_oscuro)">
+      <div className="relative font-serif text-(--color_texto_oscuro)">
         <section className="p-2">
           <h4 className="text-2xl font-bold border-b border-(--color_bordes) mb-2 uppercase tracking-wide">
             Historias Recomendadas
           </h4>
-          <div className="flex overflow-x-scroll sm:overflow-auto sm:grid w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 z-20">
+          <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
             <Historias />
           </div>
         </section>
