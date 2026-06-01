@@ -198,11 +198,13 @@ function MasOpciones({ children }: { children?: ReactNode }) {
       document.body.style.top = `-${scrollY}px`;
       document.body.style.width = "100%";
       document.body.style.overflowY = "scroll";
+      document.body.style.scrollbarGutter = "stable";
     } else {
       const scrollY = document.body.style.top;
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.overflowY = "";
+      document.body.style.scrollbarGutter = "";
       if (scrollY) {
         window.scrollTo(0, parseInt(scrollY || "0") * -1);
       }
