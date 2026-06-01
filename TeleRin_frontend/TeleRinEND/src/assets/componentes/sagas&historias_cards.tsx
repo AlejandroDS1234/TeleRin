@@ -361,6 +361,8 @@ export function HistoriaCardEditar({ idh, titulo, descripcion, autor }: Historia
               e.stopPropagation();
             }}
           >
+            {" "}
+            // hi
             <Hammer />
             <p className="w-full justify-center">En Proceso</p>
           </button>

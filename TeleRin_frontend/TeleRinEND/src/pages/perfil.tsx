@@ -14,6 +14,7 @@ import { useHistorial } from "./hook/historias/hookHistorial";
 import { useHistoriasUsuario } from "./hook/historias/hookHistoriasUsuario";
 import { usePaises } from "./hook/hookPaises";
 import { useGeneros } from "./hook/hookGeneros";
+import Consultas from "./admin/consultas_usuarios";
 
 function Nombre() {
   const { data: usuario } = useSesion("nombre_usuario");
@@ -453,6 +454,9 @@ function Perfil() {
       <h2>Historias Usuario</h2>
       <div className="flex overflow-x-auto overflow-y-visible sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
         <HistoriasUsuario />
+      </div>
+      <div className="w-full">
+        <Consultas></Consultas>
       </div>
     </div>
   );
