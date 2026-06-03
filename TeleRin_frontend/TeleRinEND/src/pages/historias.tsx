@@ -1,6 +1,6 @@
 import Editor from "../assets/componentes/editor_texto.tsx";
 import { useParams, useNavigate } from "react-router-dom";
-import { Loader, BookHeart, Book } from "lucide-react";
+import { Loader, BookHeart, Book, BookLock } from "lucide-react";
 import { redirigir } from "../function_generales.tsx";
 import { useHistorias } from "./hook/historias/hookHistorias.ts";
 import { useCalificarHistoria } from "./hook/historias/hookCalificarHistoria.ts";
@@ -78,7 +78,7 @@ function Historia() {
   }
 
   return (
-    <div className="min-h-screen bg-(--color_principal_opaco) w-full max-w-175 shadow-xl flex flex-col items-center p-4">
+    <div className="bg-(--color_principal_opaco) w-full max-w-175 shadow-xl flex flex-col items-center p-4">
       <Editor
         soloLectura={true}
         contenidoInicial={historia.data.contenido_historia}
@@ -90,6 +90,14 @@ function Historia() {
             className: "",
             content: <Calificacion />,
           },
+          !historia.data.visibilidad_historia
+            ? {
+                type: "custom",
+                value: "visibilidad",
+                content: <BookLock />,
+                className: "ml-auto",
+              }
+            : { type: "custom", value: "visibilidad", content: <Book />, className: "ml-auto" },
         ]}
       />
     </div>

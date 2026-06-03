@@ -141,12 +141,24 @@ function Editor({
   }, [soloLectura]);
 
   return (
-    <div className="w-full h-full inline justify-center">
-      <div className="w-full h-full max-w-175 bg-white p-4 rounded shadow">
+    <div className="w-full flex justify-center ">
+      <style>{`
+      .ql-container.ql-snow {
+        border: none;
+      }
+      .ql-toolbar.ql-snow {
+        border: none;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .ql-editor {
+        min-height: 450px;
+        padding: 12px;
+      }
+    `}</style>
+      <div className="w-full max-w-175  bg-white p-4 rounded shadow overflow-hidden ">
         <div id={toolbarId} className="flex justify-between p-4">
           {toolbarItems.map((item, index) => renderToolbarItem(item, index))}
         </div>
-
         <div ref={editorRef} />
       </div>
     </div>

@@ -96,8 +96,9 @@ function Iniciar_sesion_Form() {
           "Iniciar sesión"
         )}
       </button>
-
-      <BotonGoogle text="signin_with" size="large" />
+      <div className="w-full flex justify-center items-center">
+        <BotonGoogle text="signin_with" size="large" />
+      </div>
       <Link
         to="/olvide_mi_contrasena"
         className="text-(--color_texto_oscuro) flex items-center justify-center gap-1 mt-2"

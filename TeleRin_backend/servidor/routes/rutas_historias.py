@@ -47,7 +47,6 @@ def crear_historia():
     historia=Json(form["historia"])
     texto_historia=form["texto_historia"]
     visivilidad_historia=form["visibilidad_historia"] 
-    fecha_actualizacion=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     id_historia=f"""-historia-{usuario_actual["codigo_usuario"]}-{saga_historia}-{nombre_historia.strip()}"""
     id_usuario_saga=dato_en_db(None, {"codigo_usuario": usuario_actual["codigo_usuario"], "id_saga": saga_historia}, "saga")
     if not id_usuario_saga and not saga_historia.strip() == "":
@@ -63,7 +62,7 @@ def crear_historia():
     if len(texto_historia.replace(" ", ""))<500 or len(texto_historia)<1000: 
         return jsonify({"mensaje": "El texto de la historia es muy corto","tipo": "warning"})
     idioma = detectar_idioma(texto_historia)
-    insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "fecha_actualizacion": fecha_actualizacion, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": usuario_actual["codigo_usuario"], "idioma": idioma})
+    insertar_db("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "visibilidad_historia": visivilidad_historia,"id_saga": saga_historia, "id_historia": id_historia,"contenido_historia": historia,"codigo_usuario": usuario_actual["codigo_usuario"], "idioma": idioma})
     hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
     redirigir = f"/historia/{id_historia}"
     if not visivilidad_historia:
@@ -72,9 +71,12 @@ def crear_historia():
 
 @historias_bp.route("/api/historia/<id_historia>", methods=["POST"])
 def historia(id_historia):
+    usuario = obtener_usuario()
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia, h.contenido_historia ,TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, u.nombre_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia = %s AND h.id_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario ORDER BY calificacion_p DESC LIMIT 20""", (True, id_historia))
+            cursor.execute("""SELECT id_historia FROM "historias" WHERE id_historia = %s AND codigo_usuario = %s""", (id_historia, usuario["codigo_usuario"]))
+            historia_usuario=cursor.fetchall()
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,h.id_historia, h.descripcion_historia, h.contenido_historia ,TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia IN %s AND h.id_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.visibilidad_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY calificacion_p DESC LIMIT 20""", ((True,(not bool(historia_usuario))), id_historia))
             historia=cursor.fetchone()
     if not historia:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
@@ -131,6 +133,19 @@ def historial_usuario():
 def historias_creadas(codigo_usuario):
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.codigo_usuario = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY calificacion_p DESC LIMIT 20""", (codigo_usuario,))
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,TO_CHAR(h.fecha_actualizacion,'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.codigo_usuario = %s AND h.id_saga = '' GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY calificacion_p DESC LIMIT 20""", (codigo_usuario,))
             historias=cursor.fetchall()
     return jsonify(historias)
+
+@historias_bp.route("/api/historia_para_editar/<id_historia>", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
+def editar_historia(id_historia):
+    usuario_actual = obtener_usuario()
+    codigo_usuario=usuario_actual["codigo_usuario"]
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,TO_CHAR(h.fecha_actualizacion,'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.codigo_usuario = %s AND h.id_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY calificacion_p DESC LIMIT 20""", (codigo_usuario, id_historia))
+            historia=cursor.fetchone()
+    if not historia:
+        return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
+    return jsonify(historia)

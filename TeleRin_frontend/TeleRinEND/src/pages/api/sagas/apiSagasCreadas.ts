@@ -6,5 +6,6 @@ export async function sagasCreadas(codigo_usuario: string): Promise<Saga[]> {
     credentials: "include",
   });
   const data = await res.json();
+  console.log("sagas creadas", data);
   return data;
 }

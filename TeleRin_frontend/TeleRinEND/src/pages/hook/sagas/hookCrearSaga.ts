@@ -10,7 +10,7 @@ type CrearSagaData = {
 };
 
 export function useCrearSaga() {
-  const { data: usuario } = useSesion();
+  const { data: usuario } = useSesion("codigo_usuario");
   const queryClient = useQueryClient();
 
   return useMutation<CrearSagaData, Error, FormData>({

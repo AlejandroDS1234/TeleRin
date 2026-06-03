@@ -7,6 +7,7 @@ from .rutas_aux_datos import aux_bp
 from .rutas_archivos import archivos_bp
 from .rutas_pruebas import pruebas_bp
 from .rutas_listas_lectura import listas_lectura_bp
+from .rutas_usuarios import usuarios_bp
 
 # Lista de todos los blueprints para facilitar el registro masivo
 all_blueprints = [
@@ -18,5 +19,6 @@ all_blueprints = [
     aux_bp,
     archivos_bp,
     pruebas_bp,
-    listas_lectura_bp
+    listas_lectura_bp,
+    usuarios_bp
 ]

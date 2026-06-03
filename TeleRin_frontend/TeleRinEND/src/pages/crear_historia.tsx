@@ -8,14 +8,14 @@ import { Suiche } from "../function_generales.tsx";
 import { NotebookPen, BookOpenText, ChevronRight, ChevronLeft, Save, Loader } from "lucide-react";
 import CrearSaga from "../assets/componentes/crear_saga.tsx";
 import { CustomSelect } from "../assets/componentes/CustomSelect.tsx";
-import { SagasCardHorizontal } from "../assets/componentes/sagas&historias_cards.tsx";
+import { SagasCardHorizontal } from "../assets/componentes/sagas_cards";
 import type { Saga } from "../types";
 import type Delta from "quill-delta";
 import { redirigir } from "../function_generales.tsx";
 import { useNavigate } from "react-router-dom";
 import { MensajePlano } from "../assets/componentes/mensaje.tsx";
 import { useCrearHistoria } from "./hook/historias/hookCrearHistoria.ts";
-import { useSagasCreadas } from "../pages/hook/sagas/hookSagasCreadas.ts";
+import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
 
 type EditorContenido = {
   html: string;
@@ -42,6 +42,7 @@ type SeleccionarSagaProps = {
   error?: { message?: string } | null;
   abrirCrearSaga: () => void;
   sagaSeleccionada: (value: string) => void;
+  saga?: string;
 };
 
 type GuardarHistoriaProps = {
@@ -50,16 +51,18 @@ type GuardarHistoriaProps = {
   contenido: EditorContenido | null;
 };
 
-function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada }: SeleccionarSagaProps) {
-  const { data: usuario } = useSesion();
-  const [sagaSeleccion, setSagaSeleccion] = useState("");
+function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada, saga }: SeleccionarSagaProps) {
+  const { data: usuario } = useSesion("codigo_usuario");
+  const [sagaSeleccion, setSagaSeleccion] = useState(saga || "");
 
   const { data = [] } = useSagasCreadas(usuario?.codigo_usuario);
+  console.log("usuario en SeleccionarSaga:", usuario, "codigo_usuario:", usuario?.codigo_usuario);
+  console.log("sagas (hook) ->", data);
 
   return (
     <>
       <CustomSelect
-        key={data.length}
+        key={data?.length}
         titulo="Seleccionar saga"
         options={[
           {
@@ -74,12 +77,12 @@ function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada }: Selecciona
             value: "",
             label: <p className="text-center text-(--color_texto_oscuro) w-full">Sin saga</p>,
           },
-          ...data.map((saga: Saga) => ({
-            value: saga.id_saga,
+          ...data?.map((saga: Saga) => ({
+            value: saga?.id_saga,
             label: (
               <SagasCardHorizontal
-                img={saga.imagen_saga}
-                titulo={saga.nombre_saga}
+                img={saga?.imagen_saga}
+                titulo={saga?.nombre_saga}
                 className="h-15"
               />
             ),
@@ -122,7 +125,7 @@ function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
       texto_historia: contenido?.texto ?? "",
     };
     mutatecrearHistoria.mutate(payload);
-    if (mutatecrearHistoria.data?.tipo === "success") {
+    if (mutatecrearHistoria.data?.mensaje_redirigir?.tipo === "success") {
       sessionStorage.removeItem("contenido_historia");
     }
   };
@@ -250,7 +253,7 @@ function PaginaEditor() {
         </div>
       </Modal>
 
-      <div className="min-h-screen bg-[#e5e3dc] w-full max-w-175 h-[90vh] shadow-xl flex flex-col items-center p-4">
+      <div className=" bg-[#e5e3dc] w-full max-w-175 shadow-xl flex flex-col items-center p-4">
         <Editor
           onChangeContenido={(datos) => {
             setContenido(datos);

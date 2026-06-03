@@ -3,7 +3,7 @@ import { obtenerHistoria } from "../../api/historias/apiHistoria.ts";
 
 export function useHistorias(id_historia: string) {
   return useQuery({
-    queryKey: ["historia", id_historia],
+    queryKey: ["historias", id_historia],
     queryFn: () => obtenerHistoria(id_historia),
   });
 }

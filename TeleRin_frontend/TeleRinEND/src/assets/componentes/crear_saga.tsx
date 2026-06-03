@@ -19,12 +19,12 @@ function CrearSaga({ onClose }: CrearSagaProps) {
   const [res, setRes] = useState<ApiMessage | null>(null);
 
   const [nuevaFoto, setNuevaFoto] = useState<File | null>(null);
-  const [imagen, setImagen] = useState("/api/Fotos/fotos_sagas/predefinido.jpg");
+  const [imagen, setImagen] = useState("/api/Fotos/fotos_sagas/predefinido.webp");
   const inputFotoRef = useRef<HTMLInputElement | null>(null);
   const [mensajeFoto, setMensajeFoto] = useState<ApiMessage | null>(null);
   function limpiarSeleccionFoto() {
     setNuevaFoto(null);
-    setImagen("/api/Fotos/fotos_sagas/predefinido.jpg");
+    setImagen("/api/Fotos/fotos_sagas/predefinido.webp");
     if (inputFotoRef.current) {
       inputFotoRef.current.value = "";
     }

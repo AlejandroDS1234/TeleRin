@@ -138,7 +138,9 @@ function FormularioRegistro() {
           "Registrarse"
         )}
       </button>
-      <BotonGoogle text="signup_with" size="large" />
+      <div className="w-full flex justify-center items-center">
+        <BotonGoogle text="signup_with" size="large" />
+      </div>
       {res && (
         <div className="flex items-center justify-center w-full">
           <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} onHide={() => setRes(null)} />

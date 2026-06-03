@@ -8,7 +8,7 @@ type PerfilPayload = Partial<
 
 export function useSesion(columnas?: string) {
   return useQuery({
-    queryKey: ["sesion", columnas],
+    queryKey: ["usuario", "sesion", columnas],
     queryFn: () => sesion(columnas),
     staleTime: 1000 * 60 * 5,
   });
@@ -19,12 +19,12 @@ export function useEditarSesion() {
   return useMutation({
     mutationFn: (data: PerfilPayload) => editarSesion(data),
     onSuccess: (res) => {
-      queryClient.setQueryData(["sesion", res.dato.clave], (oldData: any) => ({
+      queryClient.setQueryData(["usuario", "sesion", res.dato.clave], (oldData: any) => ({
         ...oldData,
         [res.dato.clave]: res.dato.valor,
         refrescado: Date.now(),
       }));
-      queryClient.refetchQueries({ queryKey: ["sesion", res.dato.clave] });
+      queryClient.refetchQueries({ queryKey: ["usuario", "sesion", res.dato.clave] });
     },
   });
 }
@@ -34,10 +34,12 @@ export function useEditarFotoSesion() {
   return useMutation({
     mutationFn: (data: FormData) => cambiarFoto(data),
     onSuccess: (res) => {
-      queryClient.setQueryData(["sesion", "foto_perfil_usuario"], () => ({
-        foto_perfil_usuario: res.foto_perfil_usuario,
-        refrescado: Date.now(),
-      }));
+      if (res.tipo == "success") {
+        queryClient.setQueryData(["usuario", "sesion", "foto_perfil_usuario"], () => ({
+          foto_perfil_usuario: res.foto_perfil_usuario,
+          refrescado: Date.now(),
+        }));
+      }
     },
   });
 }

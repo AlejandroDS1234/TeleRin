@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
-from PIL import Image
+import psycopg2.extras
 
-from servidor.core.db import actualizar_datos
+from servidor.core.db import actualizar_datos, conectar
 from servidor.core.decoradores import necesita
 from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
 from servidor.services.servicios_perfil import (
@@ -13,7 +13,6 @@ from servidor.services.servicios_perfil import (
 from servidor.services.servicios_archivos import (
     ruta_guardado,
     validar_imagen_completa,
-    generar_imagen_reducida,
     guardar_imagen,
 )
 
@@ -31,7 +30,6 @@ def perfil():
     dato = dato.strip()
     print(clave, dato)
     mensaje=verificaciones[clave](dato)
-    print(mensaje)
     if mensaje["tipo"] == "success":
         actualizar_datos("USUARIOS", {clave: dato}, {"codigo_usuario": usuario_actual["codigo_usuario"]})
         print("actualizado")
@@ -44,7 +42,6 @@ def guardar_foto_perfil():
         usuario_actual = obtener_usuario()
         if not usuario_actual:
             return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
-        print(request.files)
         imagen=request.files['imagen']
         mensaje, resultado = validar_imagen_completa(imagen)
         if resultado:
@@ -53,3 +50,21 @@ def guardar_foto_perfil():
         guardar_imagen(imagen, ruta)
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": usuario_actual["correo_usuario"]})
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
+    
+    
+@perfil_bp.route("/api/perfil/<codigo_usuario>", methods=["POST"])
+def perfil_usuario(codigo_usuario):
+    usuario_actual = obtener_usuario()
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT codigo_usuario FROM "USUARIOS" WHERE codigo_usuario = %s""", (codigo_usuario,))
+            usuario = cursor.fetchone()
+            if usuario and usuario["codigo_usuario"] == usuario_actual["codigo_usuario"]:
+                 return jsonify({"redirigir": "/perfil", "mensaje_redirigir": {"mensaje": "Redirigiendo a tu perfil", "tipo": "success"}})
+            cursor.execute("""SELECT codigo_usuario, nombre_usuario, descripcion_personal, id_pais, id_genero, foto_perfil_usuario FROM "USUARIOS" WHERE codigo_usuario = %s""", (codigo_usuario,))
+            usuario = cursor.fetchone()
+            if not usuario:
+                return jsonify({"redirigir": "/inicio","mensaje_redirigir": {"mensaje": "Usuario no encontrado", "tipo": "danger"}})
+            return jsonify(usuario)
+
+
