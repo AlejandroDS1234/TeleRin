@@ -68,6 +68,15 @@
   background: var(--color_bordes_claro);
 }
 
+.scroll-bloqueado {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+.scroll-bloqueado::-webkit-scrollbar {
+  display: none;
+}
+
 :root {
   /* Fundacion */
   --neutral-0: #ffffff;

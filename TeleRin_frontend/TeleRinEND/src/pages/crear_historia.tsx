@@ -1,10 +1,10 @@
 import Editor from "../assets/componentes/editor_texto.tsx";
 import { useSesion } from "./hook/usuario/hookSesion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../assets/componentes/modal.tsx";
 import InputWithIcon from "../assets/componentes/inputWithIcon.tsx";
-import { Suiche } from "../function_generales.tsx";
+import { Suiche, deltaTexto } from "../function_generales.tsx";
 import { NotebookPen, BookOpenText, ChevronRight, ChevronLeft, Save, Loader } from "lucide-react";
 import CrearSaga from "../assets/componentes/crear_saga.tsx";
 import { CustomSelect } from "../assets/componentes/CustomSelect.tsx";
@@ -12,10 +12,15 @@ import { SagasCardHorizontal } from "../assets/componentes/sagas_cards";
 import type { Saga } from "../types";
 import type Delta from "quill-delta";
 import { redirigir } from "../function_generales.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { MensajePlano } from "../assets/componentes/mensaje.tsx";
 import { useCrearHistoria } from "./hook/historias/hookCrearHistoria.ts";
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
+import {
+  useEditarHistoria,
+  useCrearBorradorHistoria,
+  useGuardarBorradorHistoria,
+} from "./hook/historias/hookEditarHistoria";
 
 type EditorContenido = {
   html: string;
@@ -29,15 +34,6 @@ type GuardarHistoriaForm = {
   visibilidad_historia: boolean;
 };
 
-// type GuardarHistoriaDatos = {
-//   nombre_historia: string;
-//   descripcion_historia: string;
-//   visibilidad_historia: boolean;
-//   saga_historia: string | null;
-//   historia: Object | null;
-//   texto_historia: string;
-// };
-
 type SeleccionarSagaProps = {
   error?: { message?: string } | null;
   abrirCrearSaga: () => void;
@@ -49,6 +45,7 @@ type GuardarHistoriaProps = {
   nuevaSaga: boolean;
   abrirCrearSaga: () => void;
   contenido: EditorContenido | null;
+  idHistoria: string;
 };
 
 function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada, saga }: SeleccionarSagaProps) {
@@ -56,8 +53,6 @@ function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada, saga }: Sele
   const [sagaSeleccion, setSagaSeleccion] = useState(saga || "");
 
   const { data = [] } = useSagasCreadas(usuario?.codigo_usuario);
-  console.log("usuario en SeleccionarSaga:", usuario, "codigo_usuario:", usuario?.codigo_usuario);
-  console.log("sagas (hook) ->", data);
 
   return (
     <>
@@ -106,31 +101,68 @@ function SeleccionarSaga({ error, abrirCrearSaga, sagaSeleccionada, saga }: Sele
   );
 }
 
-function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
+function Guardar_historia({ abrirCrearSaga, contenido, idHistoria }: GuardarHistoriaProps) {
+  const mutatecrearHistoria = useCrearHistoria();
+  const [sagaSeleccion, setSagaSeleccion] = useState("");
+  const navigate = useNavigate();
+  const { data, isLoading } = useEditarHistoria(idHistoria);
+  console.log(data);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<GuardarHistoriaForm>();
+    reset,
+  } = useForm<GuardarHistoriaForm>({
+    defaultValues: {
+      nombre_historia: "",
+      descripcion_historia: "",
+      visibilidad_historia: false,
+    },
+  });
 
-  const mutatecrearHistoria = useCrearHistoria();
-  const [sagaSeleccion, setSagaSeleccion] = useState("");
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (data) {
+      reset({
+        nombre_historia: data.nombre_historia ?? "",
+        descripcion_historia: data.descripcion_historia ?? "",
+        visibilidad_historia: data.visibilidad_historia ?? false,
+      });
+      setSagaSeleccion(data.id_saga ?? "");
+    }
+  }, [data, reset]);
 
   const onSubmit = async (data: GuardarHistoriaForm) => {
+    console.log(contenido);
     const payload = {
       ...data,
       saga_historia: sagaSeleccion,
       historia: contenido?.delta ?? null,
       texto_historia: contenido?.texto ?? "",
+      id_historia: idHistoria ?? "",
     };
     mutatecrearHistoria.mutate(payload);
-    if (mutatecrearHistoria.data?.mensaje_redirigir?.tipo === "success") {
-      sessionStorage.removeItem("contenido_historia");
-    }
   };
 
-  redirigir(navigate, mutatecrearHistoria.data);
+  useEffect(() => {
+    if (mutatecrearHistoria.data?.mensaje_redirigir?.tipo === "success") {
+      sessionStorage.removeItem("borrador_activo");
+      redirigir(navigate, mutatecrearHistoria.data);
+    }
+  }, [mutatecrearHistoria.data, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h3 className="text-(--color_texto_oscuro)">Guardar historia</h3>
+        <InputWithIcon placeholder="Nombre de la historia" icon={<NotebookPen />} disabled={true} />
+        <InputWithIcon
+          placeholder="Descripción de la historia"
+          icon={<BookOpenText />}
+          disabled={true}
+        />
+      </div>
+    );
+  }
 
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
@@ -163,6 +195,7 @@ function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
       <SeleccionarSaga
         abrirCrearSaga={abrirCrearSaga}
         sagaSeleccionada={(value) => setSagaSeleccion(value)}
+        saga={data?.id_saga}
       />
 
       <button
@@ -198,18 +231,106 @@ function Guardar_historia({ abrirCrearSaga, contenido }: GuardarHistoriaProps) {
 }
 
 function PaginaEditor() {
-  const contenidoGuardado = sessionStorage.getItem("contenido_historia");
-  const delta = contenidoGuardado ? JSON.parse(contenidoGuardado).delta : null;
+  const [searchParams] = useSearchParams();
+  const historia = searchParams.get("id_historia");
+  const [idHistoria, setIdHistoria] = useState(historia || "");
+
+  const { data, isLoading } = useEditarHistoria(historia || "");
 
   const [nuevaSaga, setNuevaSaga] = useState(false);
-
   const [crearSaga, setCrearSaga] = useState(false); // flecha
   const [crearSagaMostrar, setCrearSagaMostrar] = useState(false); //mostrar crear saga
   const [abrirModal, setAbrirModal] = useState(false);
 
-  const [contenido, setContenido] = useState<EditorContenido | null>(
-    contenidoGuardado ? JSON.parse(contenidoGuardado) : null
-  );
+  const [contenido, setContenido] = useState<EditorContenido | null>(null);
+
+  console.log(data);
+
+  const mutateCrearBorrador = useCrearBorradorHistoria();
+  const mutateGuardarBorrador = useGuardarBorradorHistoria();
+
+  const navigate = useNavigate();
+
+  // Sincronizar idHistoria cuando el searchParams cambia
+  useEffect(() => {
+    if (historia) {
+      setIdHistoria(historia);
+      setContenido(null);
+    }
+  }, [historia]);
+
+  useEffect(() => {
+    if (!historia) return;
+    if (data?.borrador_historia) {
+      const delta = data.borrador_historia;
+      const textoPlano = deltaTexto(delta);
+      setContenido({
+        html: "", //cuando se necesite se pone
+        texto: textoPlano,
+        delta: delta,
+      });
+    }
+  }, [data, historia]);
+
+  useEffect(() => {
+    redirigir(navigate, data);
+  }, [historia, data, idHistoria]);
+
+  useEffect(() => {
+    const borradorActivoString = sessionStorage.getItem("borrador_activo");
+    if (!borradorActivoString) return;
+    if (historia) return;
+
+    try {
+      const borradorActivo = JSON.parse(borradorActivoString);
+      const tiempoAhora = new Date();
+      const tiempoUltimo = new Date(borradorActivo.tiempo);
+      const diferencia = tiempoAhora.getTime() - tiempoUltimo.getTime();
+      if (diferencia > 5 * 60 * 1000) {
+        sessionStorage.removeItem("borrador_activo");
+      } else {
+        navigate(`/editor?id_historia=${borradorActivo.id_historia}`);
+      }
+    } catch (error) {
+      sessionStorage.removeItem("borrador_activo");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!contenido) return;
+    const textoLimpio = contenido.texto.trim();
+    // Caso A: No hay ID y ya escribió 10 caracteres -> Crea la historia
+    if (!idHistoria && textoLimpio.length >= 10 && !mutateCrearBorrador.isPending) {
+      mutateCrearBorrador.mutate(
+        { historia: contenido.delta, texto_historia: contenido.texto, id_historia: "" },
+        { onSuccess: (nuevoId) => setIdHistoria(nuevoId) }
+      );
+    }
+    // Caso B: Ya existe un ID -> Actualiza el borrador con un retraso (Debounce)
+    else if (idHistoria) {
+      const temporizador = setTimeout(() => {
+        mutateGuardarBorrador.mutate({
+          id_historia: idHistoria,
+          borrador_historia: contenido.delta,
+        });
+      }, 2000); // Espera 2 segundos después de que el usuario para de escribir
+      sessionStorage.setItem(
+        "borrador_activo",
+        JSON.stringify({ id_historia: idHistoria, tiempo: new Date() })
+      );
+      return () => clearTimeout(temporizador); // Limpia el timer automáticamente si sigue escribiendo
+    }
+  }, [contenido, idHistoria]);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-100">
+        <p className="flex items-center gap-2 text-(--color_texto_oscuro)">
+          Cargando contenido <Loader className="animate-spin" />
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center lg:items-center">
@@ -237,6 +358,7 @@ function PaginaEditor() {
                 setCrearSagaMostrar(true);
                 setCrearSaga(true);
               }}
+              idHistoria={idHistoria}
             />
           </div>
 
@@ -257,9 +379,8 @@ function PaginaEditor() {
         <Editor
           onChangeContenido={(datos) => {
             setContenido(datos);
-            sessionStorage.setItem("contenido_historia", JSON.stringify(datos));
           }}
-          contenidoInicial={delta}
+          contenidoInicial={data?.borrador_historia}
           toolbarItems={[
             {
               type: "quill",

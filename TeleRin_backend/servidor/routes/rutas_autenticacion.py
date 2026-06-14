@@ -36,7 +36,6 @@ def sesion_usuario():
     if not usuario:
         return jsonify({"mensaje": "usuario no encontrado", "tipo": "danger"})
     usuario_filtrado = {columna: usuario[columna] for columna in columnas}
-    print("aaaaaaaaaaaaaaaaaaaaaaa ",usuario_filtrado)
     return jsonify(usuario_filtrado)
 
 @auth_bp.route("/api/registrarse", methods=["POST"])

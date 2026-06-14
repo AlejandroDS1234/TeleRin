@@ -6,15 +6,18 @@ import { useHistorias } from "./hook/historias/hookHistorias.ts";
 import { useCalificarHistoria } from "./hook/historias/hookCalificarHistoria.ts";
 import { useCalificacionHistoria } from "./hook/historias/hookCalificacionHistoria.ts";
 import { agregarAlHistorial } from "./api/historias/apiAgregarAlHistorial.ts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 function Calificacion() {
   const { id_historia = "" } = useParams();
-
   const califiacion = useCalificacionHistoria(id_historia);
-
+  const [califica, setCalifica] = useState(califiacion.data);
   const mutateCalifiacion = useCalificarHistoria();
+
+  useEffect(() => {
+    setCalifica(califiacion.data);
+  }, [califiacion.data]);
 
   return (
     <div className="flex">
@@ -28,11 +31,12 @@ function Calificacion() {
             key={i}
             className="flex hover:cursor-pointer"
             onClick={() => {
-              const nuevaCalificacion = califiacion.data === i + 1 ? 0 : i + 1;
+              const nuevaCalificacion = califica === i + 1 ? 0 : i + 1;
               mutateCalifiacion.mutate({ id_historia, calificacion: nuevaCalificacion });
+              setCalifica(nuevaCalificacion);
             }}
           >
-            {i + 1 <= califiacion.data ? <BookHeart color="var(--color_seleccionado)" /> : <Book />}
+            {i + 1 <= califica ? <BookHeart color="var(--color_seleccionado)" /> : <Book />}
           </motion.button>
         ))}
       </motion.div>
@@ -46,14 +50,14 @@ function Historia() {
 
   const historia = useHistorias(id_historia);
 
-  redirigir(navigate, historia.data);
-
   useEffect(() => {
+    if (historia.isLoading || !historia.data) return;
+    redirigir(navigate, historia.data);
     const temporizador = setTimeout(() => {
       agregarAlHistorial(id_historia);
     }, 10000);
     return () => clearTimeout(temporizador);
-  }, [id_historia]);
+  }, [id_historia, historia.data]);
 
   if (historia.isLoading) {
     return (

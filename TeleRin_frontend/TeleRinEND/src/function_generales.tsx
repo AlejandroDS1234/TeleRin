@@ -1,7 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useEffect, useState } from "react";
+import type { InputHTMLAttributes } from "react";
 import type { NavigateFunction } from "react-router-dom";
 import type { FormRegisterLike, RedirectPayload } from "./types";
+import type Delta from "quill-delta";
+import type { Op } from "quill";
 
 export async function enviarInfoServer<TResponse, TBody extends FormData | Record<string, unknown>>(
   url: string,
@@ -28,7 +31,7 @@ export async function enviarInfoServer<TResponse, TBody extends FormData | Recor
 
 export function redirigir(navigate: NavigateFunction, datos: RedirectPayload = {}) {
   if (!datos.redirigir) return;
-  navigate(datos.redirigir, { state: datos.mensaje_redirigir ? datos.mensaje_redirigir : {} });
+  navigate(datos.redirigir, { state: datos.mensaje_redirigir ? datos.mensaje_redirigir : null });
 }
 
 export function cambiarTamañoBarraContraseña(input: string) {
@@ -78,13 +81,22 @@ export function cambiarTamañoBarraContraseña(input: string) {
 }
 type SuicheProps = {
   label: string;
-  register: FormRegisterLike;
-};
+  register?: FormRegisterLike;
+} & InputHTMLAttributes<HTMLInputElement>; // Hereda de forma nativa checked, onChange, disabled, etc.
 
-export function Suiche({ label, register }: SuicheProps) {
+export function Suiche({ label, register, ...rest }: SuicheProps) {
+  // Si hay register, usamos sus propiedades. Si no, usamos las propiedades nativas de rest.
+  const inputProps = register ? register : rest;
+
   return (
     <label className="inline-flex items-center gap-3 cursor-pointer">
-      <input type="checkbox" className="sr-only peer" {...register} />
+      <input
+        type="checkbox"
+        className="sr-only peer"
+        {...inputProps}
+        // Asegura que las props extras (como disabled) se apliquen también si usas register
+        {...(register ? rest : {})}
+      />
       <div className="relative w-11 h-6 bg-(--color_bordes_claro) rounded-full peer-checked:bg-(--color_botones) after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-(--color_texto_botones) after:h-5 after:w-5 after:rounded-full after:transition-all peer-checked:after:translate-x-5" />
       <span>{label}</span>
     </label>
@@ -108,4 +120,15 @@ export function useIsLg() {
 export function ColorRandom() {
   const colores = ["#CBC0ADBF", "#86A397BF", "#B9CFD4BF", "#CEE0DCBF"];
   return colores[Math.floor(Math.random() * colores.length)];
+}
+
+export function deltaTexto(delta: Delta) {
+  const textoPlano: string = delta.ops.reduce((textoAcumulado: string, op: Op): string => {
+    // Verificación estricta de tipo para TypeScript
+    if (typeof op.insert === "string") {
+      return textoAcumulado + op.insert;
+    }
+    return textoAcumulado;
+  }, "");
+  return textoPlano;
 }

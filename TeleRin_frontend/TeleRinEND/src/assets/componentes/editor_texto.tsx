@@ -104,7 +104,6 @@ function Editor({
   const editorRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<Quill | null>(null);
   const toolbarId = "toolbar-principal";
-  const initializedRef = useRef(false);
 
   useEffect(() => {
     if (!editorRef.current || quillRef.current) return;
@@ -120,11 +119,6 @@ function Editor({
 
     quillRef.current = quill;
 
-    if (contenidoInicial && !initializedRef.current) {
-      quill.setContents(contenidoInicial);
-      initializedRef.current = true;
-    }
-
     if (!soloLectura) {
       quill.on("text-change", () => {
         const delta = quill.getContents();
@@ -134,6 +128,15 @@ function Editor({
       });
     }
   }, [soloLectura, onChangeContenido]);
+
+  useEffect(() => {
+    if (!quillRef.current) return;
+    if (contenidoInicial) {
+      quillRef.current.setContents(contenidoInicial);
+    } else {
+      quillRef.current.setContents([]);
+    }
+  }, [contenidoInicial]);
 
   useEffect(() => {
     if (!quillRef.current) return;

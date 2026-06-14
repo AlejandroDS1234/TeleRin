@@ -3,7 +3,7 @@ from flask import request, session, jsonify
 from werkzeug.security import check_password_hash
 import random
 import psycopg2.extras
-
+import uuid
 from servidor.core.db import conectar, insertar_db, dato_en_db, actualizar_datos
 from servidor.core.decoradores import registrar_funcion
 from servidor.services.servicios_sesion import guardar_sesion
@@ -49,8 +49,7 @@ def registro(form: dict):
     nombre_us=form["nombre_usuario"]
     correo_us=form["correo_usuario"]
     contraseña_us=form["contraseña_usuario"]
-    codigo_us_numero=random.randint(100000,999999)
-    codigo_us=f"{codigo_us_numero}{correo_us[0:5]}"
+    codigo_us= uuid.uuid4()
     contraseña_encriptada=encriptar(f"{correo_us}{contraseña_us}")
     insertar_db("USUARIOS",{"nombre_usuario": nombre_us, "correo_usuario": correo_us, "contraseña_usuario": contraseña_encriptada, "codigo_usuario": codigo_us})
     guardar_ip(correo_us)

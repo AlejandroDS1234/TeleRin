@@ -45,10 +45,10 @@ function RutasConSesion() {
       <div className="absolute w-full insert-0 lg:pl-15 z-30">
         <Header url="/inicio" />
       </div>
-      <div className="w-full min-h-screen pt-27 pb-20 lg:pb-6 lg:pl-21.25">
+      <div className="w-full min-h-screen pt-27 pb-20 lg:pb-6 lg:pl-21.25 ">
         <Outlet />
       </div>
-      <div className="fixed bottom-0 left-0 w-full lg:top-0 lg:bottom-auto lg:h-screen lg:w-20 insert-0 z-30">
+      <div className="fixed bottom-0 left-0 w-full lg:top-0 lg:bottom-auto lg:h-screen lg:w-20 insert-0 z-30 ">
         <Navbar />
       </div>
     </>

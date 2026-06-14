@@ -52,8 +52,8 @@ function SagasInfo() {
           <br />
         </div>
         <div className="flex flex-col gap-5">
-          <h1 className="text-3xl font-bold font-serif">nombre: {data.nombre_saga}</h1>
-          <p className="text-3xl font-bold font-serif">descripcion: {data.descripcion_saga}</p>
+          <h1 className="text-3xl font-bold font-serif">Nombre: {data.nombre_saga}</h1>
+          <p className="text-3xl font-bold font-serif">Descripción: {data.descripcion_saga}</p>
           <p className="text-3xl font-bold font-serif">
             Libros que contiene esta saga: {data.libros}
           </p>

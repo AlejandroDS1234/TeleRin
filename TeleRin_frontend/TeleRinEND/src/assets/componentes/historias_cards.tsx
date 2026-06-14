@@ -2,6 +2,9 @@ import { Book, Loader, FilePenLine, Hammer, NotebookText, BookLock } from "lucid
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import { useIsLg } from "../../function_generales";
+import useScrollLock from "../../hooks/useScrollLock";
 
 type HistoriaCardProps = {
   idh: string;
@@ -14,6 +17,7 @@ type HistoriaCardProps = {
     foto_perfil_usuario: string;
     codigo_usuario: string;
   };
+  opciones?: ReactNode;
 };
 
 const MotionLink = motion(Link);
@@ -24,6 +28,10 @@ function MasOpciones({ children }: { children?: ReactNode }) {
   const [abiertoIzquierda, setAbiertoIzquierda] = useState(true);
   const [menuDimensiones, setMenuDimensiones] = useState({ alto: 0, ancho: 0 });
   const botonref = useRef<HTMLButtonElement>(null);
+  const menuRefElement = useRef<HTMLDivElement>(null);
+
+  // Opción 1: bloquear scroll por eventos sin ocultar la scrollbar
+  useScrollLock(menuAbierto);
 
   const menuRef = (nodo: HTMLDivElement | null) => {
     if (nodo !== null && menuDimensiones.alto === 0) {
@@ -41,38 +49,30 @@ function MasOpciones({ children }: { children?: ReactNode }) {
   }, [menuAbierto]);
 
   useEffect(() => {
-    if (menuAbierto) {
-      const scrollY = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
-
-      document.body.style.overflowY = "scroll";
-      document.body.style.scrollbarGutter = "stable";
-    } else {
-      const scrollY = document.body.style.top;
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.overflowY = "";
-      document.body.style.scrollbarGutter = "";
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || "0") * -1);
-      }
-    }
-
     const cerrarClickAfuera = (e: MouseEvent | TouchEvent) => {
       if (!menuAbierto) return;
-      if (botonref.current && !botonref.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        botonref.current &&
+        !botonref.current.contains(target) &&
+        !menuRefElement.current?.contains(target)
+      ) {
         setMenuAbierto(false);
       }
     };
 
-    document.addEventListener("touchstart", cerrarClickAfuera, true);
-    document.addEventListener("click", cerrarClickAfuera, true);
+    document.addEventListener("pointerdown", cerrarClickAfuera);
 
     return () => {
-      document.removeEventListener("click", cerrarClickAfuera, true);
-      document.removeEventListener("touchstart", cerrarClickAfuera, true);
+      document.removeEventListener("pointerdown", cerrarClickAfuera);
+      // aseguramos que no queden estilos que oculten la barra
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      document.querySelectorAll(".contenedor-scroll").forEach((el) => {
+        el.classList.remove("scroll-bloqueado");
+      });
     };
   }, [menuAbierto]);
 
@@ -91,7 +91,7 @@ function MasOpciones({ children }: { children?: ReactNode }) {
             const espacioIzquierda = posicion.left;
 
             setAbiertoArrriba(
-              espacioArriba > espacioAbajo && espacioAbajo < menuDimensiones.alto + 150
+              espacioArriba > espacioAbajo && espacioAbajo < menuDimensiones.alto + 300
             );
             setAbiertoIzquierda(
               espacioDerecha < espacioIzquierda && espacioDerecha < menuDimensiones.ancho + 150
@@ -104,21 +104,28 @@ function MasOpciones({ children }: { children?: ReactNode }) {
     >
       <NotebookText />
 
-      {menuAbierto && (
-        <div
-          ref={menuRef}
-          onMouseEnter={(e) => e.preventDefault()}
-          className="bg-amber-200 w-40 absolute rounded-[10px] z-20 overflow-hidden"
-          style={{
-            top: abiertoArriba ? `-${menuDimensiones.alto - 6}px` : "auto",
-            bottom: !abiertoArriba ? `-${menuDimensiones.alto - 6}px` : "auto",
-            left: abiertoIzquierda ? `-${menuDimensiones.ancho - 6}px` : "auto",
-            right: !abiertoIzquierda ? `-${menuDimensiones.ancho - 6}px` : "auto",
-          }}
-        >
-          {children}
-        </div>
-      )}
+      {menuAbierto &&
+        createPortal(
+          <div
+            ref={(nodo) => {
+              menuRef(nodo);
+              menuRefElement.current = nodo;
+            }}
+            className="bg-amber-200 w-40 fixed rounded-[10px] z-9999 overflow-hidden"
+            style={{
+              top: abiertoArriba
+                ? `${(botonref.current?.getBoundingClientRect().top || 0) - menuDimensiones.alto + 5}px`
+                : `${(botonref.current?.getBoundingClientRect().bottom || 0) - 5}px`,
+
+              left: abiertoIzquierda
+                ? `${(botonref.current?.getBoundingClientRect().left || 0) - menuDimensiones.ancho + 5}px`
+                : `${(botonref.current?.getBoundingClientRect().right || 0) - 5}px`,
+            }}
+          >
+            {children}
+          </div>,
+          document.body
+        )}
     </button>
   );
 }
@@ -129,6 +136,7 @@ export function HistoriaCard({
   descripcion,
   visibilidad = true,
   autor,
+  opciones,
 }: HistoriaCardProps) {
   const [imagenCargada, setImagenCargada] = useState(false);
 
@@ -144,7 +152,7 @@ export function HistoriaCard({
         />
       )}
 
-      <h3 className="font-bold text-2xl w-full  line-clamp-2" title={titulo}>
+      <h3 className="font-bold text-2xl w-full  line-clamp-3" title={titulo}>
         {titulo}
       </h3>
       <p className="w-full line-clamp-3 hidden">{descripcion}</p>
@@ -180,6 +188,7 @@ export function HistoriaCard({
               <Hammer />
               <p className="w-full justify-center">En Proceso</p>
             </button>
+            {opciones}
           </MasOpciones>
         </div>
       </small>
@@ -235,7 +244,7 @@ export function HistoriaCardEditar({
         <div className="ml-auto">
           <MasOpciones>
             <Link
-              to={`/editar_historia/${encodeURIComponent(idh)}`}
+              to={`/editor?id_historia=${encodeURIComponent(idh)}`}
               className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
             >
               <FilePenLine />

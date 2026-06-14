@@ -49,7 +49,7 @@ function CerrarSesion({ boton }: CerrarSesionProps) {
             }}
           >
             {cerrarSesion.isPending ? (
-              <p className="flex">
+              <p className="flex w-full justify-center items-center gap-2">
                 Saliendo <Loader className="animate-spin" />
               </p>
             ) : (

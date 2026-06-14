@@ -16,7 +16,8 @@ import { usePaises } from "./hook/hookPaises";
 import { useGeneros } from "./hook/hookGeneros";
 import Consultas from "./admin/consultas_usuarios";
 import { useSiguiendo } from "./hook/usuario/hookSiguiendo";
-import { CardUsuario } from "../assets/componentes/card_usuario";
+import { useSeguidores } from "./hook/usuario/hookSeguidores";
+import { CardUsuario, CardUsuarioPropio } from "../assets/componentes/card_usuario";
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
 import { Sagacard, SagaCardCargando } from "../assets/componentes/sagas_cards";
 
@@ -152,10 +153,10 @@ function Imagen() {
           limpiarSeleccionFoto();
           setAbrirModal(false);
         }}
-        className="bg-(--color_principal) w-full sm:max-h-[90%] m-5 sm:max-w-lg flex flex-col gap-4 items-center p-5"
+        className="bg-(--color_principal) w-full sm:max-h-[95%] m-5 sm:max-w-lg flex flex-col gap-4 items-center p-5"
       >
         <h3>Cambiar Foto Perfil</h3>
-        <label className="border-6 rounded-full aspect-square sm:h-full sm:w-auto w-full flex items-center justify-center hover:cursor-pointer overflow-hidden">
+        <label className="border-6 rounded-full aspect-square sm:h-full sm:min-h-100 sm:w-auto w-full flex items-center justify-center hover:cursor-pointer overflow-hidden">
           {nuevaFoto ? (
             <img src={imagen} className="object-cover aspect-square" />
           ) : (
@@ -338,15 +339,117 @@ function Genero() {
   );
 }
 
+function Siguiendo() {
+  const { data: usuario } = useSesion("codigo_usuario");
+  const { isLoading, error, data } = useSiguiendo(usuario?.codigo_usuario ?? "");
+  const [modalAbierto, setModalAbierto] = useState(false);
+
+  const usuarioPropio = data?.find((u: any) => u.codigo_usuario === usuario?.codigo_usuario);
+  const otrosUsuarios = data?.filter((u: any) => u.codigo_usuario !== usuario?.codigo_usuario);
+
+  if (error) {
+    return <p className="text-red-500">Error {error.message}</p>;
+  }
+  return (
+    <>
+      <p
+        className="hover:cursor-pointer hover:bg-(--bg-surface-muted) py-0.5 px-1 rounded-md"
+        onClick={() => setModalAbierto(true)}
+      >
+        Siguiendo: {isLoading ? <Loader className="animate-spin" /> : data?.length}
+      </p>
+      <Modal
+        className="w-full sm:max-w-lg h-full max-h-120 bg-(--color_principal) m-5 flex flex-col gap-4"
+        open={modalAbierto}
+        onClose={() => setModalAbierto(false)}
+      >
+        <p>Usuarios que sigues:</p>
+        <div className="flex gap-2">
+          {data?.length ? (
+            <>
+              {/* Primero el usuario propio si se encuentra en la lista */}
+              {usuarioPropio && (
+                <CardUsuarioPropio
+                  key={usuarioPropio.codigo_usuario}
+                  codigo_usuario={usuarioPropio.codigo_usuario}
+                  nombre_usuario={usuarioPropio.nombre_usuario}
+                  foto_perfil_usuario={usuarioPropio.foto_perfil_usuario}
+                />
+              )}
+
+              {/* Después todos los demás usuarios */}
+              {otrosUsuarios.map((user: any) => (
+                <CardUsuario
+                  key={user.codigo_usuario}
+                  codigo_usuario={user.codigo_usuario}
+                  nombre_usuario={user.nombre_usuario}
+                  foto_perfil_usuario={user.foto_perfil_usuario}
+                  seguido={user.seguido}
+                />
+              ))}
+            </>
+          ) : (
+            <p className="text-(--color_texto_oscuro)">Sin usuarios</p>
+          )}
+        </div>
+      </Modal>
+    </>
+  );
+}
+
+function Seguidores() {
+  const { data: usuario } = useSesion("codigo_usuario");
+  const { isLoading, error, data } = useSeguidores(usuario?.codigo_usuario ?? "");
+  const [modalAbierto, setModalAbierto] = useState(false);
+
+  if (error) {
+    return <p className="text-red-500">Error {error.message}</p>;
+  }
+
+  return (
+    <>
+      <p
+        className="hover:cursor-pointer hover:bg-(--bg-surface-muted) py-0.5 px-1 rounded-md"
+        onClick={() => setModalAbierto(true)}
+      >
+        Seguidores: {isLoading ? <Loader className="animate-spin" /> : data?.length}
+      </p>
+      <Modal
+        className="w-full sm:max-w-lg h-full max-h-120 bg-(--color_principal) m-5 flex flex-col gap-4"
+        open={modalAbierto}
+        onClose={() => setModalAbierto(false)}
+      >
+        <p>Usuarios que te siguen:</p>
+        <div className="flex gap-2">
+          {data?.length ? (
+            data.map((usuario: any) => (
+              <CardUsuario
+                key={usuario.codigo_usuario}
+                codigo_usuario={usuario.codigo_usuario}
+                nombre_usuario={usuario.nombre_usuario}
+                foto_perfil_usuario={usuario.foto_perfil_usuario}
+                seguido={usuario.seguido}
+              />
+            ))
+          ) : (
+            <p className="text-(--color_texto_oscuro)">Sin usuarios</p>
+          )}
+        </div>
+      </Modal>
+    </>
+  );
+}
+
 function PerfilInfo() {
   return (
-    <div className="max-w-md bg-(--color_principal_oscuro) border-4 border-(--color_bordes) p-2 font-serif text-center shadow-xl lg:flex lg:flex-col  lg:self-auto lg:justify-center lg:max-h-max">
+    <div className="max-w-md min-w-sm bg-(--color_principal_oscuro) border-4 border-(--color_bordes) p-2 font-serif text-center shadow-xl  lg:self-stretch lg:justify-senter lg:items-center">
       <h1 className="text-4xl text-(--color_texto_oscuro) font-extrabold tracking-widest border-b-4 border-(--color_bordes) pb-2 mb-4">
-        SE BUSCA
+        Lector Serial
       </h1>
       <Imagen />
-      <h2 className="text-xl text-(--color_texto_oscuro) font-bold uppercase border-y-2 border-(--color_bordes) py-1 mb-3">
-        Lector Serial
+      <h2 className=" text-(--color_texto_oscuro) font-bold border-y-2 border-(--color_bordes) py-1 mb-3 flex justify-center gap-10">
+        <Siguiendo />
+        <Seguidores />
       </h2>
       <Nombre />
       <Descripcion />
@@ -369,11 +472,11 @@ function Historial() {
 
   if (isLoading) {
     return (
-      <>
+      <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
         {[...Array(5)].map((_, index) => (
           <HistoriaCardCargando key={index} />
         ))}
-      </>
+      </div>
     );
   }
   if (error) {
@@ -410,11 +513,11 @@ function HistoriasUsuario() {
 
   if (isLoading) {
     return (
-      <>
+      <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
         {[...Array(5)].map((_, index) => (
           <HistoriaCardCargando key={index} />
         ))}
-      </>
+      </div>
     );
   }
   if (error) {
@@ -452,11 +555,11 @@ function SagasUsuario() {
 
   if (isLoading) {
     return (
-      <>
+      <div className="flex overflow-x-auto overflow-y-hidden sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
         {[...Array(5)].map((_, index) => (
           <SagaCardCargando key={index} />
         ))}
-      </>
+      </div>
     );
   }
   if (error) {
@@ -482,56 +585,24 @@ function SagasUsuario() {
   );
 }
 
-function Siguiendo() {
-  const { data: usuario } = useSesion("codigo_usuario");
-  const { isLoading, error, data } = useSiguiendo(usuario?.codigo_usuario ?? "");
-  if (isLoading) {
-    return (
-      <>
-        <p>Cargando siguiendo...</p>
-      </>
-    );
-  }
-  if (error) {
-    return <p className="text-red-500">Error loading siguiendo. {error.message}</p>;
-  }
-  return (
-    <div className="flex gap-4 w-full">
-      {data?.length ? (
-        data.map((usuario: any) => (
-          <CardUsuario
-            key={usuario.codigo_usuario}
-            codigo_usuario={usuario.codigo_usuario}
-            nombre_usuario={usuario.nombre_usuario}
-            foto_perfil_usuario={usuario.foto_perfil_usuario}
-          />
-        ))
-      ) : (
-        <p className="text-(--color_texto_oscuro)">Sin usuarios</p>
-      )}
-    </div>
-  );
-}
-
 function Perfil() {
   const [menuActivo, setMenuActivo] = useState("historial");
   const menus = {
     historial: <Historial />,
     historias: <HistoriasUsuario />,
     sagas: <SagasUsuario />,
-    siguiendo: <Siguiendo />,
   };
 
   return (
-    <div className="w-full min-h-[90vh] h-max flex  justify-center p-4">
-      <div className="flex flex-col sm:flex-row w-full gap-2">
+    <div className="w-full min-h-[90vh] sm:h-[90vh] sm:max-h-[95vh] flex  justify-center p-4">
+      <div className="flex flex-col sm:flex-row w-full gap-2 lg:h-full">
         <PerfilInfo />
-        <div className=" h-124 sm:w-[80%]">
-          <div className=" h-[8%]">
+        <div className="h-full w-full">
+          <div className=" h-10 sm:h-10 flex items-end divide-x divide-(--color_bordes) border-b">
             <button
-              className={`w-1/4 h-full truncate ${
+              className={`flex-1 h-full truncate hover:cursor-pointer ${
                 menuActivo === "historial"
-                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-2xl"
+                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-xl"
                   : "bg-(--color_principal_claro)"
               }`}
               onClick={() => setMenuActivo("historial")}
@@ -540,9 +611,9 @@ function Perfil() {
               Historial
             </button>
             <button
-              className={`w-1/4 h-full truncate ${
+              className={`flex-1 h-full truncate hover:cursor-pointer ${
                 menuActivo === "historias"
-                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-2xl"
+                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-xl"
                   : "bg-(--color_principal_claro)"
               }`}
               onClick={() => setMenuActivo("historias")}
@@ -551,9 +622,9 @@ function Perfil() {
               Historias
             </button>
             <button
-              className={`w-1/4 h-full truncate ${
+              className={`flex-1 h-full truncate hover:cursor-pointer ${
                 menuActivo === "sagas"
-                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-2xl"
+                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-xl"
                   : "bg-(--color_principal_claro)"
               }`}
               onClick={() => setMenuActivo("sagas")}
@@ -561,19 +632,8 @@ function Perfil() {
             >
               Sagas
             </button>
-            <button
-              className={`w-1/4 h-full truncate ${
-                menuActivo === "siguiendo"
-                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-2xl"
-                  : "bg-(--color_principal_claro)"
-              }`}
-              onClick={() => setMenuActivo("siguiendo")}
-              title="Usuarios que sigues"
-            >
-              Siguiendo
-            </button>
           </div>
-          <div className=" h-[92%] p-5 overflow-auto">
+          <div className="contenedor-scroll h-[92%] p-2 overflow-auto scroll-suave ">
             {menus[menuActivo as keyof typeof menus]}
           </div>
         </div>

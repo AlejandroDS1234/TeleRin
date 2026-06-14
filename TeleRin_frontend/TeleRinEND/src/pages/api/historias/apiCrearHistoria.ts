@@ -11,7 +11,14 @@ type GuardarHistoriaDatos = {
   texto_historia: string;
 };
 
-export async function crearHistoria(data: GuardarHistoriaDatos): Promise<ApiMessage> {
-  const res = enviarInfoServer<ApiMessage, GuardarHistoriaDatos>("/api/crear_historia", data);
+type ApiMensajeIdHistoria = ApiMessage & {
+  id_historia: string;
+};
+
+export async function crearHistoria(data: GuardarHistoriaDatos): Promise<ApiMensajeIdHistoria> {
+  const res = enviarInfoServer<ApiMensajeIdHistoria, GuardarHistoriaDatos>(
+    "/api/crear_historia",
+    data
+  );
   return res;
 }

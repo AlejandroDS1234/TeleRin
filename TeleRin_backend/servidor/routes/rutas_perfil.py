@@ -60,7 +60,7 @@ def perfil_usuario(codigo_usuario):
             cursor.execute("""SELECT codigo_usuario FROM "USUARIOS" WHERE codigo_usuario = %s""", (codigo_usuario,))
             usuario = cursor.fetchone()
             if usuario and usuario["codigo_usuario"] == usuario_actual["codigo_usuario"]:
-                 return jsonify({"redirigir": "/perfil", "mensaje_redirigir": {"mensaje": "Redirigiendo a tu perfil", "tipo": "success"}})
+                 return jsonify({"redirigir": "/perfil"})
             cursor.execute("""SELECT codigo_usuario, nombre_usuario, descripcion_personal, id_pais, id_genero, foto_perfil_usuario FROM "USUARIOS" WHERE codigo_usuario = %s""", (codigo_usuario,))
             usuario = cursor.fetchone()
             if not usuario:

@@ -274,7 +274,7 @@ function Inicio() {
       <br />
 
       <div className="relative z-20 font-serif text-(--color_texto_oscuro)">
-        <section className="p-4 aling-center flex flex-col w-full z-20">
+        <section className="p-4 aling-center flex flex-col w-full">
           <h4 className="text-2xl font-bold border-b border-(--color_bordes) mb-2 uppercase tracking-wide">
             Sagas Recomendadas
           </h4>
@@ -286,7 +286,7 @@ function Inicio() {
       <br />
 
       <div className="relative font-serif text-(--color_texto_oscuro)">
-        <section className="p-2">
+        <section className="p-4 aling-center flex flex-col w-full">
           <h4 className="text-2xl font-bold border-b border-(--color_bordes) mb-2 uppercase tracking-wide">
             Historias Recomendadas
           </h4>

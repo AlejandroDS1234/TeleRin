@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     port: 4210,
     host: true,
-    allowedHosts: ["a266-2803-e5e0-192b-5000-cd29-7523-eed4-5723.ngrok-free.app"],
+    allowedHosts: ["engaging-disabled-usage-aim.trycloudflare.com"],
     watch: {
       usePolling: true, // ← Agregar esto
     },

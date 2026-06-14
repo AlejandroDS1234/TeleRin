@@ -34,7 +34,7 @@ def crear_saga():
     mensaje, resultado = validar_imagen_completa(imagen_saga)
     if resultado:
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
-    if len(nombre_saga.split(" "))>4 or len(nombre_saga)>50:
+    if len(nombre_saga.split(" "))>6 or len(nombre_saga)>50:
         return jsonify({"mensaje": "El nombre de la saga es muy largo","tipo": "danger"})
     if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>500:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
@@ -47,9 +47,10 @@ def crear_saga():
 
 @sagas_bp.route("/api/sagas_creadas/<usuario>", methods=["POST"])
 def sagas_creadas(usuario):
+    usuario_sesion = obtener_usuario()
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s LEFT JOIN historias h ON s.id_saga =  h.id_saga WHERE s.codigo_usuario = %s GROUP BY s.nombre_saga, s.id_saga LIMIT 20""", (usuario,))
+            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s LEFT JOIN historias h ON s.id_saga = h.id_saga AND h.visibilidad_historia IN %s WHERE s.codigo_usuario = %s GROUP BY s.nombre_saga, s.id_saga ORDER BY s.fecha_actualizacion DESC""", ((True,not (usuario_sesion["codigo_usuario"] == usuario)), usuario))
             sagas= cursor.fetchall()
     return jsonify(sagas)
   

@@ -50,7 +50,7 @@ function Index() {
       </div>
 
       {/* 5. MORRIS (encima de todo) */}
-      <div className="absolute top-[0%] right-[40%] h-[25%] aspect-square lg:fixed lg:top-[10vh] lg:left-1/2 lg:-translate-x-1/2 lg:w-[10vh] lg:h-[10vh]  z-60">
+      <div className="absolute top-[0%] right-[40%] h-[25%] aspect-square lg:fixed lg:top-[10vh] lg:left-1/2 lg:-translate-x-1/2 lg:w-[10vh] lg:h-[10vh] z-60">
         <Morris />
       </div>
     </div>

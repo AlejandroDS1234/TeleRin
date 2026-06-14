@@ -110,7 +110,7 @@ function CrearSaga({ onClose }: CrearSagaProps) {
           register={register("nombre_saga", {
             required: "El nombre es obligatorio",
             maxLength: {
-              value: 25,
+              value: 50,
               message: "El nombre no puede tener más de 25 caracteres",
             },
           })}

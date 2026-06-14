@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="min-h-screen bg-(--color_principal) relative">
       <div className="absolute inset-0 bg-[url('./assets/imagenes/texturas/ruido.png')] opacity-10 pointer-events-none"></div>
-      <div className="relative z-30">
+      <div className="relative z-30 ">
         <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
           <RutasIngresar />
         </GoogleOAuthProvider>
