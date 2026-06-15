@@ -5,7 +5,7 @@ import { redirigir } from "../function_generales.tsx";
 import { useHistorias } from "./hook/historias/hookHistorias.ts";
 import { useCalificarHistoria } from "./hook/historias/hookCalificarHistoria.ts";
 import { useCalificacionHistoria } from "./hook/historias/hookCalificacionHistoria.ts";
-import { agregarAlHistorial } from "./api/historias/apiAgregarAlHistorial.ts";
+import { useAgregarAlHistorial } from "./hook/historias/hookAgregarAlHistorial.ts";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -47,14 +47,14 @@ function Calificacion() {
 function Historia() {
   const navigate = useNavigate();
   const { id_historia = "" } = useParams();
-
+  const agregarAlHistorial = useAgregarAlHistorial();
   const historia = useHistorias(id_historia);
 
   useEffect(() => {
     if (historia.isLoading || !historia.data) return;
     redirigir(navigate, historia.data);
     const temporizador = setTimeout(() => {
-      agregarAlHistorial(id_historia);
+      agregarAlHistorial.mutate(id_historia);
     }, 10000);
     return () => clearTimeout(temporizador);
   }, [id_historia, historia.data]);

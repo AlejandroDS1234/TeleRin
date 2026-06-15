@@ -5,10 +5,19 @@ import { useForm } from "react-hook-form";
 import Modal from "../assets/componentes/modal.tsx";
 import InputWithIcon from "../assets/componentes/inputWithIcon.tsx";
 import { Suiche, deltaTexto } from "../function_generales.tsx";
-import { NotebookPen, BookOpenText, ChevronRight, ChevronLeft, Save, Loader } from "lucide-react";
+import {
+  NotebookPen,
+  BookOpenText,
+  ChevronRight,
+  ChevronLeft,
+  Save,
+  Loader,
+  StepForward,
+} from "lucide-react";
 import CrearSaga from "../assets/componentes/crear_saga.tsx";
 import { CustomSelect } from "../assets/componentes/CustomSelect.tsx";
 import { SagasCardHorizontal } from "../assets/componentes/sagas_cards";
+import { BorradoresCards } from "../assets/componentes/borradores_cards";
 import type { Saga } from "../types";
 import type Delta from "quill-delta";
 import { redirigir } from "../function_generales.tsx";
@@ -21,6 +30,10 @@ import {
   useCrearBorradorHistoria,
   useGuardarBorradorHistoria,
 } from "./hook/historias/hookEditarHistoria";
+import {
+  useContinuarHistoria,
+  useEliminarBorradorHistoria,
+} from "./hook/historias/hookContinuarHistoria";
 
 type EditorContenido = {
   html: string;
@@ -106,7 +119,6 @@ function Guardar_historia({ abrirCrearSaga, contenido, idHistoria }: GuardarHist
   const [sagaSeleccion, setSagaSeleccion] = useState("");
   const navigate = useNavigate();
   const { data, isLoading } = useEditarHistoria(idHistoria);
-  console.log(data);
   const {
     register,
     handleSubmit,
@@ -119,6 +131,7 @@ function Guardar_historia({ abrirCrearSaga, contenido, idHistoria }: GuardarHist
       visibilidad_historia: false,
     },
   });
+  const mutateEliminarBorrador = useEliminarBorradorHistoria();
 
   useEffect(() => {
     if (data) {
@@ -149,6 +162,13 @@ function Guardar_historia({ abrirCrearSaga, contenido, idHistoria }: GuardarHist
       redirigir(navigate, mutatecrearHistoria.data);
     }
   }, [mutatecrearHistoria.data, navigate]);
+
+  useEffect(() => {
+    if (mutateEliminarBorrador.data?.redirigir) {
+      sessionStorage.removeItem("borrador_activo");
+      redirigir(navigate, mutateEliminarBorrador.data);
+    }
+  }, [mutateEliminarBorrador.data]);
 
   if (isLoading) {
     return (
@@ -210,6 +230,19 @@ function Guardar_historia({ abrirCrearSaga, contenido, idHistoria }: GuardarHist
           <p className="text-(--color_texto_oscuro)">Guardar</p>
         )}
       </button>
+      <p
+        style={{ display: data?.publicada ? "block" : "none" }}
+        className="w-full text-center text-(--color_texto_oscuro) hover:cursor-pointer hover:text-(--color_botones_presionado)"
+        onClick={() => {
+          mutateEliminarBorrador.mutate(idHistoria);
+        }}
+      >
+        {mutateEliminarBorrador.isPending ? (
+          <Loader className="animate-spin" />
+        ) : (
+          "Eliminar borrador"
+        )}
+      </p>
       {mutatecrearHistoria.data && (
         <MensajePlano
           mensaje={mutatecrearHistoria.data.mensaje}
@@ -230,22 +263,96 @@ function Guardar_historia({ abrirCrearSaga, contenido, idHistoria }: GuardarHist
   );
 }
 
+function ModalGuardarHistoria({
+  open,
+  onClose,
+  contenido,
+  idHistoria,
+}: {
+  open: boolean;
+  onClose: () => void;
+  contenido: EditorContenido | null;
+  idHistoria: string;
+}) {
+  const [crearSagaMostrar, setCrearSagaMostrar] = useState(false); //mostrar crear saga
+  const [nuevaSaga, setNuevaSaga] = useState(false);
+  const [crearSaga, setCrearSaga] = useState(false); // flecha
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      className="bg-(--color_principal) w-full m-5 sm:w-130 flex flex-col justify-center items-center"
+    >
+      <div className="flex flex-col gap-4 items-center justify-center w-full h-full p-10">
+        <div className={crearSagaMostrar ? "block" : "hidden"}>
+          <CrearSaga
+            onClose={() => {
+              setCrearSagaMostrar(false);
+              setNuevaSaga((prev) => !prev);
+              setCrearSaga(false);
+            }}
+          />
+        </div>
+
+        <div className={crearSagaMostrar ? "hidden" : "block"}>
+          <Guardar_historia
+            nuevaSaga={nuevaSaga}
+            contenido={contenido}
+            abrirCrearSaga={() => {
+              setCrearSagaMostrar(true);
+              setCrearSaga(true);
+            }}
+            idHistoria={idHistoria}
+          />
+        </div>
+
+        <div
+          className={`${crearSaga ? "flex" : "hidden"} w-full justify-center items-center bg-amber-200`}
+          onClick={() => setCrearSagaMostrar((prev) => !prev)}
+        >
+          {crearSagaMostrar ? (
+            <ChevronRight className="hover:cursor-pointer" />
+          ) : (
+            <ChevronLeft className="hover:cursor-pointer" />
+          )}
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function ModalContinuarHistoria({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { data } = useContinuarHistoria();
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      className="bg-(--color_principal) w-full m-5 sm:w-130 flex flex-col justify-center items-center h-130 p-10"
+    >
+      <div className="w-full h-full overflow-auto flex flex-col gap-4 scroll-suave">
+        {data?.length > 0 ? (
+          data?.map((historia: any) => (
+            <BorradoresCards
+              texto={deltaTexto(historia.borrador_historia)}
+              id_historia={historia.id_historia}
+            />
+          ))
+        ) : (
+          <p>Sin historias</p>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
 function PaginaEditor() {
   const [searchParams] = useSearchParams();
   const historia = searchParams.get("id_historia");
   const [idHistoria, setIdHistoria] = useState(historia || "");
-
   const { data, isLoading } = useEditarHistoria(historia || "");
-
-  const [nuevaSaga, setNuevaSaga] = useState(false);
-  const [crearSaga, setCrearSaga] = useState(false); // flecha
-  const [crearSagaMostrar, setCrearSagaMostrar] = useState(false); //mostrar crear saga
-  const [abrirModal, setAbrirModal] = useState(false);
-
+  const [abrirModalCrear, setAbrirModalCrear] = useState(false);
+  const [abrirModalContinuar, setAbrirModalContinuar] = useState(false);
   const [contenido, setContenido] = useState<EditorContenido | null>(null);
-
-  console.log(data);
-
   const mutateCrearBorrador = useCrearBorradorHistoria();
   const mutateGuardarBorrador = useGuardarBorradorHistoria();
 
@@ -273,6 +380,11 @@ function PaginaEditor() {
   }, [data, historia]);
 
   useEffect(() => {
+    setAbrirModalContinuar(false);
+    setAbrirModalCrear(false);
+    if (data?.redirigir) {
+      sessionStorage.removeItem("borrador_activo");
+    }
     redirigir(navigate, data);
   }, [historia, data, idHistoria]);
 
@@ -334,47 +446,16 @@ function PaginaEditor() {
 
   return (
     <div className="flex justify-center lg:items-center">
-      <Modal
-        open={abrirModal}
-        onClose={() => setAbrirModal(false)}
-        className="bg-(--color_principal) w-full m-5 sm:w-130 flex flex-col justify-center items-center"
-      >
-        <div className="flex flex-col gap-4 items-center justify-center w-full h-full p-10">
-          <div className={crearSagaMostrar ? "block" : "hidden"}>
-            <CrearSaga
-              onClose={() => {
-                setCrearSagaMostrar(false);
-                setNuevaSaga((prev) => !prev);
-                setCrearSaga(false);
-              }}
-            />
-          </div>
-
-          <div className={crearSagaMostrar ? "hidden" : "block"}>
-            <Guardar_historia
-              nuevaSaga={nuevaSaga}
-              contenido={contenido}
-              abrirCrearSaga={() => {
-                setCrearSagaMostrar(true);
-                setCrearSaga(true);
-              }}
-              idHistoria={idHistoria}
-            />
-          </div>
-
-          <div
-            className={`${crearSaga ? "flex" : "hidden"} w-full justify-center items-center bg-amber-200`}
-            onClick={() => setCrearSagaMostrar((prev) => !prev)}
-          >
-            {crearSagaMostrar ? (
-              <ChevronRight className="hover:cursor-pointer" />
-            ) : (
-              <ChevronLeft className="hover:cursor-pointer" />
-            )}
-          </div>
-        </div>
-      </Modal>
-
+      <ModalGuardarHistoria
+        onClose={() => setAbrirModalCrear(false)}
+        open={abrirModalCrear}
+        contenido={contenido}
+        idHistoria={idHistoria}
+      />
+      <ModalContinuarHistoria
+        onClose={() => setAbrirModalContinuar(false)}
+        open={abrirModalContinuar}
+      />
       <div className=" bg-[#e5e3dc] w-full max-w-175 shadow-xl flex flex-col items-center p-4">
         <Editor
           onChangeContenido={(datos) => {
@@ -399,16 +480,32 @@ function PaginaEditor() {
             { type: "quill", value: "code-block" },
             {
               type: "custom",
+              value: "continuar",
+              className: "",
+              content: (
+                <p
+                  className="hover:cursor-pointer"
+                  onClick={() => {
+                    setAbrirModalContinuar(true);
+                  }}
+                >
+                  <p className="hidden sm:block">Continuar</p>
+                  <StepForward className="block sm:hidden" />
+                </p>
+              ),
+            },
+            {
+              type: "custom",
               value: "titulo",
               className: "",
               content: (
-                <button
-                  className="font-bold hover:cursor-pointer"
-                  onClick={() => setAbrirModal(true)}
+                <p
+                  className="font-bold hover:cursor-pointer hover:text-(--color_botones_presionado)"
+                  onClick={() => setAbrirModalCrear(true)}
                 >
                   <p className="hidden sm:block">Guardar</p>
                   <Save className="block sm:hidden" />
-                </button>
+                </p>
               ),
             },
           ]}

@@ -96,7 +96,7 @@ def editar_historia(id_historia):
             print(historia_usuario)
             if not historia_usuario:
                 return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Historia no disponible", "tipo": "danger"}})
-            cursor.execute("""SELECT h.nombre_historia, h.id_saga ,h.visibilidad_historia ,h.id_historia, h.descripcion_historia, h.contenido_historia, h.borrador_historia ,TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.id_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.visibilidad_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY calificacion_p DESC LIMIT 20""", (id_historia,))
+            cursor.execute("""SELECT h.nombre_historia, h.id_saga ,h.visibilidad_historia ,h.id_historia, h.descripcion_historia, h.contenido_historia, h.borrador_historia, h.publicada ,TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.id_historia = %s GROUP BY h.nombre_historia, h.id_historia, h.visibilidad_historia, h.fecha_actualizacion, h.publicada""", (id_historia,))
             historia=cursor.fetchone()
     if not historia:
         return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
@@ -189,4 +189,36 @@ def historias_creadas(codigo_usuario):
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,TO_CHAR(h.fecha_actualizacion,'DD/MM/YYYY') as fecha_actualizacion, h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.codigo_usuario = %s AND h.id_saga = '' AND h.visibilidad_historia IN %s AND h.publicada = TRUE GROUP BY h.nombre_historia, h.id_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY h.fecha_actualizacion DESC""", (codigo_usuario,(True, (not bool(usuario["codigo_usuario"]==codigo_usuario)))))
             historias=cursor.fetchall()
     return jsonify(historias)
+
+@historias_bp.route("/api/continuar_historia", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
+def continuar_historia():
+    usuario_actual = obtener_usuario()
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT borrador_historia, id_historia FROM "historias" WHERE codigo_usuario = %s AND publicada = FALSE""", (usuario_actual["codigo_usuario"],))
+            historia=cursor.fetchall()
+            print(historia)
+    return jsonify(historia)
+    
+@historias_bp.route("/api/eliminar_borrador/<id_historia>", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
+def eliminar_borrador(id_historia):
+    usuario_actual = obtener_usuario()
+    with conectar() as db:
+        with db.cursor() as cursor:
+            cursor.execute("""SELECT publicada FROM "historias" WHERE id_historia = %s AND codigo_usuario = %s""", (id_historia, usuario_actual["codigo_usuario"]))
+            publicada=cursor.fetchone()
+            if (publicada is None):
+                return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
+            if publicada[0]:
+                cursor.execute("""UPDATE historias SET borrador_historia = NULL WHERE id_historia = %s AND codigo_usuario = %s""", (id_historia, usuario_actual["codigo_usuario"]))
+                db.commit()
+                return jsonify({"redirigir": "/perfil", "mensaje_redirigir": {"mensaje": "Borrador eliminado", "tipo": "success"}})
+            else:
+                cursor.execute("""DELETE FROM historias WHERE id_historia = %s AND codigo_usuario = %s""", (id_historia, usuario_actual["codigo_usuario"]))
+    return jsonify({"mensaje": "Borrador eliminado", "tipo": "success"})
+                
+
+
    
