@@ -1,4 +1,4 @@
-import imagen from "../imagenes/sobrefondo_olvido_de_contraseña.png";
+import imagen from "../imagenes/sobrefondo_olvido_de_contraseña.webp";
 
 function Sobrefondo_olvido_contraseña() {
   return (
@@ -6,6 +6,9 @@ function Sobrefondo_olvido_contraseña() {
       src={imagen}
       alt="sobrefondo"
       className="w-full h-[88vh] mt-[12vh] object-cover lg:object-right pointer-events-none"
+      loading="eager"
+      fetchPriority="high"
+      decoding="async"
     />
   );
 }

@@ -1,4 +1,4 @@
-import imagen from "../imagenes/sobrefondo.png";
+import imagen from "../imagenes/sobrefondo.webp";
 
 function Sobrefondo() {
   return (
@@ -6,6 +6,9 @@ function Sobrefondo() {
       src={imagen}
       alt="sobrefondo"
       className="w-full h-full object-cover lg:object-right pointer-events-none"
+      loading="eager"
+      fetchPriority="high"
+      decoding="async"
     />
   );
 }

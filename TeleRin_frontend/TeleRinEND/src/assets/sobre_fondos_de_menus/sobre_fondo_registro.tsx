@@ -1,4 +1,4 @@
-import imagen from "../imagenes/sobrefondo_registro.png";
+import imagen from "../imagenes/sobrefondo_registro.webp";
 
 function Sobrefondo_registro() {
   return (
@@ -6,6 +6,9 @@ function Sobrefondo_registro() {
       src={imagen}
       alt="sobrefondo"
       className="w-full h-[88vh] mt-[12vh] object-cover lg:object-right pointer-events-none"
+      loading="eager"
+      fetchPriority="high"
+      decoding="async"
     />
   );
 }

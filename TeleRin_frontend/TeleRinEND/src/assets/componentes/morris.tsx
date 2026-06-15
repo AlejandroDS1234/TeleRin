@@ -1,13 +1,19 @@
 import { useEffect } from "react";
 import { useRive, useStateMachineInput } from "@rive-app/react-canvas";
+import morrisAndroid from "../morris/morris_android_prime (1).riv";
 
-function Morris() {
-
+function Morris({ onLoad }: { onLoad?: () => void }) {
   const { rive, RiveComponent } = useRive({
-    src: "/src/assets/morris/morris_android_prime (1).riv",
+    src: morrisAndroid,
     stateMachines: "saludo",
     autoplay: true,
   });
+
+  useEffect(() => {
+    if (rive) {
+      onLoad?.();
+    }
+  }, [rive]);
 
   // triggers
   const triggerGrande = useStateMachineInput(rive, "saludo", "esGrande");
@@ -38,7 +44,7 @@ function Morris() {
   }, [rive, triggerGrande, triggerPequeno]);
 
   return (
-    <div className="w-[300px] h-[300px] lg:w-[80vh] lg:h-[80vh]">
+    <div className="w-75 h-75 lg:w-[80vh] lg:h-[80vh]">
       <RiveComponent />
     </div>
   );

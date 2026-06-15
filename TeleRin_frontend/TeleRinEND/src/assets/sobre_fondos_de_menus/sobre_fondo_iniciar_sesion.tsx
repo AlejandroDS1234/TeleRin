@@ -1,4 +1,4 @@
-import imagen from "../imagenes/sobrefondo_inicio_de_sesion.png";
+import imagen from "../imagenes/sobrefondo_inicio_de_sesion.webp";
 
 function Sobrefondo_inicio_sesion() {
   return (
@@ -6,6 +6,9 @@ function Sobrefondo_inicio_sesion() {
       src={imagen}
       alt="sobrefondo"
       className="w-full h-[88vh] mt-[12vh] object-cover lg:object-right pointer-events-none"
+      loading="eager"
+      fetchPriority="high"
+      decoding="async"
     />
   );
 }

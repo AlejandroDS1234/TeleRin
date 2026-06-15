@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 
 interface HeaderProps {
   url?: string;
+  iniciar?: boolean;
 }
 
-function Header({ url = "/" }: HeaderProps) {
+function Header({ url = "/", iniciar = true }: HeaderProps) {
   return (
     <motion.header className="h-25 flex flex-col  items-center">
       <div className="h-100 flex justify-center sm:justify-between items-end w-full px-[5%]">
