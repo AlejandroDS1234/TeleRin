@@ -1,9 +1,17 @@
-import { Book, Loader, FilePenLine, Hammer, NotebookText, BookLock } from "lucide-react";
+import {
+  Book,
+  Loader,
+  FilePenLine,
+  Hammer,
+  NotebookText,
+  BookLock,
+  CircleUserRound,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { useIsLg } from "../../function_generales";
+import { ColorRandom } from "../../function_generales";
 import useScrollLock from "../../hooks/useScrollLock";
 
 type HistoriaCardProps = {
@@ -152,7 +160,7 @@ export function HistoriaCard({
         />
       )}
 
-      <h3 className="font-bold text-2xl w-full  line-clamp-3" title={titulo}>
+      <h3 className="font-bold text-2xl w-full  line-clamp-3 break-all" title={titulo}>
         {titulo}
       </h3>
       <p className="w-full line-clamp-3 hidden">{descripcion}</p>
@@ -216,7 +224,7 @@ export function HistoriaCardEditar({
           className="bg-(--neutral-150) absolute -top-3 -right-3 p-0.5 rounded-full"
         />
       )}
-      <h3 className="font-bold text-2xl w-full  line-clamp-3" title={titulo}>
+      <h3 className="font-bold text-2xl w-full line-clamp-3" title={titulo}>
         {titulo}
       </h3>
       <p className="w-full line-clamp-3 hidden">{descripcion}</p>
@@ -279,26 +287,35 @@ export function HistoriaCardEditar({
 
 export function HistoriaCardCargando() {
   return (
-    <div className="bg-(--bg-surface) flex flex-col gap-4 border border-(--border-default) border-dotted flex-none w-50 sm:w-full h-50 p-4">
-      <h3 className="font-bold w-full line-clamp-2">...</h3>
-      <div className="w-full line-clamp-3">
-        <p>
-          Cargando <Loader className="animate-spin" />
-        </p>
+    <div className="bg-(--bg-surface) border border-(--border-default) border-dotted flex-none w-50 sm:w-full h-50">
+      <div className="flex flex-col gap-4 w-full h-full p-4 pt-6 animate-pulse">
+        <h3 className="w-full flex flex-col gap-3">
+          <div
+            className="min-h-6 w-full rounded-sm border-[#6f675d]/50 border"
+            style={{ backgroundColor: ColorRandom() }}
+          />
+          <div
+            className="min-h-6 w-full rounded-sm border-[#6f675d]/50 border"
+            style={{ backgroundColor: ColorRandom() }}
+          />
+          <div
+            className="min-h-6 w-full rounded-sm border-[#6f675d]/50 border"
+            style={{ backgroundColor: ColorRandom() }}
+          />
+        </h3>
+
+        <small className="mt-auto w-full h-8 flex gap-1 items-center">
+          <div className="flex gap-1 items-center bg-(--bg-surface-muted) rounded-2xl pr-2 w-[55%] h-full">
+            <CircleUserRound size={31} color="#6f675d" />
+            <div className="flex gap-1">
+              <div className="aspect-square rounded-full h-2 bg-[#6f675d]/60 animate-bounce [animation-delay:-0.3s]" />
+              <div className="aspect-square rounded-full h-2 bg-[#6f675d]/60 animate-bounce [animation-delay:-0.15s]" />
+              <div className="aspect-square rounded-full h-2 bg-[#6f675d]/60 animate-bounce" />
+            </div>
+          </div>
+          <div className="ml-auto h-full aspect-square rounded-full bg-(--bg-surface-muted)" />
+        </small>
       </div>
-      <small className="mt-auto w-full flex justify-between">
-        <div className="flex gap-[0.5px]">
-          {[...Array(3)].map((_, i) => (
-            <span key={i}>
-              <Book />
-            </span>
-          ))}
-        </div>
-        <p className="font-bold truncate">
-          --
-          <Loader className="animate-spin" />
-        </p>
-      </small>
     </div>
   );
 }

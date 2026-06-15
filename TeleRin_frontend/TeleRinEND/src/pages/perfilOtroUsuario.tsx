@@ -78,7 +78,7 @@ function Siguiendo() {
   return (
     <>
       <p
-        className="hover:cursor-pointer hover:bg-(--bg-surface-muted) py-0.5 px-1 rounded-md"
+        className="hover:cursor-pointer hover:bg-(--bg-surface-muted) py-0.5 px-1 rounded-md flex"
         onClick={() => setModalAbierto(true)}
       >
         Siguiendo: {isLoading ? <Loader className="animate-spin" /> : data?.length}
@@ -141,7 +141,7 @@ function Seguidores() {
   return (
     <>
       <p
-        className="hover:cursor-pointer hover:bg-(--bg-surface-muted) py-0.5 px-1 rounded-md"
+        className="hover:cursor-pointer hover:bg-(--bg-surface-muted) py-0.5 px-1 rounded-md flex"
         onClick={() => setModalAbierto(true)}
       >
         Seguidores: {isLoading ? <Loader className="animate-spin" /> : data?.length}
