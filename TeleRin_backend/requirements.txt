@@ -21,3 +21,4 @@ argparse
 qrcode
 google-auth
 requests
+apscheduler

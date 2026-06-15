@@ -1,4 +1,4 @@
-import { Shredder, Loader } from "lucide-react";
+import { Shredder } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEliminarBorradorHistoria } from "../../pages/hook/historias/hookContinuarHistoria";
 import { useState } from "react";
@@ -10,9 +10,9 @@ export function BorradoresCards({ texto, id_historia }: { texto: string; id_hist
   return (
     <div
       onClick={() => navigate(`/editor?id_historia=${id_historia}`)}
-      className="relative w-full h-50 max-h-50 bg-[#fdfbf7] border-t-4 border-neutral-900 border-b border-neutral-300 p-6 font-serif shadow-sm text-neutral-800 flex flex-col justify-between select-none shrink-0"
+      className="relative w-full h-50 max-h-50 bg-[#fdfbf7] border-t-4 border-b border-neutral-300 p-6 font-serif shadow-sm text-neutral-800 flex flex-col justify-between select-none shrink-0"
     >
-      <div className="columns-2 gap-6 text-justify text-xs leading-relaxed h-[calc(100%-4px)] overflow-hidden [column-fill:auto] break-words">
+      <div className="columns-2 gap-6 text-justify text-xs leading-relaxed h-[calc(100%-4px)] overflow-hidden [column-fill:auto]  wrap-break-word">
         <p className="first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:leading-[0.8] first-letter:pt-1 first-letter:pr-2 first-letter:text-neutral-950">
           {texto}
         </p>
