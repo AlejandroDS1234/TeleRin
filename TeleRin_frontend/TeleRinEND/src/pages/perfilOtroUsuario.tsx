@@ -9,7 +9,11 @@ import { useParams } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { useSiguiendo, useSiguiendoUsuario } from "./hook/usuario/hookSiguiendo";
 import { useSeguidores } from "./hook/usuario/hookSeguidores";
-import { CardUsuario, CardUsuarioPropio } from "../assets/componentes/card_usuario";
+import {
+  CardUsuario,
+  CardUsuarioPropio,
+  CardUsuarioCargando,
+} from "../assets/componentes/card_usuario";
 import { useOtroUsuario } from "./hook/usuario/hookOtroUsuario";
 import { Sagacard, SagaCardCargando } from "../assets/componentes/sagas_cards";
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
@@ -89,8 +93,14 @@ function Siguiendo() {
         onClose={() => setModalAbierto(false)}
       >
         <p>Usuarios que sigue:</p>
-        <div className="flex gap-2">
-          {data?.length ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(25%,1fr))] gap-4 over overflow-x-auto scroll-suave">
+          {isLoading ? (
+            <>
+              {[...Array(5)].map((_, index) => (
+                <CardUsuarioCargando key={index} />
+              ))}
+            </>
+          ) : data?.length ? (
             <>
               {/* Primero el usuario propio si se encuentra en la lista */}
               {usuarioPropio && (
@@ -152,8 +162,14 @@ function Seguidores() {
         onClose={() => setModalAbierto(false)}
       >
         <p>Usuarios que lo siguen:</p>
-        <div className="flex gap-2">
-          {data?.length ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(25%,1fr))] gap-4 over overflow-x-auto scroll-suave">
+          {isLoading ? (
+            <>
+              {[...Array(5)].map((_, index) => (
+                <CardUsuarioCargando key={index} />
+              ))}
+            </>
+          ) : data?.length ? (
             <>
               {/* Primero el usuario propio si se encuentra en la lista */}
               {usuarioPropio && (

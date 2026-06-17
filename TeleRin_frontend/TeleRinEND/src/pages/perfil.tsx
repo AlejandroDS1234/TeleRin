@@ -17,7 +17,11 @@ import { useGeneros } from "./hook/hookGeneros";
 import Consultas from "./admin/consultas_usuarios";
 import { useSiguiendo } from "./hook/usuario/hookSiguiendo";
 import { useSeguidores } from "./hook/usuario/hookSeguidores";
-import { CardUsuario, CardUsuarioPropio } from "../assets/componentes/card_usuario";
+import {
+  CardUsuario,
+  CardUsuarioPropio,
+  CardUsuarioCargando,
+} from "../assets/componentes/card_usuario";
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
 import { Sagacard, SagaCardCargando } from "../assets/componentes/sagas_cards";
 
@@ -364,8 +368,14 @@ function Siguiendo() {
         onClose={() => setModalAbierto(false)}
       >
         <p>Usuarios que sigues:</p>
-        <div className="flex gap-2">
-          {data?.length ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(25%,1fr))] gap-4 over overflow-x-auto scroll-suave">
+          {isLoading ? (
+            <>
+              {[...Array(5)].map((_, index) => (
+                <CardUsuarioCargando key={index} />
+              ))}
+            </>
+          ) : data?.length ? (
             <>
               {/* Primero el usuario propio si se encuentra en la lista */}
               {usuarioPropio && (
@@ -415,13 +425,19 @@ function Seguidores() {
         Seguidores: {isLoading ? <Loader className="animate-spin" /> : data?.length}
       </p>
       <Modal
-        className="w-full sm:max-w-lg h-full max-h-120 bg-(--color_principal) m-5 flex flex-col gap-4"
+        className="w-full m-5 sm:max-w-lg h-full max-h-120 bg-(--color_principal)  flex flex-col gap-4"
         open={modalAbierto}
         onClose={() => setModalAbierto(false)}
       >
         <p>Usuarios que te siguen:</p>
-        <div className="flex gap-2">
-          {data?.length ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(25%,1fr))] gap-4 over overflow-x-auto scroll-suave">
+          {isLoading ? (
+            <>
+              {[...Array(5)].map((_, index) => (
+                <CardUsuarioCargando key={index} />
+              ))}
+            </>
+          ) : data?.length ? (
             data.map((usuario: any) => (
               <CardUsuario
                 key={usuario.codigo_usuario}

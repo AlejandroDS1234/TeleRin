@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useSeguir, useDejarDeSeguir } from "../../pages/hook/usuario/hookSeguir";
-import { Loader } from "lucide-react";
+import { Loader, CircleUserRound } from "lucide-react";
+import { ColorRandom } from "../../function_generales";
+
 type CardUsuarioProps = {
   codigo_usuario: string;
   nombre_usuario: string;
@@ -23,7 +25,7 @@ export function CardUsuario({
     <Link
       to={`/perfil/${encodeURIComponent(codigo_usuario)}`}
       key={codigo_usuario}
-      className=" flex flex-col h-35 w-28 items-center justify-between gap-1 p-2 rounded-md transition-colors border-[#9b7d58]/40 border bg-linear-to-br from-[#d7b18a] via-[#f3ede3] to-[#8ca89e] bg-size-[140%_140%] bg-position-[35%_50%] hover:bg-position-[45%_55%] duration-500 hover:brightness-[1.02] shadow-md hover:shadow-lg"
+      className=" flex flex-col h-35 w-full items-center justify-between gap-1 p-2 rounded-md transition-colors border-[#9b7d58]/40 border bg-linear-to-br from-[#d7b18a] via-[#f3ede3] to-[#8ca89e] bg-size-[140%_140%] bg-position-[35%_50%] hover:bg-position-[45%_55%] duration-500 hover:brightness-[1.02] shadow-md hover:shadow-lg"
       title={nombre_usuario}
     >
       <div className="h-full min-h-15 rounded-full relative border-2 aspect-square overflow-hidden">
@@ -39,7 +41,7 @@ export function CardUsuario({
           style={{ opacity: fotoCargada ? 1 : 0 }}
         />
       </div>
-      <p className="text-sm font-bold text-center truncate h-9 w-full">{nombre_usuario}</p>
+      <p className="text-sm font-bold text-center truncate h-9 w-full min-w-0">{nombre_usuario}</p>
       {seguido ? (
         <button
           className="bg-(--border-alpha-45) hover:bg-(--card-tint-1) hover:cursor-pointer px-2 rounded-2xl"
@@ -85,10 +87,10 @@ export function CardUsuarioPropio({
     <Link
       to={`/perfil`}
       key={codigo_usuario}
-      className=" flex flex-col h-35 w-28 items-center justify-between gap-1 p-2 rounded-md transition-colors border-[#9b7d58]/40 border bg-linear-to-br from-[#d7b18a] via-[#f3ede3] to-[#8ca89e] bg-size-[140%_140%] bg-position-[35%_50%] hover:bg-position-[45%_55%] duration-500 hover:brightness-[1.02] shadow-md hover:shadow-lg"
+      className=" flex flex-col h-35 w-full items-center justify-between gap-1 p-2 rounded-md transition-colors border-[#9b7d58]/40 border bg-linear-to-br from-[#d7b18a] via-[#f3ede3] to-[#8ca89e] bg-size-[140%_140%] bg-position-[35%_50%] hover:bg-position-[45%_55%] duration-500 hover:brightness-[1.02] shadow-md hover:shadow-lg"
       title={"Yo"}
     >
-      <div className="w-full rounded-full relative border-2 aspect-square overflow-hidden">
+      <div className="h-full rounded-full relative border-2 aspect-square overflow-hidden">
         <img
           src={`/api/Fotos/perfil/${foto_perfil_usuario}?size=reducida`}
           className="w-full h-full rounded-full object-cover absolute"
@@ -103,5 +105,24 @@ export function CardUsuarioPropio({
       </div>
       <p className="text-sm font-bold text-center">{nombre_usuario}</p>
     </Link>
+  );
+}
+
+export function CardUsuarioCargando() {
+  return (
+    <div className="h-35 w-full rounded-md transition-colors border-[#9b7d58]/40 border bg-linear-to-br from-[#d7b18a] via-[#f3ede3] to-[#8ca89e] bg-size-[140%_140%] bg-position-[35%_50%] duration-500 shadow-md">
+      <div className="flex flex-col h-full w-full items-center justify-between gap-1 p-2">
+        <CircleUserRound
+          size={"100%"}
+          color="#6f675d"
+          className="animate-pulse  [animation-duration:3s]"
+        />
+        <div className="h-9 bg-[#6f675d] w-full rounded-sm animate-pulse [animation-delay:-0.15s] [animation-duration:3s]" />
+        <div
+          className="h-9 rounded-2xl text-center w-[70%] border border-(--border-default) animate-pulse [animation-duration:3s] [animation-delay:-0.3s]"
+          style={{ backgroundColor: ColorRandom() }}
+        />
+      </div>
+    </div>
   );
 }

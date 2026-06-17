@@ -93,26 +93,23 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
 
 export function SagaCardCargando() {
   return (
-    <div className="relative p-4 bg-(--bg-surface) flex flex-col border-2 border-(--border-default) border-double h-70 flex-none w-50 sm:w-full">
-      <div>
+    <div className="p-4 bg-(--bg-surface) flex flex-col items-center gap-1 border-2 border-(--border-default) border-double h-70 w-50 sm:w-full">
+      <div className="flex flex-col items-center gap-1.5 w-full">
         <div className="flex flex-col w-full justify-center items-center gap-px">
           <div className="bg-(--border-default) w-full border-(--border-default) h-[1.5px]" />
           <div className="bg-(--border-default) w-[98%] border-(--border-default) h-px" />
         </div>
-
-        <h3 className="truncate w-full font-bold text-2xl font-serif h-min text-center"></h3>
-
+        <div className="w-[90%] rounded-sm h-5 bg-(--bg-surface-muted) animate-pulse [animation-delay:-1s]"></div>
         <div className="flex flex-col w-full justify-center items-center gap-px">
           <div className="bg-(--border-default) w-[98%] border-(--border-default) h-px" />
           <div className="bg-(--border-default) w-full border-(--border-default) h-[1.5px]" />
         </div>
       </div>
-
-      <div className="relative mt-auto h-43 w-full bg-(--bg-surface-muted)"></div>
-
-      <small className="mt-auto flex justify-center">
-        <div> </div>
-      </small>
+      <div className="relative h-43 w-full">
+        <div className="absolute inset-0 h-full w-full bg-(--neutral-150) animate-pulse [animation-delay:-3s]"></div>
+        <div className="h-full w-full bg-[#B9CFD4BF]"></div>
+      </div>
+      <small className="mt-auto h-3.5 bg-(--bg-surface-muted) w-[60%] rounded-sm animate-pulse" />
       <Lineas grosor="0.1px" espaciado="1px" cantidad={2} />
     </div>
   );

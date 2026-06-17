@@ -306,7 +306,7 @@ export function HistoriaCardCargando() {
 
         <small className="mt-auto w-full h-8 flex gap-1 items-center">
           <div className="flex gap-1 items-center bg-(--bg-surface-muted) rounded-2xl pr-2 w-[55%] h-full">
-            <CircleUserRound size={31} color="#6f675d" />
+            <CircleUserRound size={"100%"} color="#6f675d" />
             <div className="flex gap-1">
               <div className="aspect-square rounded-full h-2 bg-[#6f675d]/60 animate-bounce [animation-delay:-0.3s]" />
               <div className="aspect-square rounded-full h-2 bg-[#6f675d]/60 animate-bounce [animation-delay:-0.15s]" />
