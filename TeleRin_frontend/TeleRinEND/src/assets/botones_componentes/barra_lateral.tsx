@@ -11,7 +11,6 @@ function Navbar() {
   const location = useLocation();
   const { data: usuario } = useSesion("foto_perfil_usuario");
   const [abierta, setabierta] = useState(false);
-  const [imagenPerfilCargada, setImagenPerfilCargada] = useState(false);
   const isLg = useIsLg();
 
   const resaltado = location.pathname;
@@ -93,19 +92,6 @@ function Navbar() {
           <img
             src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?size=reducida&t=${usuario?.refrescado ?? 0}`}
             className="absolute inset-0 w-full h-full object-cover rounded-full border-2 border-black"
-            style={{ opacity: !imagenPerfilCargada ? 1 : 0 }}
-          />
-
-          {/* Imagen real con fade in */}
-          <motion.img
-            className="h-10 aspect-square rounded-full border-2 transition-opacity duration-300 object-cover"
-            style={{
-              borderColor:
-                resaltado === "/perfil" ? "var(--interactive-selected)" : "var(--border-default)",
-              opacity: imagenPerfilCargada ? 1 : 0,
-            }}
-            src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?t=${usuario?.refrescado ?? 0}`}
-            onLoad={() => setImagenPerfilCargada(true)}
           />
         </motion.div>
 

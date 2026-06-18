@@ -15,7 +15,6 @@ function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
         const response = await fetch(verificarUrl, { credentials: "include" });
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
           if (data.redirigir) {
             setIsAuthorized(false);
             setRedirectPath(data.redirigir);
@@ -38,7 +37,7 @@ function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Verificando acceso...</div>
+        <div className="text-xl">Verificando acceso... poner a morris cargando</div>
       </div>
     );
   }

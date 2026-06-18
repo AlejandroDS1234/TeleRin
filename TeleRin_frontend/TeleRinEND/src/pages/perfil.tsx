@@ -144,6 +144,7 @@ function Imagen() {
   function limpiarSeleccionFoto() {
     setNuevaFoto(null);
     setImagen("");
+    mutateSesion.reset();
     if (inputFotoRef.current) {
       inputFotoRef.current.value = "";
     }
@@ -213,7 +214,9 @@ function Imagen() {
             />
           </div>
         )}
-        {nuevaFoto && <p>{nuevaFoto.name}</p>}
+        {nuevaFoto && !mutateSesion.data && (
+          <p className="truncate w-full text-center">{nuevaFoto.name}</p>
+        )}
         {mutateSesion.data && (
           <MensajePlano
             mensaje={mutateSesion.data.mensaje}

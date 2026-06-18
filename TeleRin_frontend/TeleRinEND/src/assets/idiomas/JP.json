@@ -1,16 +1,16 @@
 {
-    "Título": "テレリン",
-    "Inicia sesion": "ログイン",
-    "Registro": "登録する",
-    "Frase 1": "声に出して読むのが恥ずかしいようなことを投稿してください",
-    "Frase 2": "勇気ある者だけが挑戦できる冒険へ出発しよう！",
-    "Perfil": "プロフィール",
-    "Contraseña": "パスワード",
-    "Olvide mi contraseña": "パスワードを忘れてしまいました",
-    "Iniciar Sesion": "ログイン",
-    "No tienes cuenta": "アカウントをお持ちではありませんか？",
-    "Registrate": "登録する",
-    "Enviar el correo de Verificacion": "確認メールを送信する",
-    "Verificar": "確認する",
-    "Reenviar El Codigo": "コードを転送する"
+"Título": "テレリン"
+"Inicia sesion" : "ログイン"
+"Registro": "登録する"
+"Frase 1": "声に出して読むのが恥ずかしいようなことを投稿してください"
+"Frase 2" : "勇気ある者だけが挑戦できる冒険へ出発しよう！"
+"Perfil" : "プロフィール"
+"Contraseña" : "パスワード"
+"Olvide mi contraseña" : "パスワードを忘れてしまいました"
+"Iniciar Sesion" : "ログイン"
+"No tienes cuenta" : "アカウントをお持ちではありませんか？"  
+"Registrate" : "登録する"
+"Enviar el correo de Verificacion" : "確認メールを送信する"
+"Verificar" : "確認する"
+"Reenviar El Codigo" : "コードを転送する"
 }

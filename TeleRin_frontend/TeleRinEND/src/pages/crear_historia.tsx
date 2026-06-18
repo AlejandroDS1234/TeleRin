@@ -145,7 +145,6 @@ function Guardar_historia({ abrirCrearSaga, contenido, idHistoria }: GuardarHist
   }, [data, reset]);
 
   const onSubmit = async (data: GuardarHistoriaForm) => {
-    console.log(contenido);
     const payload = {
       ...data,
       saga_historia: sagaSeleccion,

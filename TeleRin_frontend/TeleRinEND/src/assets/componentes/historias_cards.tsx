@@ -1,14 +1,5 @@
-import {
-  Book,
-  Loader,
-  FilePenLine,
-  Hammer,
-  NotebookText,
-  BookLock,
-  CircleUserRound,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { FilePenLine, Hammer, NotebookText, BookLock, CircleUserRound } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { ColorRandom } from "../../function_generales";
@@ -27,8 +18,6 @@ type HistoriaCardProps = {
   };
   opciones?: ReactNode;
 };
-
-const MotionLink = motion(Link);
 
 function MasOpciones({ children }: { children?: ReactNode }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -146,61 +135,62 @@ export function HistoriaCard({
   autor,
   opciones,
 }: HistoriaCardProps) {
-  const [imagenCargada, setImagenCargada] = useState(false);
-
+  const navigate = useNavigate();
   return (
-    <MotionLink
+    <Link
       to={`/historia/${encodeURIComponent(idh)}`}
-      className="relative bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] border-[#6f675d]/50 flex flex-col gap-4 border border-dotted flex-none w-50 sm:w-full h-50 p-4 pr-3 "
+      className="bg-radial from-[#d9cebc] via-[#f3efe7] to-[#b3d4bf] group relative  border-[#6f675d]/50  border border-dotted flex-none w-50 sm:w-full h-50"
     >
       {!visibilidad && (
         <BookLock
           height={25}
-          className="bg-(--neutral-150) absolute -top-3 -right-3 p-0.5 rounded-full"
+          className="bg-(--neutral-150) absolute -top-3 -right-3 p-0.5 rounded-full "
         />
       )}
-
-      <h3 className="font-bold text-2xl w-full  line-clamp-3 break-all" title={titulo}>
-        {titulo}
-      </h3>
-      <p className="w-full line-clamp-3 hidden">{descripcion}</p>
-      <small className="mt-auto w-full h-8 flex gap-1 items-center">
-        <Link
-          className="flex gap-1 items-center max-w-[75%] hover:bg-(--bg-surface-muted) rounded-2xl pr-2 transition-bg-color duration-300"
-          to={`/perfil/${encodeURIComponent(autor.codigo_usuario)}`}
+      <div className="bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] absolute inset-0 w-full h-full group-hover:animate-pulse group-hover:[animation-duration:2s]" />
+      <div className="absolute flex flex-col gap-4 p-4 pr-3 w-full h-full ">
+        <h3
+          className="font-bold text-2xl w-full  line-clamp-3 break-all animate-none"
+          title={titulo}
         >
-          <div className="aspect-square h-8 relative ">
-            <img
-              src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
-              style={{ opacity: imagenCargada ? 0 : 1 }}
-              className="absolute object-cover rounded-full aspect-square w-full h-full"
-            />
-            <img
-              src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}`}
-              style={{ opacity: imagenCargada ? 1 : 0 }}
-              onLoad={() => setImagenCargada(true)}
-              className="object-cover rounded-full aspect-square w-full h-full"
-            />
+          {titulo}
+        </h3>
+        <p className="w-full line-clamp-3 hidden">{descripcion}</p>
+        <small className="mt-auto w-full h-8 flex gap-1 items-center">
+          <div
+            className="flex gap-1 items-center max-w-[75%] hover:bg-(--bg-surface-muted) rounded-2xl pr-2 transition-bg-color duration-300"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate(`/perfil/${encodeURIComponent(autor.codigo_usuario)}`);
+            }}
+          >
+            <div className="aspect-square h-8 relative ">
+              <img
+                src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
+                className="absolute object-cover rounded-full aspect-square w-full h-full"
+              />
+            </div>
+            <p className="font-bold truncate">{autor.nombre_usuario}</p>
           </div>
-          <p className="font-bold truncate">{autor.nombre_usuario}</p>
-        </Link>
-        <div className="ml-auto">
-          <MasOpciones>
-            <button
-              className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <Hammer />
-              <p className="w-full justify-center">En Proceso</p>
-            </button>
-            {opciones}
-          </MasOpciones>
-        </div>
-      </small>
-    </MotionLink>
+          <div className="ml-auto">
+            <MasOpciones>
+              <button
+                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <Hammer />
+                <p className="w-full justify-center">En Proceso</p>
+              </button>
+              {opciones}
+            </MasOpciones>
+          </div>
+        </small>
+      </div>
+    </Link>
   );
 }
 
@@ -211,12 +201,11 @@ export function HistoriaCardEditar({
   visibilidad,
   autor,
 }: HistoriaCardProps) {
-  const [imagenCargada, setImagenCargada] = useState(false);
-
+  const navigate = useNavigate();
   return (
-    <MotionLink
+    <Link
       to={`/historia/${encodeURIComponent(idh)}`}
-      className=" relative bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] border-[#6f675d]/50 flex flex-col gap-4 border border-dotted flex-none w-50 sm:w-full h-50 p-4 pr-3 "
+      className="bg-radial from-[#d9cebc] via-[#f3efe7] to-[#b3d4bf] group relative  border-[#6f675d]/50  border border-dotted flex-none w-50 sm:w-full h-50"
     >
       {!visibilidad && (
         <BookLock
@@ -224,83 +213,90 @@ export function HistoriaCardEditar({
           className="bg-(--neutral-150) absolute -top-3 -right-3 p-0.5 rounded-full"
         />
       )}
-      <h3 className="font-bold text-2xl w-full line-clamp-3" title={titulo}>
-        {titulo}
-      </h3>
-      <p className="w-full line-clamp-3 hidden">{descripcion}</p>
-      <small className="mt-auto w-full h-8 flex gap-1 items-center ">
-        <Link
-          className="flex gap-1 items-center  hover:bg-(--bg-surface-muted) rounded-2xl pr-2 max-w-[75%] transition-bg-color duration-300"
-          to={`/perfil/${encodeURIComponent(autor.codigo_usuario)}`}
-        >
-          <div className="aspect-square h-8 relative">
-            <img
-              src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
-              style={{ opacity: imagenCargada ? 0 : 1 }}
-              className="absolute object-cover rounded-full aspect-square w-full h-full"
-            />
-            <img
-              src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}`}
-              style={{ opacity: imagenCargada ? 1 : 0 }}
-              onLoad={() => setImagenCargada(true)}
-              className="object-cover rounded-full aspect-square w-full h-full"
-            />
+      <div className="bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] absolute inset-0 w-full h-full group-hover:animate-pulse group-hover:[animation-duration:2s]" />
+      <div className="absolute flex flex-col gap-4 p-4 pr-3 w-full h-full ">
+        <h3 className="font-bold text-2xl w-full line-clamp-3" title={titulo}>
+          {titulo}
+        </h3>
+        <p className="w-full line-clamp-3 hidden">{descripcion}</p>
+        <small className="mt-auto w-full h-8 flex gap-1 items-center ">
+          <div
+            className="flex gap-1 items-center  hover:bg-(--bg-surface-muted) rounded-2xl pr-2 max-w-[75%] transition-bg-color duration-300"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate(`/perfil/${encodeURIComponent(autor.codigo_usuario)}`);
+            }}
+          >
+            <div className="aspect-square h-8 relative">
+              <img
+                src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
+                className="absolute object-cover rounded-full aspect-square w-full h-full"
+              />
+            </div>
+            <p className="font-bold truncate">{autor.nombre_usuario}</p>
           </div>
-          <p className="font-bold truncate">{autor.nombre_usuario}</p>
-        </Link>
 
-        <div className="ml-auto">
-          <MasOpciones>
-            <Link
-              to={`/editor?id_historia=${encodeURIComponent(idh)}`}
-              className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
-            >
-              <FilePenLine />
-              <p className="w-full justify-center">Editar</p>
-            </Link>
-            <button
-              className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <Hammer />
-              <p className="w-full justify-center">En Proceso</p>
-            </button>
-            <button
-              className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <Hammer />
-              <p className="w-full justify-center">En Construccion</p>
-            </button>
-          </MasOpciones>
-        </div>
-      </small>
-    </MotionLink>
+          <div className="ml-auto">
+            <MasOpciones>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  navigate(`/editor?id_historia=${encodeURIComponent(idh)}`);
+                }}
+                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+              >
+                <FilePenLine />
+                <p className="w-full justify-center">Editar</p>
+              </div>
+              <button
+                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <Hammer />
+                <p className="w-full justify-center">En Proceso</p>
+              </button>
+              <button
+                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+              >
+                <Hammer />
+                <p className="w-full justify-center">En Construccion</p>
+              </button>
+            </MasOpciones>
+          </div>
+        </small>
+      </div>
+    </Link>
   );
 }
 
 export function HistoriaCardCargando() {
+  const [color] = useState(ColorRandom());
+  const [color2] = useState(ColorRandom());
+  const [color3] = useState(ColorRandom());
   return (
     <div className="bg-(--bg-surface) border border-(--border-default) border-dotted flex-none w-50 sm:w-full h-50">
       <div className="flex flex-col gap-4 w-full h-full p-4 pt-6 animate-pulse">
         <h3 className="w-full flex flex-col gap-3">
           <div
             className="min-h-6 w-full rounded-sm border-[#6f675d]/50 border"
-            style={{ backgroundColor: ColorRandom() }}
+            style={{ backgroundColor: color }}
           />
           <div
             className="min-h-6 w-full rounded-sm border-[#6f675d]/50 border"
-            style={{ backgroundColor: ColorRandom() }}
+            style={{ backgroundColor: color2 }}
           />
           <div
             className="min-h-6 w-full rounded-sm border-[#6f675d]/50 border"
-            style={{ backgroundColor: ColorRandom() }}
+            style={{ backgroundColor: color3 }}
           />
         </h3>
 
@@ -327,10 +323,10 @@ export function HistoriaCard_vision({
   visibilidad = true,
   autor,
 }: HistoriaCardProps) {
-  const [imagenCargada, setImagenCargada] = useState(false);
+  const navigate = useNavigate();
 
   return (
-    <MotionLink
+    <Link
       to={`/historia/${encodeURIComponent(idh)}`}
       className="relative bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] border-[#6f675d]/50 flex flex-row gap-4 border border-dotted w-full sm:w-full h-50 p-4 pr-3 "
     >
@@ -344,25 +340,18 @@ export function HistoriaCard_vision({
         <h3 className="font-bold text-2xl w-full  line-clamp-2">{titulo}</h3>
         <p className="w-full line-clamp-3">{descripcion}</p>
         <small className="mt-auto w-full h-8 flex gap-1 items-center">
-          <Link
+          <div
             className="flex gap-1 items-center max-w-[75%] hover:bg-(--bg-surface-muted) rounded-2xl pr-2 transition-bg-color duration-300"
-            to={`/perfil/${encodeURIComponent(autor.codigo_usuario)}`}
+            onClick={() => navigate(`/perfil/${encodeURIComponent(autor.codigo_usuario)}`)}
           >
             <div className="aspect-square h-8 relative ">
               <img
                 src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
-                style={{ opacity: imagenCargada ? 0 : 1 }}
                 className="absolute object-cover rounded-full aspect-square w-full h-full"
-              />
-              <img
-                src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}`}
-                style={{ opacity: imagenCargada ? 1 : 0 }}
-                onLoad={() => setImagenCargada(true)}
-                className="object-cover rounded-full aspect-square w-full h-full"
               />
             </div>
             <p className="font-bold truncate">{autor.nombre_usuario}</p>
-          </Link>
+          </div>
           <div className="ml-auto">
             <MasOpciones>
               <button
@@ -379,6 +368,6 @@ export function HistoriaCard_vision({
           </div>
         </small>
       </div>
-    </MotionLink>
+    </Link>
   );
 }

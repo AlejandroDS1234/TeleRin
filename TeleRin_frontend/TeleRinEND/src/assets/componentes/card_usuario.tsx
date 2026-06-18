@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useSeguir, useDejarDeSeguir } from "../../pages/hook/usuario/hookSeguir";
-import { Loader, CircleUserRound } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import { ColorRandom } from "../../function_generales";
 
 type CardUsuarioProps = {

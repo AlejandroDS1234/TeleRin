@@ -32,7 +32,7 @@ function FormularioRegistro() {
       setRes(res);
     } catch (error) {
       setRes({ mensaje: "Error de conexión", tipo: "danger" });
-      console.log(error);
+      console.log("Error en registrarse: ", error);
     } finally {
       setCargando(false);
     }

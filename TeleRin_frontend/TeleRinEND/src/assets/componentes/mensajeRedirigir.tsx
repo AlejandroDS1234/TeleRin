@@ -6,7 +6,6 @@ import type { RedirectPayload } from "../../types";
 function UseMensajeRedirigir() {
   const location = useLocation();
   const state = location.state as RedirectPayload["mensaje_redirigir"] | null;
-  console.log("estate " + state);
   useEffect(() => {
     if (state) {
       window.history.replaceState({}, document.title);

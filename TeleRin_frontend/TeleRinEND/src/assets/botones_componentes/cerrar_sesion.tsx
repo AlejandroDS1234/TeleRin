@@ -38,11 +38,10 @@ function CerrarSesion({ boton }: CerrarSesionProps) {
             onClick={() => {
               cerrarSesion.mutate(undefined, {
                 onSuccess: (data) => {
-                  console.log(data);
                   redirigir(navigate, data);
                 },
                 onError: (error) => {
-                  console.log(error);
+                  console.log("Error al cerrar sesión:", error);
                 },
               });
               sessionStorage.clear();

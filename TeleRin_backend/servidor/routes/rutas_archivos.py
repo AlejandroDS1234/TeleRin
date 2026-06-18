@@ -12,8 +12,8 @@ def perfil_img(filename):
 
 @archivos_bp.route("/api/Fotos/fotos_sagas/<filename>")
 def fotos_saga(filename):
-    # Obtener el parámetro "size" del URL
+    tamaños = {'full': '', 'reducida': '_reducida', 'card': '_card'}
     size = request.args.get('size', 'full')  # default: 'full'
-    if size == 'reducida':
-        filename = filename.replace('.webp', '_reducida.webp')
+    if size in tamaños:
+        filename = filename.replace('.webp', tamaños[size] + '.webp')
     return send_from_directory("Fotos/fotos_sagas", filename)

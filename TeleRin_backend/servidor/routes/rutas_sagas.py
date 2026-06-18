@@ -39,7 +39,7 @@ def crear_saga():
     if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>500:
         return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
     imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
-    guardar_imagen(imagen_saga, imagen_saga_ruta)
+    guardar_imagen(imagen_saga, imagen_saga_ruta, "saga")
     saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": usuario_actual["codigo_usuario"]}
     insertar_db("saga", saga)
     hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})

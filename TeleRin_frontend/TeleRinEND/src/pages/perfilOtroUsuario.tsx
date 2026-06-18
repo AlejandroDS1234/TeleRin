@@ -206,7 +206,6 @@ function BotonSeguir() {
   const mutateSeguir = useSeguir();
   const mutateDejarDeSeguir = useDejarDeSeguir();
   const { data } = useSiguiendoUsuario(codigo_usuario);
-  console.log(data);
 
   return !data?.siguiendo ? (
     <button

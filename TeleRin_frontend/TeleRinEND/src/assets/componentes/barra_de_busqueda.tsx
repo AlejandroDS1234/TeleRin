@@ -3,11 +3,8 @@ import { useState } from "react";
 function BarraDeBusqueda() {
   const [busqueda, setBusqueda] = useState("");
 
-  const manejarBusqueda = (e) => {
+  const manejarBusqueda = (e: any) => {
     e.preventDefault();
-
-    // Aquí el backend agregará la lógica real
-    console.log("Buscando:", busqueda);
   };
 
   return (

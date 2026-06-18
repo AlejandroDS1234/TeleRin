@@ -21,7 +21,6 @@ export async function sesion(columnas?: string): Promise<Usuario | null> {
     },
   });
   const data = await response.json();
-  console.log("Respuesta del servidor:", data, "Columna solicitada:", columnas);
   return data;
 }
 

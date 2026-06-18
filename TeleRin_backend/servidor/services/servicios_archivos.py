@@ -30,24 +30,32 @@ def validar_imagen_completa(file, max_mb=5, min_w=300, min_h=300):
     if w < min_w or h < min_h:
         return f"La imagen debe ser mínimo {min_w}x{min_h} px", True
     return None, False   
-
+    
 def generar_imagen_reducida(imagen_file, ancho=150, alto=150):
     """Genera una versión pequeña y comprimida de la imagen"""
-    img = Image.open(imagen_file)
+    img = imagen_file.copy()
     # Redimensiona manteniendo proporción
     img.thumbnail((ancho, alto), Image.Resampling.LANCZOS)
-    # Convertir a RGB si es necesario (para guardar como JPEG)
-    if img.mode in ('RGBA', 'P'):
-        img = img.convert('RGB')
     return img
 
-def guardar_imagen(imagen, ruta):
-    # Abrimos la imagen
-    img_pil = Image.open(imagen)
-    img_pil.save(ruta, "WEBP", quality=85)
-    imagen.seek(0) # Reiniciamos el stream original para generar la reducida
+def guardar_imagenes_saga(img, ruta):
+    imagen = img.copy()
+    card = generar_imagen_reducida(imagen, 300, 300)
     reducida = generar_imagen_reducida(imagen, 150, 150)
-    reducida.save(ruta.replace(".webp", "_reducida.webp"), "WEBP", quality=40)
+    card.save(ruta.replace(".webp", "_card.webp"), "WEBP", quality=85, optimize=True)
+    reducida.save(ruta.replace(".webp", "_reducida.webp"), "WEBP", quality=40, optimize=True)
+    imagen.save(ruta, "WEBP", quality=85, optimize=True)
+    
+def guardar_imagen_perfil(img, ruta):
+    imagen = img.copy()
+    reducida = generar_imagen_reducida(imagen, 150, 150)
+    imagen.save(ruta, "WEBP", quality=85, optimize=True)
+    reducida.save(ruta.replace(".webp", "_reducida.webp"), "WEBP", quality=40, optimize=True)
+
+def guardar_imagen(imagen, ruta, tipo):
+    tipos={"perfil": guardar_imagen_perfil, "saga": guardar_imagenes_saga}
+    img_pil = Image.open(imagen)
+    tipos[tipo](img_pil, ruta)
     
 def tratar_img_google(imagen, codigo_usuario):
     foto = requests.get(imagen)

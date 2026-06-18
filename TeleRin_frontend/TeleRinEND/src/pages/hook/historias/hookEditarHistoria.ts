@@ -3,7 +3,7 @@ import {
   crearBorradorHistoria,
   guardarBorradorHistoria,
 } from "../../api/historias/apiEditarHistoria";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import type Delta from "quill-delta";
 
 type EditarHistoriaDatos = {

@@ -47,7 +47,7 @@ def guardar_foto_perfil():
         if resultado:
             return jsonify({"mensaje": mensaje, "tipo": "danger"})
         nombre_archivo, ruta=ruta_guardado(usuario_actual["codigo_usuario"], "_perfil", "Fotos/perfil")
-        guardar_imagen(imagen, ruta)
+        guardar_imagen(imagen, ruta, "perfil")
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": usuario_actual["correo_usuario"]})
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
     

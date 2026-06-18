@@ -37,7 +37,7 @@ function Morris_salir() {
   }, [rive, triggerGrande, triggerPequeno]);
 
   return (
-    <div className="w-[400px] h-[400px] lg:w-[80vh] lg:h-[80vh]">
+    <div className="w-100 h-100 lg:w-[80vh] lg:h-[80vh]">
       <RiveComponent />
     </div>
   );

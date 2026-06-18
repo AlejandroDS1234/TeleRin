@@ -3,6 +3,5 @@ export async function historiasSagas(id_saga: string) {
     method: "POST",
   });
   const data = await response.json();
-  console.log(data);
   return data;
 }

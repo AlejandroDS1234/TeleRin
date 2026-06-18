@@ -1,4 +1,3 @@
-import { Book, Loader } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -24,8 +23,6 @@ type SagasCardHorizontalProps = {
   className?: string;
 };
 
-const MotionLink = motion(Link);
-
 function Lineas({ grosor, espaciado, cantidad = 2 }: LineasProps) {
   return (
     <div className="flex flex-col w-full justify-center" style={{ gap: espaciado }}>
@@ -37,8 +34,7 @@ function Lineas({ grosor, espaciado, cantidad = 2 }: LineasProps) {
 }
 
 export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardProps) {
-  const [imagenCargada, setImagenCargada] = useState(false);
-
+  const [color] = useState(ColorRandom());
   return (
     <Link
       to={`/sagas/${encodeURIComponent(ids)}`}
@@ -60,18 +56,11 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
         </div>
       </div>
 
-      <div className="relative mt-auto h-43 w-full" style={{ backgroundColor: ColorRandom() }}>
+      <div className="relative mt-auto h-43 w-full" style={{ backgroundColor: color }}>
         <img
-          src={`/api/Fotos/fotos_sagas/${img}?size=reducida`}
+          src={`/api/Fotos/fotos_sagas/${img}?size=card`}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: !imagenCargada ? 1 : 0 }}
-        />
-
-        <img
-          className="mt-auto h-43 w-full object-cover transition-opacity duration-300"
-          style={{ opacity: imagenCargada ? 1 : 0 }}
-          src={`/api/Fotos/fotos_sagas/${img}`}
-          onLoad={() => setImagenCargada(true)}
+          loading="lazy"
         />
       </div>
 
@@ -93,7 +82,7 @@ export function Sagacard({ ids, img, titulo, descripcion, libros }: SagasCardPro
 
 export function SagaCardCargando() {
   return (
-    <div className="p-4 bg-(--bg-surface) flex flex-col items-center gap-1 border-2 border-(--border-default) border-double h-70 w-50 sm:w-full">
+    <div className="p-4 bg-(--bg-surface) flex flex-col items-center gap-1 border-2 border-(--border-default) flex-none border-double h-70 w-50 sm:w-full">
       <div className="flex flex-col items-center gap-1.5 w-full">
         <div className="flex flex-col w-full justify-center items-center gap-px">
           <div className="bg-(--border-default) w-full border-(--border-default) h-[1.5px]" />
@@ -116,22 +105,12 @@ export function SagaCardCargando() {
 }
 
 export function SagasCardHorizontal({ img, titulo, className = "" }: SagasCardHorizontalProps) {
-  const [imagenCargada, setImagenCargada] = useState(false);
-
   return (
     <div className={`flex items-center gap-4 py-1 px-3 ${className}`}>
       <div className="relative aspect-square h-full">
         <img
-          src={`/api/Fotos/fotos_sagas/${img}?size=reducida`}
+          src={`/api/Fotos/fotos_sagas/${img}?size=card`}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: !imagenCargada ? 1 : 0 }}
-        />
-
-        <img
-          className="aspect-square h-full transition-opacity duration-300"
-          style={{ opacity: imagenCargada ? 1 : 0 }}
-          src={`/api/Fotos/fotos_sagas/${img}`}
-          onLoad={() => setImagenCargada(true)}
         />
       </div>
       <p className="truncate font-bold">{titulo}</p>
