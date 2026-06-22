@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict WNbnNsM7QdXLCt8GVUDnQpEHQMKKhboTraubZc14LS9I8dlggpYsy0naPhKhOz4
+\restrict xeHBV1dKVQdH7MZaQgJn90VDhfVEoEtPdW0f2Bp4vfGmZiGLW33UtHwCLRVEo6z
 
 -- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-06-18 00:04:00
+-- Started on 2026-06-22 10:25:21
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -365,7 +365,6 @@ COPY public.calificacion_historia (codigo_usuario, id_historia, calificacion) FR
 765874ducua	-historia-765874ducua--prueba de mensaje redirigir	1
 121384lovic	-historia-765874ducua--inicio-765874ducua-La Saga de Cientopitos-Capítulo 1	2
 121384lovic	-historia-765874ducua--El eco en el viento de palmira	3
-765874ducua	-historia-765874ducua--461802	3
 765874ducua	-historia-876148magia--inicio-876148magia-Saga de testeo-Las noches boca arriba 2	1
 765874ducua	-historia-765874ducua--inicio-765874ducua-La Saga de Cientopitos-Capítulo 4	3
 876148magia	-historia-876148magia--inicio-876148magia-Saga de testeo-Las noches boca arriba	1
@@ -447,9 +446,9 @@ COPY public.historial (id_historia, tiempo_vista, codigo_usuario) FROM stdin;
 -historia-765874ducua--inicio-765874ducua-La Saga de Cientopitos-Capítulo 1	2026-06-04 22:15:00	876148magia
 -historia-765874ducua--El eco en el viento de palmira	2026-06-14 15:19:20	765874ducua
 765874ducua-ca886ff0-ebbb-4436-85f7-cfd42a99015c	2026-06-14 21:33:34	765874ducua
--historia-765874ducua--461802	2026-06-15 13:39:26	765874ducua
 -historia-765874ducua--inicio-765874ducua-La Saga de Cientopitos-Capítulo 1	2026-06-02 12:05:33	765874ducua
 -historia-765874ducua--inicio-765874ducua-La Saga de Cientopitos-Capítulo 4	2026-06-02 12:09:41	765874ducua
+-historia-765874ducua--461802	2026-06-19 01:14:09	765874ducua
 -historia-876148magia--inicio-876148magia-Saga de testeo-Las noches boca arriba 2	2026-06-03 03:56:43	765874ducua
 \.
 
@@ -1117,11 +1116,11 @@ ALTER TABLE ONLY public.paletas
     ADD CONSTRAINT paletas_codigo_usuario_fkey FOREIGN KEY (codigo_usuario) REFERENCES public."USUARIOS"(codigo_usuario) NOT VALID;
 
 
--- Completed on 2026-06-18 00:04:00
+-- Completed on 2026-06-22 10:25:21
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict WNbnNsM7QdXLCt8GVUDnQpEHQMKKhboTraubZc14LS9I8dlggpYsy0naPhKhOz4
+\unrestrict xeHBV1dKVQdH7MZaQgJn90VDhfVEoEtPdW0f2Bp4vfGmZiGLW33UtHwCLRVEo6z
 

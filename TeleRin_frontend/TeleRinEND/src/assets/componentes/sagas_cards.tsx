@@ -109,8 +109,9 @@ export function SagasCardHorizontal({ img, titulo, className = "" }: SagasCardHo
     <div className={`flex items-center gap-4 py-1 px-3 ${className}`}>
       <div className="relative aspect-square h-full">
         <img
-          src={`/api/Fotos/fotos_sagas/${img}?size=card`}
+          src={`/api/Fotos/fotos_sagas/${img}?size=reducida`}
           className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
         />
       </div>
       <p className="truncate font-bold">{titulo}</p>

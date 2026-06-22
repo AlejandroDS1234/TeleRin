@@ -169,6 +169,7 @@ export function HistoriaCard({
               <img
                 src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
                 className="absolute object-cover rounded-full aspect-square w-full h-full"
+                loading="lazy"
               />
             </div>
             <p className="font-bold truncate">{autor.nombre_usuario}</p>
