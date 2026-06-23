@@ -91,7 +91,7 @@ function Navbar() {
           {/* Placeholder borroso (imagen reducida) */}
           <img
             src={`/api/Fotos/perfil/${usuario?.foto_perfil_usuario}?size=reducida&t=${usuario?.refrescado ?? 0}`}
-            className="absolute inset-0 w-full h-full object-cover rounded-full border-2 border-black"
+            className={`absolute inset-0 w-full h-full object-cover rounded-full border-2 ${resaltado === "/perfil" ? "border-(--interactive-selected)" : "border-(--border-default)"}`}
           />
         </motion.div>
 

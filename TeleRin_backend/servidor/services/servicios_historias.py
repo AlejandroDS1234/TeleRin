@@ -2,6 +2,7 @@ from servidor.services.servicios_texto import hay_caracteres_repetidos
 from servidor.core.db import dato_en_db, conectar
 from servidor.core.decoradores import necesita
 from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
+import psycopg2.extras
 
 @necesita("usuario", sesion_iniciada)
 def verificar_nommbre_historia(nombre: str, id_saga: str, id_historia: str):
@@ -53,3 +54,17 @@ def verificar_id(id: str):
     if not dato_en_db(None, {"id_historia": id, "codigo_usuario": obtener_usuario()["codigo_usuario"]}, "historias"):
         return {"mensaje": "No tienes acceso a esta historia", "tipo": "warning"}
     return False
+
+def obtener_info_todas_historias():
+     with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, u.foto_perfil_usuario,COUNT(ch.calificacion) AS vistas, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion, h.visibilidad_historia, COALESCE(array_agg(hs.nombre_hashtag) FILTER (WHERE hh.id_hashtag IS NOT NULL), '{}') AS hashtags, h.contenido_historia FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario LEFT JOIN hashtags_historias hh ON h.id_historia = hh.id_historia LEFT JOIN hashtags hs ON hh.id_hashtag = hs.id_hashtag WHERE h.publicada = TRUE GROUP BY h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, h.visibilidad_historia, h.fecha_actualizacion, h.contenido_historia""")
+            historias=cursor.fetchall()
+            return historias
+
+def obtener_info_historia(id_historia):
+      with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, u.foto_perfil_usuario,COUNT(ch.calificacion) AS vistas, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion, h.visibilidad_historia, COALESCE(array_agg(hs.nombre_hashtag) FILTER (WHERE hh.id_hashtag IS NOT NULL), '{}') AS hashtags, h.contenido_historia FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario LEFT JOIN hashtags_historias hh ON h.id_historia = hh.id_historia LEFT JOIN hashtags hs ON hh.id_hashtag = hs.id_hashtag WHERE h.publicada = TRUE AND h.id_historia= %s GROUP BY h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, h.visibilidad_historia, h.fecha_actualizacion, h.contenido_historia""", (id_historia,))
+            historia=cursor.fetchone()
+            return historia

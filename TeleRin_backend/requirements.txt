@@ -22,3 +22,4 @@ qrcode
 google-auth
 requests
 apscheduler
+elasticsearch==8.14.0

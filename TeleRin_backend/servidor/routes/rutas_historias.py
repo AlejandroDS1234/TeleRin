@@ -6,10 +6,10 @@ import uuid
 from servidor.core.db import conectar, dato_en_db, insertar_db, actualizar_datos
 from servidor.core.decoradores import necesita
 from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
-from servidor.services.servicios_texto import detectar_idioma, obtener_hashtags
-from servidor.services.servicios_historias import verificar_nommbre_historia, verificar_descripcion_historia, verificar_saga, verificar_historia, verificar_id
-
-
+from servidor.services.servicios_texto import detectar_idioma, obtener_hashtags, delta_texto
+from servidor.services.servicios_historias import verificar_nommbre_historia, verificar_descripcion_historia, verificar_saga, verificar_historia, verificar_id, obtener_info_historia
+from servidor.services.servicios_busqueda import indexar_historia, actualizar_documento_historia
+   
 historias_bp = Blueprint("historias", __name__)
 
 def hashtag_db(texto: str, id: str, tabla_campo: str):
@@ -67,6 +67,12 @@ def crear_historia():
     mensaje = "Historia actualizada" if publicada else "Historia creada"
     actualizar_datos("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "id_saga": saga_historia, "contenido_historia": historia, "idioma": idioma, "visibilidad_historia": visivilidad_historia, "publicada": True, "borrador_historia": None}, {"id_historia": id_historia})
     hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
+    if not publicada:
+        indexar_historia(obtener_info_historia(id_historia))
+    else:
+        info_h = obtener_info_historia(id_historia)
+        info_h["contenido_historia"] = delta_texto(info_h["contenido_historia"])
+        actualizar_documento_historia(id_historia, obtener_info_historia(id_historia))
     return jsonify({"redirigir": redirigir, "mensaje_redirigir": {"mensaje": mensaje, "tipo": "success"}, "id_historia": id_historia})
 
 @historias_bp.route("/api/borrador_historia", methods=["POST"])
@@ -116,9 +122,7 @@ def guardar_borrador_historia():
             cursor.execute("SELECT id_historia FROM historias WHERE id_historia = %s AND codigo_usuario = %s", (id_historia, usuario_actual["codigo_usuario"]))
             historia_usuario=cursor.fetchall()
             if not historia_usuario:
-                print("jjjjjjjjjjjjjjjjjjjjj")
                 return jsonify({"redirigir": "/inicio", "mensaje_redirigir":{"mensaje": "Historia no disponible", "tipo": "danger"}})
-    print("hhhhhhhhhhhhhhhhhh")
     actualizar_datos("historias", {"borrador_historia": borrador_historia}, {"id_historia": id_historia})
     return jsonify({"mensaje": "Borrador guardado", "tipo": "success"})
 

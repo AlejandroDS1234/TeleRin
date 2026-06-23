@@ -94,3 +94,14 @@ def detectar_idioma(texto):
     except:
         idioma = "es"
     return idiomas_soportados.get(idioma, 'spanish')
+
+def delta_texto(delta):
+    texto_final = []
+    # Iterar sobre cada operación en el diccionario 'ops'
+    for operacion in delta.get("ops", []):
+        # Asegurarse de que la operación sea de inserción y contenga texto
+        if "insert" in operacion and isinstance(operacion["insert"], str):
+            texto_final.append(operacion["insert"])
+            
+    # Unir todos los fragmentos de texto en una sola cadena
+    return "".join(texto_final)

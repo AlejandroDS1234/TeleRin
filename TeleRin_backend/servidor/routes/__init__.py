@@ -8,6 +8,7 @@ from .rutas_archivos import archivos_bp
 from .rutas_pruebas import pruebas_bp
 from .rutas_listas_lectura import listas_lectura_bp
 from .rutas_usuarios import usuarios_bp
+from .rutas_busqueda import buscar_bp
 
 # Lista de todos los blueprints para facilitar el registro masivo
 all_blueprints = [
@@ -20,5 +21,6 @@ all_blueprints = [
     archivos_bp,
     pruebas_bp,
     listas_lectura_bp,
-    usuarios_bp
+    usuarios_bp,
+    buscar_bp
 ]
