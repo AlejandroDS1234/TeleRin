@@ -55,16 +55,16 @@ def verificar_id(id: str):
         return {"mensaje": "No tienes acceso a esta historia", "tipo": "warning"}
     return False
 
-def obtener_info_todas_historias():
-     with conectar() as db:
+def obtener_info_todas_historias():  
+    with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, u.foto_perfil_usuario,COUNT(ch.calificacion) AS vistas, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion, h.visibilidad_historia, COALESCE(array_agg(hs.nombre_hashtag) FILTER (WHERE hh.id_hashtag IS NOT NULL), '{}') AS hashtags, h.contenido_historia FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario LEFT JOIN hashtags_historias hh ON h.id_historia = hh.id_historia LEFT JOIN hashtags hs ON hh.id_hashtag = hs.id_hashtag WHERE h.publicada = TRUE GROUP BY h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, h.visibilidad_historia, h.fecha_actualizacion, h.contenido_historia""")
+            cursor.execute("""SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, u.foto_perfil_usuario,COUNT(ch.calificacion) AS vistas, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion, h.visibilidad_historia, COALESCE(array_agg(hs.nombre_hashtag) FILTER (WHERE hh.id_hashtag IS NOT NULL), '{}') AS hashtags, h.contenido_historia, h.id_saga, s.nombre_saga FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario LEFT JOIN hashtags_historias hh ON h.id_historia = hh.id_historia LEFT JOIN hashtags hs ON hh.id_hashtag = hs.id_hashtag LEFT JOIN saga s ON h.id_saga = s.id_saga WHERE h.publicada = TRUE GROUP BY h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, h.visibilidad_historia, h.fecha_actualizacion, h.contenido_historia, h.id_saga, s.nombre_saga""")
             historias=cursor.fetchall()
             return historias
-
+  
 def obtener_info_historia(id_historia):
-      with conectar() as db:
+    with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, u.foto_perfil_usuario,COUNT(ch.calificacion) AS vistas, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion, h.visibilidad_historia, COALESCE(array_agg(hs.nombre_hashtag) FILTER (WHERE hh.id_hashtag IS NOT NULL), '{}') AS hashtags, h.contenido_historia FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario LEFT JOIN hashtags_historias hh ON h.id_historia = hh.id_historia LEFT JOIN hashtags hs ON hh.id_hashtag = hs.id_hashtag WHERE h.publicada = TRUE AND h.id_historia= %s GROUP BY h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, h.visibilidad_historia, h.fecha_actualizacion, h.contenido_historia""", (id_historia,))
+            cursor.execute("""SELECT h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, u.foto_perfil_usuario,COUNT(ch.calificacion) AS vistas, ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion, h.visibilidad_historia, COALESCE(array_agg(hs.nombre_hashtag) FILTER (WHERE hh.id_hashtag IS NOT NULL), '{}') AS hashtags, h.contenido_historia, h.id_saga, s.nombre_saga FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario LEFT JOIN hashtags_historias hh ON h.id_historia = hh.id_historia LEFT JOIN hashtags hs ON hh.id_hashtag = hs.id_hashtag LEFT JOIN saga s ON h.id_saga = s.id_saga WHERE h.publicada = TRUE AND h.id_historia= %s GROUP BY h.id_historia, h.nombre_historia, h.descripcion_historia, u.nombre_usuario, u.codigo_usuario, h.visibilidad_historia, h.fecha_actualizacion, h.contenido_historia, h.id_saga, s.nombre_saga""", (id_historia,))
             historia=cursor.fetchone()
             return historia

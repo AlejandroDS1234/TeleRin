@@ -15,6 +15,7 @@ from servidor.services.servicios_archivos import (
     validar_imagen_completa,
     guardar_imagen,
 )
+from servidor.services.servicios_busqueda import actualizar_autor_indices
 
 perfil_bp = Blueprint("perfil", __name__)
 
@@ -25,10 +26,8 @@ def perfil():
     if not usuario_actual:
         return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
     form = request.get_json()
-    print(form)
     clave, dato =  list(form.items())[0]
     dato = dato.strip()
-    print(clave, dato)
     mensaje=verificaciones[clave](dato)
     if mensaje["tipo"] == "success":
         actualizar_datos("USUARIOS", {clave: dato}, {"codigo_usuario": usuario_actual["codigo_usuario"]})
@@ -49,6 +48,7 @@ def guardar_foto_perfil():
         nombre_archivo, ruta=ruta_guardado(usuario_actual["codigo_usuario"], "_perfil", "Fotos/perfil")
         guardar_imagen(imagen, ruta, "perfil")
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": usuario_actual["correo_usuario"]})
+        actualizar_autor_indices(usuario_actual["codigo_usuario"], { "foto_perfil_usuario": nombre_archivo })
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
     
     

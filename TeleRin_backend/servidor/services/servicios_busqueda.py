@@ -14,11 +14,7 @@ def actualizar_documento_historia(id_historia, cambios):
         index="historias",
         id=id_historia,
         doc=cambios
-    )
-    
-    
-
-
+    )  
 
 def _buscar(indice, consulta, limite=20):
     return es.search(
@@ -58,3 +54,23 @@ def buscar_historias(texto, visiblilidad = True):
 
     respuesta = _buscar("historias", consulta)
     return [hit["_source"] for hit in respuesta["hits"]["hits"]]
+
+def actualizar_autor_indices(codigo_usuario, cambios):
+    es.update_by_query(
+        index="historias",
+        query={
+            "term": {
+                "codigo_usuario": codigo_usuario
+            }
+        },
+        script={
+            "source": """
+                for (entry in params.campos.entrySet()) {
+                    ctx._source[entry.getKey()] = entry.getValue();
+                }
+            """,
+            "params": {
+                "campos": cambios
+            }
+        }
+    )

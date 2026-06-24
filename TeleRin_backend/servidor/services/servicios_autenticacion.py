@@ -82,8 +82,7 @@ def registrarse_google(nombre: str, correo: str, google_id: str, imagen: str):
     usuario = dato_en_db(correo, "correo_usuario")
     if usuario:
         return jsonify({"mensaje": "Correo ya registrado", "tipo": "warning"})
-    codigo_us_numero=random.randint(100000,999999)
-    codigo_us=f"{codigo_us_numero}{correo[0:5]}"
+    codigo_us=uuid.uuid4()
     
     tratada_img = tratar_img_google(imagen, codigo_us)
     if not tratada_img:

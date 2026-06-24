@@ -37,6 +37,10 @@ function BarraDeBusqueda() {
               key={historia.id_historia}
               className="rounded-lg border border-gray-200 p-4 bg-white shadow-sm"
             >
+              <img
+                src={`/api/Fotos/perfil/${historia.foto_perfil_usuario}?size=reducida`}
+                loading="lazy"
+              ></img>
               <h3 className="font-semibold text-lg">{historia.nombre_historia}</h3>
               <p className="text-sm text-gray-600 mt-1">{historia.descripcion_historia}</p>
               <p className="text-xs text-gray-500 mt-2">Autor: {historia.nombre_usuario}</p>

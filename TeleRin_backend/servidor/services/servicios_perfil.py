@@ -1,6 +1,7 @@
 from servidor.core.db import dato_en_db
 from servidor.services.servicios_sesion import obtener_usuario
 from servidor.services.servicios_texto import hay_caracteres_repetidos
+from servidor.services.servicios_busqueda import actualizar_autor_indices
 
 def verficar_nombre_usuario(data):
     if not data:
@@ -12,6 +13,7 @@ def verficar_nombre_usuario(data):
         return {"mensaje": "Nombre no valido", "tipo": "warning"}
     if len(data)>30 or len(data.split(" "))>4:
         return {"mensaje": "Nombre muy largo", "tipo": "warning"}
+    actualizar_autor_indices(usuario_actual["codigo_usuario"], { "nombre_usuario": data })
     return {"mensaje": "Nombre actualizado", "tipo": "success"}
 
 def verificar_descripcion_usuario(data):
