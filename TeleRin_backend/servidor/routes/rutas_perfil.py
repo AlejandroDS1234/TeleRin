@@ -48,7 +48,7 @@ def guardar_foto_perfil():
         nombre_archivo, ruta=ruta_guardado(usuario_actual["codigo_usuario"], "_perfil", "Fotos/perfil")
         guardar_imagen(imagen, ruta, "perfil")
         actualizar_datos("USUARIOS", {"foto_perfil_usuario": nombre_archivo}, {"correo_usuario": usuario_actual["correo_usuario"]})
-        actualizar_autor_indices(usuario_actual["codigo_usuario"], { "foto_perfil_usuario": nombre_archivo })
+        actualizar_autor_indices(usuario_actual["codigo_usuario"], { "foto_perfil_usuario": nombre_archivo }, "historias")
         return jsonify({"mensaje": "Foto de perfil actualizada", "tipo": "success", "foto_perfil_usuario": nombre_archivo})
     
     

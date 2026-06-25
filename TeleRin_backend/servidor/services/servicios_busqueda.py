@@ -15,6 +15,13 @@ def actualizar_documento_historia(id_historia, cambios):
         id=id_historia,
         doc=cambios
     )  
+    
+def indexar_saga(saga):
+    es.index(
+        index = "sagas",
+        id = saga["id_saga"],
+        document = saga
+    )
 
 def _buscar(indice, consulta, limite=20):
     return es.search(
@@ -55,9 +62,39 @@ def buscar_historias(texto, visiblilidad = True):
     respuesta = _buscar("historias", consulta)
     return [hit["_source"] for hit in respuesta["hits"]["hits"]]
 
-def actualizar_autor_indices(codigo_usuario, cambios):
+def buscar_sagas(texto):
+    consulta = {
+        "bool": {
+            "should": [
+                {
+                    "multi_match": {
+                        "query": texto,
+                        "type": "bool_prefix",
+                        "fields": [
+                            "nombre_saga^4",
+                            "descripcion_saga^2",
+                            "nombre_usuario^3",
+                            "hashtags^5",
+                        ]
+                    }
+                }
+            ],
+            "minimum_should_match": 1
+        }
+    }
+    
+    respuesta = _buscar("sagas", consulta)
+    return [hit["_source"] for hit in respuesta["hits"]["hits"]]
+
+def busqueda_global(texto):
+    return {
+        "historias": buscar_historias(texto),
+        "sagas": buscar_sagas(texto)
+    }
+
+def actualizar_autor_indices(codigo_usuario, cambios, indice):
     es.update_by_query(
-        index="historias",
+        index=indice,
         query={
             "term": {
                 "codigo_usuario": codigo_usuario

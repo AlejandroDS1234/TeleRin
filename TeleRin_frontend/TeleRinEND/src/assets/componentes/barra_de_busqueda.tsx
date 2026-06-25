@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useBuscar } from "../../pages/hook/hookBusqueda";
+import { HistoriaCard } from "./historias_cards";
+import { Sagacard } from "./sagas_cards";
 
 function BarraDeBusqueda() {
   const [searchText, setSearchText] = useState("");
@@ -28,25 +30,39 @@ function BarraDeBusqueda() {
         <p className="text-sm text-gray-600">Escribe algo para buscar historias.</p>
       ) : isLoading ? (
         <p className="text-sm text-gray-600">Buscando...</p>
-      ) : data?.length === 0 ? (
+      ) : data?.historias?.length === 0 && data?.sagas?.length === 0 ? (
         <p className="text-sm text-gray-600">No se encontraron resultados.</p>
       ) : (
-        <div className="grid gap-3">
-          {data?.map((historia: any) => (
-            <div
-              key={historia.id_historia}
-              className="rounded-lg border border-gray-200 p-4 bg-white shadow-sm"
-            >
-              <img
-                src={`/api/Fotos/perfil/${historia.foto_perfil_usuario}?size=reducida`}
-                loading="lazy"
-              ></img>
-              <h3 className="font-semibold text-lg">{historia.nombre_historia}</h3>
-              <p className="text-sm text-gray-600 mt-1">{historia.descripcion_historia}</p>
-              <p className="text-xs text-gray-500 mt-2">Autor: {historia.nombre_usuario}</p>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+            {data?.historias?.map((historia: any) => (
+              <HistoriaCard
+                key={historia.id_historia}
+                idh={historia.id_historia}
+                titulo={historia.nombre_historia}
+                descripcion={historia.descripcion_historia}
+                visibilidad={historia.visiblilidad_historia}
+                autor={{
+                  nombre_usuario: historia.nombre_usuario,
+                  foto_perfil_usuario: historia.foto_perfil_usuario,
+                  codigo_usuario: historia.codigo_usuario,
+                }}
+              />
+            ))}
+          </div>
+          <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+            {data?.sagas?.map((saga: any) => (
+              <Sagacard
+                key={saga.id_saga}
+                ids={saga.id_saga}
+                img={saga.imagen_saga}
+                titulo={saga.nombre_saga}
+                descripcion={saga.descripcion_saga}
+                libros={saga.cantidad_historias}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

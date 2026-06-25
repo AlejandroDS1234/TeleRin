@@ -72,7 +72,7 @@ def crear_historia():
     else:
         info_h = obtener_info_historia(id_historia)
         info_h["contenido_historia"] = delta_texto(info_h["contenido_historia"])
-        actualizar_documento_historia(id_historia, obtener_info_historia(id_historia))
+        actualizar_documento_historia(id_historia, info_h)
     return jsonify({"redirigir": redirigir, "mensaje_redirigir": {"mensaje": mensaje, "tipo": "success"}, "id_historia": id_historia})
 
 @historias_bp.route("/api/borrador_historia", methods=["POST"])
