@@ -2,27 +2,40 @@ from servidor.core.busqueda import obtener_elastic
 
 es = obtener_elastic()
 
-def indexar_historia(historia):
+def indexar(indice, id, datos):
     es.index(
-        index="historias",
-        id = historia["id_historia"],
-        document = historia
-    )
-    
-def actualizar_documento_historia(id_historia, cambios):
-    es.update(
-        index="historias",
-        id=id_historia,
-        doc=cambios
-    )  
-    
-def indexar_saga(saga):
-    es.index(
-        index = "sagas",
-        id = saga["id_saga"],
-        document = saga
+        index=indice,
+        id=id,
+        document=datos
     )
 
+def actualizar_documento(indice, id, cambios):
+    es.update(
+        index=indice,
+        id=id,
+        doc=cambios
+    )
+    
+def actualizar_autor_indices(codigo_usuario, cambios, indice):
+    es.update_by_query(
+        index=indice,
+        query={
+            "term": {
+                "codigo_usuario": codigo_usuario
+            }
+        },
+        script={
+            "source": """
+                for (entry in params.campos.entrySet()) {
+                    ctx._source[entry.getKey()] = entry.getValue();
+                }
+            """,
+            "params": {
+                "campos": cambios
+            }
+        }
+    )
+      
 def _buscar(indice, consulta, limite=20):
     return es.search(
         index=indice,
@@ -92,22 +105,4 @@ def busqueda_global(texto):
         "sagas": buscar_sagas(texto)
     }
 
-def actualizar_autor_indices(codigo_usuario, cambios, indice):
-    es.update_by_query(
-        index=indice,
-        query={
-            "term": {
-                "codigo_usuario": codigo_usuario
-            }
-        },
-        script={
-            "source": """
-                for (entry in params.campos.entrySet()) {
-                    ctx._source[entry.getKey()] = entry.getValue();
-                }
-            """,
-            "params": {
-                "campos": cambios
-            }
-        }
-    )
+

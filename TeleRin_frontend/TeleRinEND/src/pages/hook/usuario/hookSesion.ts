@@ -39,6 +39,7 @@ export function useEditarFotoSesion() {
           foto_perfil_usuario: res.foto_perfil_usuario,
           refrescado: Date.now(),
         }));
+        queryClient.invalidateQueries({ queryKey: ["historias"] });
       }
     },
   });

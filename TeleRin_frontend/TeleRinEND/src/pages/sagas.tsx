@@ -2,7 +2,11 @@ import { useParams } from "react-router-dom";
 import { Loader, BookLock } from "lucide-react";
 import { ColorRandom } from "../function_generales";
 import { useState } from "react";
-import { HistoriaCard_vision, HistoriaCardCargando } from "../assets/componentes/historias_cards";
+import {
+  HistoriaCardCargando,
+  HistoriaCard,
+  HistoriaCardEditar,
+} from "../assets/componentes/historias_cards";
 import { useHistoriasSagas } from "./hook/sagas/hookHistoriasSaga";
 import { useSagaInfo } from "./hook/sagas/hookSagaInfo";
 import type { Historia } from "../types";
@@ -68,6 +72,8 @@ function SagasInfo() {
 function SagasHistorias() {
   const { id_saga = "" } = useParams();
   const { isLoading, error, data } = useHistoriasSagas(id_saga);
+  const Card = data?.editar ? HistoriaCardEditar : HistoriaCard;
+
   if (isLoading) {
     return (
       <>
@@ -87,9 +93,9 @@ function SagasHistorias() {
 
   return (
     <>
-      {data.length ? (
-        data.map((historia: Historia) => (
-          <HistoriaCard_vision
+      {data.historias?.length ? (
+        data.historias?.map((historia: Historia) => (
+          <Card
             key={historia.id_historia}
             idh={historia.id_historia}
             titulo={historia.nombre_historia}

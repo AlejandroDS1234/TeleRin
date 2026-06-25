@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     port: 4210,
     host: true,
-    allowedHosts: ["statutory-worcester-regulations-figure.trycloudflare.com"],
+    allowedHosts: ["hon-med-divided-whatever.trycloudflare.com"],
     watch: {
       usePolling: true, // ← Agregar esto
     },

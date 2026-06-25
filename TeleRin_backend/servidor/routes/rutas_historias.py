@@ -8,7 +8,8 @@ from servidor.core.decoradores import necesita
 from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
 from servidor.services.servicios_texto import detectar_idioma, obtener_hashtags, delta_texto
 from servidor.services.servicios_historias import verificar_nommbre_historia, verificar_descripcion_historia, verificar_saga, verificar_historia, verificar_id, obtener_info_historia
-from servidor.services.servicios_busqueda import indexar_historia, actualizar_documento_historia
+from servidor.services.servicios_busqueda import indexar, actualizar_documento
+from servidor.services.servicios_sagas import obtener_info_saga
    
 historias_bp = Blueprint("historias", __name__)
 
@@ -32,6 +33,12 @@ def guardar_historial(id_historia: str):
     with conectar() as db:
         with db.cursor() as cursor:
             cursor.execute('INSERT INTO "historial" (codigo_usuario, id_historia, tiempo_vista) VALUES (%s, %s, %s) ON CONFLICT (codigo_usuario, id_historia) DO UPDATE SET tiempo_vista = EXCLUDED.tiempo_vista', (codigo_usuario, id_historia, tiempo))
+    info = obtener_info_historia(id_historia)
+    del info["contenido_historia"]
+    actualizar_documento("historias", id_historia, info)
+    if info["id_saga"]:
+        info_saga = obtener_info_saga(info["id_saga"])
+        actualizar_documento("sagas", info["id_saga"], info_saga)
     return jsonify(["guardado #no se usa"])
 
 @historias_bp.route("/api/crear_historia", methods=["POST"])
@@ -67,12 +74,16 @@ def crear_historia():
     mensaje = "Historia actualizada" if publicada else "Historia creada"
     actualizar_datos("historias", {"nombre_historia": nombre_historia, "descripcion_historia": descripcion_historia, "id_saga": saga_historia, "contenido_historia": historia, "idioma": idioma, "visibilidad_historia": visivilidad_historia, "publicada": True, "borrador_historia": None}, {"id_historia": id_historia})
     hashtag_db(descripcion_historia, id_historia, {"tabla": "hashtags_historias", "campo": "id_historia"})
-    if not publicada:
-        indexar_historia(obtener_info_historia(id_historia))
-    else:
-        info_h = obtener_info_historia(id_historia)
-        info_h["contenido_historia"] = delta_texto(info_h["contenido_historia"])
-        actualizar_documento_historia(id_historia, info_h)
+    info_h = obtener_info_historia(id_historia)
+    info_h["contenido_historia"] = delta_texto(info_h["contenido_historia"])
+    print(publicada)
+    if publicada[0] is False or publicada is None:
+        indexar("historias", id_historia, info_h)
+    else:    
+        actualizar_documento("historias", id_historia, info_h)
+    if saga_historia:
+        info_s=obtener_info_saga(saga_historia)
+        actualizar_documento("sagas", saga_historia, info_s)
     return jsonify({"redirigir": redirigir, "mensaje_redirigir": {"mensaje": mensaje, "tipo": "success"}, "id_historia": id_historia})
 
 @historias_bp.route("/api/borrador_historia", methods=["POST"])
@@ -164,6 +175,12 @@ def calificar_historia(id_historia):
         actualizar_datos("calificacion_historia", {"calificacion": calificacion}, {"id_historia": id_historia, "codigo_usuario": id_usuario})
         return jsonify({"fin": "calificacion cambiada", "tipo": "success"})
     insertar_db("calificacion_historia", {"id_historia": id_historia, "calificacion": calificacion, "codigo_usuario": id_usuario})
+    info = obtener_info_historia(id_historia)
+    del info["contenido_historia"]
+    actualizar_documento("historias", id_historia, info)
+    if info["id_saga"]:
+        info_saga= obtener_info_saga(info["id_saga"])
+        actualizar_documento("sagas", info["id_saga"], info_saga)
     return jsonify({"fin": "calificacion cambiada", "tipo": "success"})
   
 @historias_bp.route("/api/calificacion_historia/<id_historia>", methods=["POST"])

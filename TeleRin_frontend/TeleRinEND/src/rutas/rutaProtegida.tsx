@@ -37,7 +37,7 @@ function RutaProtegida({ verificarUrl }: RutaProtegidaProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Verificando acceso... poner a morris cargando</div>
+        <div className="text-xl">Verificando acceso...</div>
       </div>
     );
   }

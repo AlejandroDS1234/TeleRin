@@ -41,17 +41,17 @@ function Index() {
         </div>
 
         {/* 3. BOTÓN DE INICIO DE SESIÓN (encima de todo) */}
-        <div className="absolute top-[50%] left-[1%] h-[25%] aspect-square lg:top-[40%] lg:left-auto lg:right-[20%] lg:h-[25%] z-50">
+        <div className="absolute top-[50%] left-[1%] h-[25%] aspect-square lg:top-[40%] lg:left-auto lg:right-[20%] lg:h-[25%] md:left-[60%] md:top-[60%] z-50">
           <Boton_inicio_sesion />
         </div>
 
         {/* 4. BOTÓN DE MÁS DE NOSOTROS (encima de todo) */}
-        <div className="absolute top-[65%] left-[45%] h-[25%] aspect-square lg:top-[60%] lg:left-[80%] lg:h-[25%]  z-60">
+        {/* <div className="absolute top-[65%] left-[45%] h-[25%] aspect-square lg:top-[60%] lg:left-[80%] lg:h-[25%]  z-60">
           <Boton_mas_de_nosotros />
-        </div>
+        </div> */}
 
         {/* 5. MORRIS (encima de todo) */}
-        <div className="absolute top-[0%] right-[40%] h-[25%] aspect-square lg:fixed lg:top-[10vh] lg:left-1/2 lg:-translate-x-1/2 lg:w-[10vh] lg:h-[10vh] z-60">
+        <div className="absolute top-[0%] right-[40%] h-[25%] aspect-square lg:fixed lg:top-[10vh] lg:left-1/2 lg:-translate-x-1/2 lg:w-[10vh] lg:h-[10vh] md:h-[40%] md:top-[30%]  z-60">
           <Morris />
         </div>
       </div>

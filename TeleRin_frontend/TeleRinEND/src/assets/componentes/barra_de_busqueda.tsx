@@ -34,6 +34,7 @@ function BarraDeBusqueda() {
         <p className="text-sm text-gray-600">No se encontraron resultados.</p>
       ) : (
         <>
+          <p>Historias</p>
           <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
             {data?.historias?.map((historia: any) => (
               <HistoriaCard
@@ -50,6 +51,7 @@ function BarraDeBusqueda() {
               />
             ))}
           </div>
+          <p>Sagas</p>
           <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
             {data?.sagas?.map((saga: any) => (
               <Sagacard

@@ -14,6 +14,7 @@ def verficar_nombre_usuario(data):
     if len(data)>30 or len(data.split(" "))>4:
         return {"mensaje": "Nombre muy largo", "tipo": "warning"}
     actualizar_autor_indices(usuario_actual["codigo_usuario"], { "nombre_usuario": data }, "historias")
+    actualizar_autor_indices(usuario_actual["codigo_usuario"], { "nombre_usuario": data }, "sagas")
     return {"mensaje": "Nombre actualizado", "tipo": "success"}
 
 def verificar_descripcion_usuario(data):

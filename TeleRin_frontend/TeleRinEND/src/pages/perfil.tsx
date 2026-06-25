@@ -461,7 +461,7 @@ function Seguidores() {
 
 function PerfilInfo() {
   return (
-    <div className="max-w-md min-w-sm bg-(--color_principal_oscuro) border-4 border-(--color_bordes) p-2 font-serif text-center shadow-xl  lg:self-stretch lg:justify-senter lg:items-center">
+    <div className="max-w-md sm:min-w-sm bg-(--color_principal_oscuro) border-4 border-(--color_bordes) p-2 font-serif text-center shadow-xl  self-start">
       <h1 className="text-4xl text-(--color_texto_oscuro) font-extrabold tracking-widest border-b-4 border-(--color_bordes) pb-2 mb-4">
         Lector Serial
       </h1>

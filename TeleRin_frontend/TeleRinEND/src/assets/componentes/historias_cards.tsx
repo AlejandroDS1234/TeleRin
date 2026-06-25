@@ -108,7 +108,7 @@ function MasOpciones({ children }: { children?: ReactNode }) {
               menuRef(nodo);
               menuRefElement.current = nodo;
             }}
-            className="bg-amber-200 w-40 fixed rounded-[10px] z-9999 overflow-hidden"
+            className="bg-(--color_principal_opaco) w-40 fixed rounded-[10px] z-9999 overflow-hidden"
             style={{
               top: abiertoArriba
                 ? `${(botonref.current?.getBoundingClientRect().top || 0) - menuDimensiones.alto + 5}px`
@@ -177,7 +177,7 @@ export function HistoriaCard({
           <div className="ml-auto">
             <MasOpciones>
               <button
-                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -246,13 +246,13 @@ export function HistoriaCardEditar({
                   e.preventDefault();
                   navigate(`/editor?id_historia=${encodeURIComponent(idh)}`);
                 }}
-                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
               >
                 <FilePenLine />
-                <p className="w-full justify-center">Editar</p>
+                <p className="w-full justify-center text-center">Editar</p>
               </div>
               <button
-                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -262,7 +262,7 @@ export function HistoriaCardEditar({
                 <p className="w-full justify-center">En Proceso</p>
               </button>
               <button
-                className="flex h-10 w-full items-center px-2 justify-center bg-amber-200 hover:bg-amber-300 hover:cursor-pointer"
+                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();

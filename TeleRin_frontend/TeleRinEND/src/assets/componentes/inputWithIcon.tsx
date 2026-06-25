@@ -15,6 +15,7 @@ function InputWithIcon({
     <div className={`relative ${classNamePadre}`}>
       <div className="absolute inset-y-0 left-3 flex items-center text-gray-600 z-10">{icon}</div>
       <input
+        autoComplete="off"
         className={`w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 ${className}`}
         {...props}
         {...register}

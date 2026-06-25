@@ -196,6 +196,69 @@ def crear_indices_sagas():
     )
     
     print("indice de sagas creado")
+    
+def crear_indices_usuarios():
+    indice = "usuarios"
+    
+    if elastic.indices.exists(index=indice):
+        elastic.indices.delete(index=indice)
+        print("indice usuarios existe")
+    
+    mapping = {
+        "settings": {
+            "analysis": {
+                "filter": {
+                    "autocomplete_filter": {
+                        "type": "edge_ngram",
+                        "min_gram": 1,
+                        "max_gram": 20
+                    }
+                },
+                "analyzer": {
+                    "autocomplete": {
+                        "type": "custom",
+                        "tokenizer": "standard",
+                        "filter": [
+                            "lowercase",
+                            "autocomplete_filter"
+                        ]
+                    }
+                }
+            }
+        },
+        "mappings": {
+            "properties": {
+
+                "codigo_usuario": {
+                    "type": "keyword"
+                },
+
+                "nombre_usuario": {
+                    "type": "text",
+                    "analyzer": "autocomplete",
+                    "search_analyzer": "standard"
+                },
+
+                "descripcion_personal": {
+                    "type": "text",
+                    "analyzer": "autocomplete",
+                    "search_analyzer": "standard"
+                },
+  
+                "foto_perfil_usuario": {
+                    "type": "keyword"
+                },
+     
+                "seguidores": {
+                    "type": "integer"
+                },
+                
+                "cantidad_historias": {
+                    "type": "integer"
+                }
+            }
+        } 
+    }
 
 if __name__ == "__main__":
     crear_indices_historias()

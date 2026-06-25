@@ -3,7 +3,7 @@ import BarraDeBusqueda from "../assets/componentes/barra_de_busqueda";
 function Buscar() {
   return (
     <div>
-      <div className="max-w-md mx-auto mt-10 bg-amber-200">
+      <div className="max-w-md mx-auto mt-10">
         <BarraDeBusqueda />
       </div>
     </div>

@@ -306,7 +306,7 @@ function ModalGuardarHistoria({
         </div>
 
         <div
-          className={`${crearSaga ? "flex" : "hidden"} w-full justify-center items-center bg-amber-200`}
+          className={`${crearSaga ? "flex" : "hidden"} w-full justify-center items-center`}
           onClick={() => setCrearSagaMostrar((prev) => !prev)}
         >
           {crearSagaMostrar ? (

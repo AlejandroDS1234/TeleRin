@@ -4,25 +4,12 @@ import { Sagacard, SagaCardCargando } from "../assets/componentes/sagas_cards";
 import { HistoriaCard, HistoriaCardCargando } from "../assets/componentes/historias_cards";
 import { motion } from "framer-motion";
 import type { Historia, Saga } from "../types";
+import imagen_inicio from "../assets/imagenes/imagen_inicio.webp";
 
 function HistoriasPrincipales() {
   return (
     <div className="relative sm:flex-row max-h-lg min-h-lg sm:max-h-90 sm:min-h-90 bg-(--color_principal_opaco)">
-      <img
-        src="https://media.istockphoto.com/id/1127245421/es/foto/manos-de-mujer-pidiendo-la-bendici%C3%B3n-de-dios-sobre-fondo-puesta-de-sol.webp?s=1024x1024&w=is&k=20&c=rckoeBloyLTsIHQabNQRzxtgKAzZrakd4IIlKDU3nRw="
-        className="object-cover w-full h-full"
-      />
-      <div className="absolute bottom-6 right-6 sm:right-12 max-w-[90%] sm:max-w-sm text-right">
-        <h3 className="wrap-break-word font-bold text-2xl sm:text-3xl text-center bg-white/50 backdrop-blur-md rounded-2xl p-2">
-          Nombre de la sega a la que estamos llamando :)
-        </h3>
-        <br className="hidden sm:block" />
-        <p className="hidden sm:block bg-white/50 backdrop-blur-md rounded-2xl p-2">
-          descripcion Lorem ipsum dolor sit amet consectetur adipisicing elit. Error, quasi
-          necessitatibus, ipsum facilis animi debitis, culpa sed laboriosam qui vitae aliquid porro
-          ab provident nesciunt ducimus. Temporibus recusandae expedita obcaecati.
-        </p>
-      </div>
+      <img src={imagen_inicio} className="object-cover w-full h-full" />
     </div>
   );
 }
@@ -189,8 +176,8 @@ function Sagas() {
           libros={saga.libros ?? 0}
         />
       ))}
-      <MasSagasCard onClick={() => setModalAbierto(true)} />
-      {modalAbierto && <ModalSagas sagas={sagas} cerrar={() => setModalAbierto(false)} />}
+      {/* <MasSagasCard onClick={() => setModalAbierto(true)} />
+      {modalAbierto && <ModalSagas sagas={sagas} cerrar={() => setModalAbierto(false)} />} */}
     </>
   );
 }

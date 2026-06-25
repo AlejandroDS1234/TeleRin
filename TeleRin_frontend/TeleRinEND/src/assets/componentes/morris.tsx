@@ -20,7 +20,7 @@ function Morris({ onLoad }: { onLoad?: () => void }) {
   const triggerPequeno = useStateMachineInput(rive, "saludo", "esPequeño");
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
+    const mq = window.matchMedia("(min-width: 768px)");
 
     const activar = (e: MediaQueryList | MediaQueryListEvent) => {
       if (!rive) return;
@@ -44,7 +44,7 @@ function Morris({ onLoad }: { onLoad?: () => void }) {
   }, [rive, triggerGrande, triggerPequeno]);
 
   return (
-    <div className="w-75 h-75 lg:w-[80vh] lg:h-[80vh]">
+    <div className="w-75 h-75 lg:w-[80vh] lg:h-[80vh] md:w-[60vh] md:h-[60vh]">
       <RiveComponent />
     </div>
   );

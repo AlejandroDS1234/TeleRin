@@ -8,10 +8,11 @@ from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
 from servidor.services.servicios_archivos import (
     ruta_guardado,
     validar_imagen_completa,
-    generar_imagen_reducida,
     guardar_imagen,
 )
 from servidor.routes.rutas_historias import hashtag_db
+from servidor.services.servicios_sagas import obtener_info_saga
+from servidor.services.servicios_busqueda import indexar
 
 sagas_bp = Blueprint("sagas", __name__)
 
@@ -43,6 +44,7 @@ def crear_saga():
     saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": usuario_actual["codigo_usuario"]}
     insertar_db("saga", saga)
     hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})
+    indexar("sagas", id_saga, obtener_info_saga(id_saga))
     return jsonify({"mensaje": "Saga creada", "tipo": "success", "saga": saga})
 
 @sagas_bp.route("/api/sagas_creadas/<usuario>", methods=["POST"])
@@ -77,4 +79,7 @@ def sagas_historias(id_saga):
             historia_usuario=cursor.fetchall()
             cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,TO_CHAR(h.fecha_actualizacion,'DD/MM/YYYY'), h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,  ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia IN %s AND h.id_saga = %s GROUP BY h.nombre_historia, h.id_historia,  u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY h.fecha_actualizacion DESC""", ((True,(not bool(historia_usuario))), id_saga))
             historias=cursor.fetchall()
-    return jsonify(historias)
+            print(historia_usuario)
+            resultado = {"editar": (bool(historia_usuario)),"historias":historias}
+            print(resultado)
+    return jsonify(resultado)
