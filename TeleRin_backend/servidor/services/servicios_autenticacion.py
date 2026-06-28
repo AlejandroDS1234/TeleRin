@@ -49,7 +49,7 @@ def registro(form: dict):
     nombre_us=form["nombre_usuario"]
     correo_us=form["correo_usuario"]
     contraseña_us=form["contraseña_usuario"]
-    codigo_us= uuid.uuid4()
+    codigo_us= f"{uuid.uuid4()}"
     contraseña_encriptada=encriptar(f"{correo_us}{contraseña_us}")
     insertar_db("USUARIOS",{"nombre_usuario": nombre_us, "correo_usuario": correo_us, "contraseña_usuario": contraseña_encriptada, "codigo_usuario": codigo_us})
     guardar_ip(correo_us)
@@ -82,7 +82,7 @@ def registrarse_google(nombre: str, correo: str, google_id: str, imagen: str):
     usuario = dato_en_db(correo, "correo_usuario")
     if usuario:
         return jsonify({"mensaje": "Correo ya registrado", "tipo": "warning"})
-    codigo_us=uuid.uuid4()
+    codigo_us= f"{uuid.uuid4()}"
     
     tratada_img = tratar_img_google(imagen, codigo_us)
     if not tratada_img:

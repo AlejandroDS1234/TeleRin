@@ -15,7 +15,6 @@ import Historias from "../pages/historias.tsx";
 import Sagas from "../pages/sagas.tsx";
 import Consultas from "../pages/admin/consultas_usuarios.tsx";
 import PanelAdmin from "../pages/admin/panelAdmin.tsx";
-import EditarHistoria from "../pages/editarHistorias.tsx";
 import PerfilOtros from "../pages/perfilOtroUsuario.tsx";
 import { Routes, Route } from "react-router-dom";
 
@@ -45,7 +44,6 @@ function RutasIngresar() {
           <Route path="/sagas/:id_saga" element={<Sagas />} />
           <Route path="/admin" element={<PanelAdmin />} />
           <Route path="/consultas" element={<Consultas />} />
-          <Route path="/editar_historia/:id_historia" element={<EditarHistoria />} />
           <Route path="/perfil/:codigo_usuario" element={<PerfilOtros />} />
         </Route>
       </Route>

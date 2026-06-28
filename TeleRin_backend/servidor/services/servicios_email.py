@@ -16,7 +16,7 @@ def enviar_correo_validacion(correo):
     mensaje=MIMEMultipart()
     mensaje["From"]=emisor
     mensaje["To"]=correo
-    mensaje["Subject"]=f"Codigo de verificacion TeleRin: {codigo}"
+    mensaje["Subject"]=f"Verifica tu correo en TeleRin"
     cuerpo=f""" 
     <!DOCTYPE html>
     <html lang="es">

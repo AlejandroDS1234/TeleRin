@@ -259,7 +259,7 @@ def crear_indices_usuarios():
             }
         } 
     }
-
+   
 if __name__ == "__main__":
     crear_indices_historias()
     crear_indices_sagas()
