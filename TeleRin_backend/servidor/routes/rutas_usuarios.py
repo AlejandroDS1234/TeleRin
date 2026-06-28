@@ -3,10 +3,13 @@ import psycopg2.extras
 from servidor.core.db import conectar, insertar_db
 from servidor.core.decoradores import necesita
 from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
+from servidor.services.servicios_busqueda import actualizar_documento
+from servidor.services.servicios_usuarios import obtener_usuario_codigo
 
 usuarios_bp = Blueprint("usuarios", __name__)
 
 @usuarios_bp.route("/api/seguidos/<codigo_usuario>", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
 def seguidos(codigo_usuario):
     usuario = obtener_usuario()
     with conectar() as db:
@@ -25,9 +28,10 @@ def seguidos(codigo_usuario):
             return jsonify(seguidos)
         
 @usuarios_bp.route("/api/seguidores/<codigo_usuario>", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
 def seguidores(codigo_usuario):
     usuario = obtener_usuario()
-    with conectar() as db:  
+    with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute("""SELECT u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,
                             EXISTS (
@@ -43,6 +47,7 @@ def seguidores(codigo_usuario):
             return jsonify(seguidores)
         
 @usuarios_bp.route("/api/siguiendo_usuario/<codigo_usuario>", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
 def siguiendo_usuario(codigo_usuario):
     usuario_actual = obtener_usuario()
     with conectar() as db:
@@ -57,17 +62,21 @@ def siguiendo_usuario(codigo_usuario):
             return jsonify(siguiendo)
         
 @usuarios_bp.route("/api/seguir_usuario/<codigo_usuario>", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
 def seguir_usuario(codigo_usuario):
     usuario_actual = obtener_usuario()
     insertar_db("usuarios_seguidos", {"codigo_usuario_seguidor": usuario_actual["codigo_usuario"], "codigo_usuario_seguido": codigo_usuario})
+    actualizar_documento("usuarios", codigo_usuario, obtener_usuario_codigo(codigo_usuario))
     return jsonify({"codigo": codigo_usuario, "tipo": "success"})
 
 @usuarios_bp.route("/api/dejar_seguir_usuario/<codigo_usuario>", methods=["POST"])
+@necesita("usuario", sesion_iniciada)
 def dejar_seguir_usuario(codigo_usuario):
     usuario_actual = obtener_usuario()
     with conectar() as db:
         with db.cursor() as cursor:
             cursor.execute("""DELETE FROM usuarios_seguidos WHERE codigo_usuario_seguidor = %s AND codigo_usuario_seguido = %s""", (usuario_actual["codigo_usuario"], codigo_usuario))
+    actualizar_documento("usuarios", codigo_usuario, obtener_usuario_codigo(codigo_usuario))
     return jsonify({"codigo": codigo_usuario, "tipo": "success"})
 
 

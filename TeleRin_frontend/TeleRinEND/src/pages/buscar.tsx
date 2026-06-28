@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useBuscar } from "./hook/hookBusqueda";
 import { HistoriaCard } from "../assets/componentes/historias_cards";
 import { Sagacard } from "../assets/componentes/sagas_cards";
+import { CardUsuario } from "../assets/componentes/card_usuario";
 
 function Buscar() {
   const [searchText, setSearchText] = useState("");
@@ -28,7 +29,7 @@ function Buscar() {
           className="
             sticky
             top-5
-            bg-blue-600
+          
             rounded-sm
             p-3
 
@@ -50,12 +51,14 @@ function Buscar() {
       </div>
 
       {/* Resultados */}
-      <div className="bg-red-600 flex-1 z-2 p-3 rounded-sm">
+      <div className=" flex-1 z-2 p-3 rounded-sm">
         {busqueda.trim().length === 0 ? (
           <p className="text-sm text-gray-600">Escribe algo para buscar historias.</p>
         ) : isLoading ? (
           <p className="text-sm text-gray-600">Buscando...</p>
-        ) : data?.historias?.length === 0 && data?.sagas?.length === 0 ? (
+        ) : data?.historias?.length === 0 &&
+          data?.sagas?.length === 0 &&
+          data?.usuarios?.length === 0 ? (
           <p className="text-sm text-gray-600">No se encontraron resultados.</p>
         ) : (
           <>
@@ -86,6 +89,17 @@ function Buscar() {
                   titulo={saga.nombre_saga}
                   descripcion={saga.descripcion_saga}
                   libros={saga.cantidad_historias}
+                />
+              ))}
+            </div>
+            <p>Usuarios</p>
+            <div className="flex overflow-x-auto sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+              {data?.usuarios?.map((usuario: any) => (
+                <CardUsuario
+                  codigo_usuario={usuario.codigo_usuario}
+                  nombre_usuario={usuario.nombre_usuario}
+                  foto_perfil_usuario={usuario.foto_perfil_usuario}
+                  seguido={true}
                 />
               ))}
             </div>

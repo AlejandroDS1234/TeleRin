@@ -52,10 +52,11 @@ def buscar_historias(texto, visiblilidad = True):
                         "query": texto,
                         "type": "bool_prefix",
                         "fields": [
-                            "nombre_historia^4",
-                            "descripcion_historia^2",
-                            "nombre_usuario^3",
-                            "hashtags^5",
+                            "nombre_historia^10",
+                            "hashtags^8",
+                            "nombre_usuario^6",
+                            "nombre_saga^5",
+                            "descripcion_historia^3",
                             "contenido_historia"
                         ]
                     }
@@ -77,32 +78,41 @@ def buscar_historias(texto, visiblilidad = True):
 
 def buscar_sagas(texto):
     consulta = {
-        "bool": {
-            "should": [
-                {
-                    "multi_match": {
-                        "query": texto,
-                        "type": "bool_prefix",
-                        "fields": [
-                            "nombre_saga^4",
-                            "descripcion_saga^2",
-                            "nombre_usuario^3",
-                            "hashtags^5",
-                        ]
-                    }
-                }
-            ],
-            "minimum_should_match": 1
+        "multi_match": {
+            "query": texto,
+            "type": "bool_prefix",
+            "fields": [
+                "nombre_saga^4",
+                "descripcion_saga^2",
+                "nombre_usuario^3",
+                "hashtags^5",
+            ]
         }
     }
     
     respuesta = _buscar("sagas", consulta)
     return [hit["_source"] for hit in respuesta["hits"]["hits"]]
 
+def buscar_usuarios(texto):
+    consulta = {
+        "multi_match": {
+            "query": texto,
+            "type": "bool_prefix",
+            "fields": [
+                "nombre_usuario^4",
+                "descripcion_personal^2"
+            ]
+        }
+    }
+    
+    respuesta = _buscar("usuarios", consulta)
+    return [hit["_source"] for hit in respuesta["hits"]["hits"]]
+
 def busqueda_global(texto):
     return {
         "historias": buscar_historias(texto),
-        "sagas": buscar_sagas(texto)
+        "sagas": buscar_sagas(texto),
+        "usuarios": buscar_usuarios(texto)
     }
 
 

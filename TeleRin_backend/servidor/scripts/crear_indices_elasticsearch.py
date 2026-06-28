@@ -2,6 +2,47 @@ from servidor.core.busqueda import obtener_elastic
 
 elastic = obtener_elastic()
 
+CONFIG_AUTOCOMPLETE = {
+    "index": {
+        "max_ngram_diff": 7
+    },
+    "analysis": {
+        "filter": {
+            "autocomplete_filter": {
+                "type": "edge_ngram",
+                "min_gram": 1,
+                "max_gram": 20
+            },
+
+            "contains_filter": {
+                "type": "ngram",
+                "min_gram": 3,
+                "max_gram": 10
+            }
+        },
+
+        "analyzer": {
+            "autocomplete": {
+                "type": "custom",
+                "tokenizer": "standard",
+                "filter": [
+                    "lowercase",
+                    "autocomplete_filter"
+                ]
+            },
+
+            "contains": {
+                "type": "custom",
+                "tokenizer": "standard",
+                "filter": [
+                    "lowercase",
+                    "contains_filter"
+                ]
+            }
+        }
+    }
+}
+
 def crear_indices_historias():
 
     indice = "historias"
@@ -12,27 +53,7 @@ def crear_indices_historias():
         
 
     mapping = {
-        "settings": {
-            "analysis": {
-                "filter": {
-                    "autocomplete_filter": {
-                        "type": "edge_ngram",
-                        "min_gram": 1,
-                        "max_gram": 20
-                    }
-                },
-                "analyzer": {
-                    "autocomplete": {
-                        "type": "custom",
-                        "tokenizer": "standard",
-                        "filter": [
-                            "lowercase",
-                            "autocomplete_filter"
-                        ]
-                    }
-                }
-            }
-        },
+        "settings": CONFIG_AUTOCOMPLETE,
         "mappings": {
             "properties": {
 
@@ -48,8 +69,6 @@ def crear_indices_historias():
 
                 "descripcion_historia": {
                     "type": "text",
-                    "analyzer": "autocomplete",
-                    "search_analyzer": "standard"
                 },
 
                 "hashtags": {
@@ -93,7 +112,9 @@ def crear_indices_historias():
                 },
                 
                 "nombre_saga": {
-                    "type": "text"
+                    "type": "text",
+                    "analyzer": "autocomplete",
+                    "search_analyzer": "standard"
                 }
             }
         } 
@@ -113,29 +134,8 @@ def crear_indices_sagas():
         elastic.indices.delete(index=indice)
         print("indice saga existe")
     
-    
     mapping = {
-        "settings": {
-            "analysis": {
-                "filter": {
-                    "autocomplete_filter": {
-                        "type": "edge_ngram",
-                        "min_gram": 1,
-                        "max_gram": 20
-                    }
-                },
-                "analyzer": {
-                    "autocomplete": {
-                        "type": "custom",
-                        "tokenizer": "standard",
-                        "filter": [
-                            "lowercase",
-                            "autocomplete_filter"
-                        ]
-                    }
-                }
-            }
-        },
+        "settings": CONFIG_AUTOCOMPLETE,
         "mappings": {
             "properties": {
 
@@ -150,9 +150,7 @@ def crear_indices_sagas():
                 },
 
                 "descripcion_saga": {
-                    "type": "text",
-                    "analyzer": "autocomplete",
-                    "search_analyzer": "standard"
+                    "type": "text"
                 },
 
                 "hashtags": {
@@ -205,27 +203,7 @@ def crear_indices_usuarios():
         print("indice usuarios existe")
     
     mapping = {
-        "settings": {
-            "analysis": {
-                "filter": {
-                    "autocomplete_filter": {
-                        "type": "edge_ngram",
-                        "min_gram": 1,
-                        "max_gram": 20
-                    }
-                },
-                "analyzer": {
-                    "autocomplete": {
-                        "type": "custom",
-                        "tokenizer": "standard",
-                        "filter": [
-                            "lowercase",
-                            "autocomplete_filter"
-                        ]
-                    }
-                }
-            }
-        },
+        "settings": CONFIG_AUTOCOMPLETE,
         "mappings": {
             "properties": {
 
@@ -235,14 +213,12 @@ def crear_indices_usuarios():
 
                 "nombre_usuario": {
                     "type": "text",
-                    "analyzer": "autocomplete",
+                    "analyzer": "contains",
                     "search_analyzer": "standard"
                 },
 
                 "descripcion_personal": {
                     "type": "text",
-                    "analyzer": "autocomplete",
-                    "search_analyzer": "standard"
                 },
   
                 "foto_perfil_usuario": {
@@ -259,8 +235,18 @@ def crear_indices_usuarios():
             }
         } 
     }
-   
+    
+    elastic.indices.create(
+        index=indice,
+        body=mapping
+    )
+    
+    print("indice de usuarios creado")
+    
+    
+    
 if __name__ == "__main__":
     crear_indices_historias()
     crear_indices_sagas()
+    crear_indices_usuarios()
     
