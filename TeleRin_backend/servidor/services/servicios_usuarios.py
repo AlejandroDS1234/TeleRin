@@ -1,4 +1,5 @@
 from servidor.core.db import conectar
+from servidor.services.servicios_sesion import obtener_usuario 
 import psycopg2.extras
 
 def obtener_todos_usuarios():
@@ -65,3 +66,16 @@ def obtener_usuario_codigo(codigo_usuario):
             """, (codigo_usuario,))
             usuario = cursor.fetchone()
             return usuario
+        
+def siguiendo_usuario(codigo_usuario):
+    usuario_actual = obtener_usuario()
+    with conectar() as db:
+        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
+            cursor.execute("""SELECT EXISTS (
+                            SELECT 1 
+                            FROM usuarios_seguidos 
+                            WHERE codigo_usuario_seguidor = %s 
+                            AND codigo_usuario_seguido = %s
+                            ) AS siguiendo""", (usuario_actual["codigo_usuario"], codigo_usuario))
+            siguiendo = cursor.fetchone()
+            return siguiendo

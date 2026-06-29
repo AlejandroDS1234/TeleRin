@@ -99,7 +99,7 @@ function Buscar() {
                   codigo_usuario={usuario.codigo_usuario}
                   nombre_usuario={usuario.nombre_usuario}
                   foto_perfil_usuario={usuario.foto_perfil_usuario}
-                  seguido={true}
+                  seguido={usuario.siguiendo}
                 />
               ))}
             </div>

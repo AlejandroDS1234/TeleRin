@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     port: 4210,
     host: true,
-    allowedHosts: ["hon-med-divided-whatever.trycloudflare.com"],
+    allowedHosts: ["sustainable-portion-calculate-mem.trycloudflare.com"],
     watch: {
       usePolling: true, // ← Agregar esto
     },

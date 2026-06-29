@@ -4,7 +4,7 @@ from servidor.core.db import conectar, insertar_db
 from servidor.core.decoradores import necesita
 from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
 from servidor.services.servicios_busqueda import actualizar_documento
-from servidor.services.servicios_usuarios import obtener_usuario_codigo
+from servidor.services.servicios_usuarios import obtener_usuario_codigo, siguiendo_usuario
 
 usuarios_bp = Blueprint("usuarios", __name__)
 
@@ -48,19 +48,9 @@ def seguidores(codigo_usuario):
         
 @usuarios_bp.route("/api/siguiendo_usuario/<codigo_usuario>", methods=["POST"])
 @necesita("usuario", sesion_iniciada)
-def siguiendo_usuario(codigo_usuario):
-    usuario_actual = obtener_usuario()
-    with conectar() as db:
-        with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT EXISTS (
-                            SELECT 1 
-                            FROM usuarios_seguidos 
-                            WHERE codigo_usuario_seguidor = %s 
-                            AND codigo_usuario_seguido = %s
-                            ) AS siguiendo""", (usuario_actual["codigo_usuario"], codigo_usuario))
-            siguiendo = cursor.fetchone()
-            return jsonify(siguiendo)
-        
+def siguiendo_usuario_ruta(codigo_usuario):
+    return jsonify(siguiendo_usuario(codigo_usuario))
+  
 @usuarios_bp.route("/api/seguir_usuario/<codigo_usuario>", methods=["POST"])
 @necesita("usuario", sesion_iniciada)
 def seguir_usuario(codigo_usuario):

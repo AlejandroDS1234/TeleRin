@@ -1,7 +1,6 @@
 import socket
 from flask import request, session, jsonify
 from werkzeug.security import check_password_hash
-import random
 import psycopg2.extras
 import uuid
 from servidor.core.db import conectar, insertar_db, dato_en_db, actualizar_datos
@@ -9,6 +8,8 @@ from servidor.core.decoradores import registrar_funcion
 from servidor.services.servicios_sesion import guardar_sesion
 from servidor.services.servicios_texto import encriptar
 from servidor.services.servicios_archivos import tratar_img_google
+from servidor.services.servicios_busqueda import indexar
+from servidor.services.servicios_usuarios import obtener_usuario_codigo
 
 def obtener_ip():
     ip_local = socket.gethostbyname(socket.gethostname())
@@ -52,6 +53,7 @@ def registro(form: dict):
     codigo_us= f"{uuid.uuid4()}"
     contraseña_encriptada=encriptar(f"{correo_us}{contraseña_us}")
     insertar_db("USUARIOS",{"nombre_usuario": nombre_us, "correo_usuario": correo_us, "contraseña_usuario": contraseña_encriptada, "codigo_usuario": codigo_us})
+    indexar("usuarios", codigo_us, obtener_usuario_codigo(codigo_us))
     guardar_ip(correo_us)
     guardar_sesion(correo_us)
     return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Registrado exitosamente", "tipo": "success"}})
@@ -88,6 +90,7 @@ def registrarse_google(nombre: str, correo: str, google_id: str, imagen: str):
     if not tratada_img:
         tratada_img = "predefinido.webp"
     insertar_db("USUARIOS",{"nombre_usuario": nombre, "correo_usuario": correo, "google_id": google_id, "foto_perfil_usuario": tratada_img, "codigo_usuario": codigo_us})
+    indexar("usuarios", codigo_us, obtener_usuario_codigo(codigo_us))
     guardar_ip(correo)
     guardar_sesion(correo)
     return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Registrado exitosamente", "tipo": "success"}})

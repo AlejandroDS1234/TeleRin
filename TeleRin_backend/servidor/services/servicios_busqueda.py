@@ -1,4 +1,5 @@
 from servidor.core.busqueda import obtener_elastic
+from servidor.services.servicios_usuarios import siguiendo_usuario
 
 es = obtener_elastic()
 
@@ -104,9 +105,11 @@ def buscar_usuarios(texto):
             ]
         }
     }
-    
     respuesta = _buscar("usuarios", consulta)
-    return [hit["_source"] for hit in respuesta["hits"]["hits"]]
+    usuarios = [hit["_source"] for hit in respuesta["hits"]["hits"]]
+    for usuario in usuarios:
+        usuario["siguiendo"] = siguiendo_usuario(usuario["codigo_usuario"])["siguiendo"]    
+    return usuarios
 
 def busqueda_global(texto):
     return {

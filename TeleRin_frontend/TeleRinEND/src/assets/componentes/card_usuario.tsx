@@ -17,7 +17,7 @@ export function CardUsuario({
   foto_perfil_usuario,
   seguido,
 }: CardUsuarioProps) {
-  const [fotoCargada, setFotoCargada] = useState(false);
+  const [siguiendo, setSiguiendo] = useState(seguido);
   const mutateSeguir = useSeguir();
   const mutateDejarDeSeguir = useDejarDeSeguir();
 
@@ -32,23 +32,21 @@ export function CardUsuario({
         <img
           src={`/api/Fotos/perfil/${foto_perfil_usuario}?size=reducida`}
           className="w-full h-full rounded-full object-cover absolute"
-          style={{ opacity: fotoCargada ? 0 : 1 }}
-        />
-        <img
-          src={`/api/Fotos/perfil/${foto_perfil_usuario}`}
-          className="w-full h-full rounded-full object-cover"
-          onLoad={() => setFotoCargada(true)}
-          style={{ opacity: fotoCargada ? 1 : 0 }}
         />
       </div>
       <p className="text-sm font-bold text-center truncate h-9 w-full min-w-0">{nombre_usuario}</p>
-      {seguido ? (
+      {siguiendo ? (
         <button
           className="bg-(--border-alpha-45) hover:bg-(--card-tint-1) hover:cursor-pointer px-2 rounded-2xl"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            mutateDejarDeSeguir.mutate(codigo_usuario);
+            setSiguiendo(false);
+            mutateDejarDeSeguir.mutate(codigo_usuario, {
+              onError: () => {
+                setSiguiendo(true);
+              },
+            });
           }}
         >
           {mutateDejarDeSeguir.isPending ? (
@@ -63,7 +61,12 @@ export function CardUsuario({
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            mutateSeguir.mutate(codigo_usuario);
+            setSiguiendo(true);
+            mutateSeguir.mutate(codigo_usuario, {
+              onError: () => {
+                setSiguiendo(false);
+              },
+            });
           }}
         >
           {mutateSeguir.isPending ? (
