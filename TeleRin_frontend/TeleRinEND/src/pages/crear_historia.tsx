@@ -34,6 +34,8 @@ import {
   useContinuarHistoria,
   useEliminarBorradorHistoria,
 } from "./hook/historias/hookContinuarHistoria";
+import Morris_asistente from "../assets/componentes/asistenteia.tsx";
+import Modal_chat from "../assets/componentes/modal_chat.tsx";
 
 type EditorContenido = {
   html: string;
@@ -344,6 +346,25 @@ function ModalContinuarHistoria({ open, onClose }: { open: boolean; onClose: () 
   );
 }
 
+function Asistente_ia() {
+  const [mostrarModal, setMostrarModal] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setMostrarModal(true)}
+        className="fixed right-0 bottom-15 lg:bottom-0 z-50 w-[120px] lg:w-[240px] h-[87px] overflow-hidden flex items-end justify-end"
+      >
+        <div className="translate-y-[3px] translate-x-[80px] pointer-events-none">
+          <Morris_asistente />
+        </div>
+      </button>
+
+      {mostrarModal && <Modal_chat />}
+    </>
+  );
+}
+
 function PaginaEditor() {
   const [searchParams] = useSearchParams();
   const historia = searchParams.get("id_historia");
@@ -509,6 +530,9 @@ function PaginaEditor() {
             },
           ]}
         />
+      </div>
+      <div className="fixed right-0 bottom-30">
+        <Asistente_ia />
       </div>
     </div>
   );
