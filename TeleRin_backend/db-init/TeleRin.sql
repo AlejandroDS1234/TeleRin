@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict nYbvmV5nwveyK0TOL8BszT74zIj6GHj5CHhk94Lnaehw1VCae4UMlPB9OBXmEdK
+\restrict 9E12Z8B46G99qvZs6uUSjFB8Kp4nsVSpjNa336XGbzkCF9dCtKcBFsuBYdj0doG
 
 -- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
 -- Dumped by pg_dump version 18.1
 
--- Started on 2026-06-28 18:44:13
+-- Started on 2026-07-01 14:08:49
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,7 +22,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 236 (class 1255 OID 41263)
+-- TOC entry 236 (class 1255 OID 16385)
 -- Name: actualizar_fecha_actualizacion(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -43,7 +43,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 219 (class 1259 OID 16385)
+-- TOC entry 219 (class 1259 OID 16386)
 -- Name: USUARIOS; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -67,7 +67,7 @@ CREATE TABLE public."USUARIOS" (
 ALTER TABLE public."USUARIOS" OWNER TO postgres;
 
 --
--- TOC entry 220 (class 1259 OID 16395)
+-- TOC entry 220 (class 1259 OID 16406)
 -- Name: calificacion_historia; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -81,7 +81,7 @@ CREATE TABLE public.calificacion_historia (
 ALTER TABLE public.calificacion_historia OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 16403)
+-- TOC entry 221 (class 1259 OID 16414)
 -- Name: generos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -94,7 +94,7 @@ CREATE TABLE public.generos (
 ALTER TABLE public.generos OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 16410)
+-- TOC entry 222 (class 1259 OID 16421)
 -- Name: hashtags; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -107,7 +107,7 @@ CREATE TABLE public.hashtags (
 ALTER TABLE public.hashtags OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 16417)
+-- TOC entry 223 (class 1259 OID 16428)
 -- Name: hashtags_historias; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -120,7 +120,7 @@ CREATE TABLE public.hashtags_historias (
 ALTER TABLE public.hashtags_historias OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 16424)
+-- TOC entry 224 (class 1259 OID 16435)
 -- Name: hashtags_id_hashtag_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -145,7 +145,7 @@ ALTER SEQUENCE public.hashtags_id_hashtag_seq OWNED BY public.hashtags.id_hashta
 
 
 --
--- TOC entry 225 (class 1259 OID 16425)
+-- TOC entry 225 (class 1259 OID 16436)
 -- Name: hashtags_sagas; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -158,7 +158,7 @@ CREATE TABLE public.hashtags_sagas (
 ALTER TABLE public.hashtags_sagas OWNER TO postgres;
 
 --
--- TOC entry 226 (class 1259 OID 16432)
+-- TOC entry 226 (class 1259 OID 16443)
 -- Name: historial; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -173,7 +173,7 @@ CREATE TABLE public.historial (
 ALTER TABLE public.historial OWNER TO postgres;
 
 --
--- TOC entry 227 (class 1259 OID 16440)
+-- TOC entry 227 (class 1259 OID 16453)
 -- Name: historias; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -196,7 +196,7 @@ CREATE TABLE public.historias (
 ALTER TABLE public.historias OWNER TO postgres;
 
 --
--- TOC entry 233 (class 1259 OID 33024)
+-- TOC entry 228 (class 1259 OID 16467)
 -- Name: lista_historia; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -209,7 +209,7 @@ CREATE TABLE public.lista_historia (
 ALTER TABLE public.lista_historia OWNER TO postgres;
 
 --
--- TOC entry 234 (class 1259 OID 33046)
+-- TOC entry 229 (class 1259 OID 16474)
 -- Name: lista_usuario; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -222,7 +222,7 @@ CREATE TABLE public.lista_usuario (
 ALTER TABLE public.lista_usuario OWNER TO postgres;
 
 --
--- TOC entry 232 (class 1259 OID 33013)
+-- TOC entry 230 (class 1259 OID 16481)
 -- Name: listas_lectura; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -236,7 +236,7 @@ CREATE TABLE public.listas_lectura (
 ALTER TABLE public.listas_lectura OWNER TO postgres;
 
 --
--- TOC entry 228 (class 1259 OID 16451)
+-- TOC entry 231 (class 1259 OID 16489)
 -- Name: paises; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -249,7 +249,7 @@ CREATE TABLE public.paises (
 ALTER TABLE public.paises OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1259 OID 16456)
+-- TOC entry 232 (class 1259 OID 16494)
 -- Name: paletas; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -267,7 +267,7 @@ CREATE TABLE public.paletas (
 ALTER TABLE public.paletas OWNER TO postgres;
 
 --
--- TOC entry 230 (class 1259 OID 16465)
+-- TOC entry 233 (class 1259 OID 16503)
 -- Name: paletas_id_paleta_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -284,7 +284,7 @@ ALTER SEQUENCE public.paletas_id_paleta_seq OWNER TO postgres;
 
 --
 -- TOC entry 3577 (class 0 OID 0)
--- Dependencies: 230
+-- Dependencies: 233
 -- Name: paletas_id_paleta_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -292,7 +292,7 @@ ALTER SEQUENCE public.paletas_id_paleta_seq OWNED BY public.paletas.id_paleta;
 
 
 --
--- TOC entry 231 (class 1259 OID 16466)
+-- TOC entry 234 (class 1259 OID 16504)
 -- Name: saga; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -310,7 +310,7 @@ CREATE TABLE public.saga (
 ALTER TABLE public.saga OWNER TO postgres;
 
 --
--- TOC entry 235 (class 1259 OID 41272)
+-- TOC entry 235 (class 1259 OID 16518)
 -- Name: usuarios_seguidos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -324,7 +324,7 @@ CREATE TABLE public.usuarios_seguidos (
 ALTER TABLE public.usuarios_seguidos OWNER TO postgres;
 
 --
--- TOC entry 3353 (class 2604 OID 16476)
+-- TOC entry 3353 (class 2604 OID 16527)
 -- Name: hashtags id_hashtag; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -332,7 +332,7 @@ ALTER TABLE ONLY public.hashtags ALTER COLUMN id_hashtag SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 3359 (class 2604 OID 16477)
+-- TOC entry 3359 (class 2604 OID 16528)
 -- Name: paletas id_paleta; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -340,7 +340,7 @@ ALTER TABLE ONLY public.paletas ALTER COLUMN id_paleta SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 3554 (class 0 OID 16385)
+-- TOC entry 3554 (class 0 OID 16386)
 -- Dependencies: 219
 -- Data for Name: USUARIOS; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -352,12 +352,13 @@ Sonic99DX	lovichabdiel@gmail.com	\N	132	1	no saber nada es saber algo	121384lovi
 gamer _20	emanuelbanol4@gmail.com	\N	37	2	Beta tester	432028emanu_perfil.webp	432028emanu	1	spanish	{scrypt:32768:8:1$OWUtrJuE1DLyL9Zu$35e822df402686166318384dcc0a8c264feb8e5ea988360086d68b29079b4fc91fbf3c068bdddc83ece60c628216db846cd986a64cd0e201eee9218a4fabd9b6}	117197469088074844395	2026-06-03 05:06:08.59742
 the crow	magiahh67@gmail.com	scrypt:32768:8:1$t1uhEHtkQ3jQixc4$f90c4be6ca391a7e7e2c80500066b04a5d0667aa2f89d431d3f669c062118f7977ec6458f77e12bb4d9774474fadc8d0cc472542116dcc1cc99495c5ba202f56	0	0	\N	876148magia_perfil.webp	876148magia	1	spanish	{scrypt:32768:8:1$QwI5Qr672Dn7Q7gZ$a4914d0f937fe4d5f97515ebee9dec572f8cf31cbff264249d01fb2efacf866bfd687ff616d97667c4107d1ca41e76a34581b9cf57ad37996d90a5250cff98a0,scrypt:32768:8:1$i69TzAfN1YOHm2pu$1b1b3132618e3983458c4f7cc97f2d4217404d669f3ccdecc6cc92db88fb3eddac7814efbcee1e44bf555f2ccfef325107699f539c386d2d14be3da4f38ab6f8,scrypt:32768:8:1$3HLeLDrXysIGLG8n$9dda585f4d25fa8bdff4b0fff108e685fc426c134bf9d17d09dca4c2e6bc5de0a16ff00941999384797f8c7f6d520d1c9f24f95dc1d42941e0b65ab37192c2a3}	\N	2026-06-03 05:06:08.59742
 IlovePython	j.f.m.b1106@gmail.com	\N	103	1	hola mundo ("print")	499342j.f.m_perfil.webp	499342j.f.m	1	spanish	{scrypt:32768:8:1$lloKqnNK8xuv6Uiu$804ef8bca5a739bbb0fea44502e6be5f0bcdce6641f5bcb1270786b43ca7c76fbdae2005f10b28461b074bc31fc7aaff8633f86c822fc3a36007cf1c8a43d2b6,scrypt:32768:8:1$W2PnSQPsJyw6TEQP$a1a46ab428840fa9e5622a25b11690da757b9d9a45c540deb0af6c4f6760932074c8556d81e7e2416bc63b2bd315d39ae1a15e9e9e657dbe697a248f50feb381}	106675070339678151477	2026-06-11 19:20:16.480293
-Alejo	ducuarasatizabalalejandro@gmail.com	scrypt:32768:8:1$SjcQvnQFyfQReDko$be836f9dad7e7294711a2ad6d6f185003c4bca4f468e09d9920607e9b4ab8c01c68a8ee06719e2b6e7f411df6f6ec4c4aa52e8393b1aed52e98e5650d336cae8	37	1	Programador	765874ducua_perfil.webp	765874ducua	1	spanish	{scrypt:32768:8:1$4vTYVM7vvkp38AI2$35bd867a701493578b18e71cd746e976e74c64a183ace9d7f08546dffcc928036253de0faee288735a7e6fab4e5e897c08427a317b9d8840427943f8b90e2358,scrypt:32768:8:1$AQP9EmnYvJlarvMe$e2f40e9765f3372eb9ecbc7771df05aa1981a56b82e2001e36c9cdd4f29ad16f7f50a0617b1208be77b23f0e908ad60989f528af1e3b2b0572777f7e1212df6b,scrypt:32768:8:1$lXAbm45x8PBCGPHJ$04d8707e530d24718c96894749086d8879f6b84c779fc24530b5b76ffd594a11dd55860902116ab6de2ccad0b2420e605ec0cb233e56ed90aed920fb13a3a499,scrypt:32768:8:1$eJRZEcx9QZcr7jYh$12c2f5f626c8aae59b80e6455101af864135e9156772b5092331977dbba40a765dba05b0fd1e0c8563cac5ae08bd078f3a33cf857a4e1458c0a4397304761815,scrypt:32768:8:1$RfmPFD4kcm6iUUPe$778cd1f17f7422ca84c79b3748052283d35a9f8cb87aa659a47d124a324bd789ba6776fbfcbc3e0670173534dc620ef74bd81cb1633b7c2eba22672f806d12d6,scrypt:32768:8:1$GqDgGUVlmnjvJ6eA$98363b0f13cc53e1fc4bde7ba115fa4e86bb33ef3b8b3f701f5ed6d1a9dd9e598f4f0bdaf10a461100b80cdb7f8e9daea60b6e36443734260a335273974e1a52,scrypt:32768:8:1$EIKg2DpvivoxPtT4$4f02b3ad1bd179daf6aa2a0db62a62863f7e2b5aa5a5b4cf6fbdc98378954c69abb806f0cee09bb6f97f38bde99fd4045622c9e7bb240939ab0e8953c7821736,scrypt:32768:8:1$QGv9vb8FaFJ0ZYer$655f51fdd887d6c92894e22cac66d8c496c0a84d9a449d046db2209cc57ef6e5d2c2751717f4f9d2329dbc98f3c740f9654df3e052c9e0e4c6dfe51c60cf0d5f,scrypt:32768:8:1$m2JCyLKJi7Q2edNR$bf8a61ffdac8b0bcb287b923fa4ecaa0c76d96108935b190575dc549c93bf467e00f74478c050c85d025ec0babda220b71a54b1913fcba7e9e1227ab5bbef8f0,scrypt:32768:8:1$qgnAurlksNzmvwit$f8b1c2c4f0fee6d800469cdf4b61547fe5301347982208a11da9ae79f9b7a4590a2a7c45551bdb5aadf971d17c76d5c6828d31dbc691dc89615ad6cfc0971e65,scrypt:32768:8:1$WB5xXEj6dEGkfXBn$d0aa371ca037da12e8b704f7277c25186749590285d379f694072ba2c404f104ede2cab41eceb80b20d3b47a8922e2bdf141f87b073b7c0c2f8c6326bcf27530,scrypt:32768:8:1$3jgAdZ3kKaN2WhQk$cac406edaf44c6318035fc0e0a3c66c1e9c75c323b8f858accef355ab0f2d336a4e6d6802514ca376b45252ffa966bd4d44d16ccde0a17a57cd3e6a3ed91af66,scrypt:32768:8:1$jyn7QRmYankUThcy$aeb5e5cad55738ba473cc1163903a28f9e23d2343363c4e758350d83f5ae6357c904721fc6c425e8770ddffd14772fd42c8bba81b1ccbe6580d30da1bbea94d0}	112170301094736581888	2026-06-03 05:06:08.59742
+Alejo	ducuarasatizabalalejandro@gmail.com	scrypt:32768:8:1$SjcQvnQFyfQReDko$be836f9dad7e7294711a2ad6d6f185003c4bca4f468e09d9920607e9b4ab8c01c68a8ee06719e2b6e7f411df6f6ec4c4aa52e8393b1aed52e98e5650d336cae8	37	1	Programador	765874ducua_perfil.webp	765874ducua	1	spanish	{scrypt:32768:8:1$4vTYVM7vvkp38AI2$35bd867a701493578b18e71cd746e976e74c64a183ace9d7f08546dffcc928036253de0faee288735a7e6fab4e5e897c08427a317b9d8840427943f8b90e2358,scrypt:32768:8:1$AQP9EmnYvJlarvMe$e2f40e9765f3372eb9ecbc7771df05aa1981a56b82e2001e36c9cdd4f29ad16f7f50a0617b1208be77b23f0e908ad60989f528af1e3b2b0572777f7e1212df6b,scrypt:32768:8:1$lXAbm45x8PBCGPHJ$04d8707e530d24718c96894749086d8879f6b84c779fc24530b5b76ffd594a11dd55860902116ab6de2ccad0b2420e605ec0cb233e56ed90aed920fb13a3a499,scrypt:32768:8:1$eJRZEcx9QZcr7jYh$12c2f5f626c8aae59b80e6455101af864135e9156772b5092331977dbba40a765dba05b0fd1e0c8563cac5ae08bd078f3a33cf857a4e1458c0a4397304761815,scrypt:32768:8:1$RfmPFD4kcm6iUUPe$778cd1f17f7422ca84c79b3748052283d35a9f8cb87aa659a47d124a324bd789ba6776fbfcbc3e0670173534dc620ef74bd81cb1633b7c2eba22672f806d12d6,scrypt:32768:8:1$GqDgGUVlmnjvJ6eA$98363b0f13cc53e1fc4bde7ba115fa4e86bb33ef3b8b3f701f5ed6d1a9dd9e598f4f0bdaf10a461100b80cdb7f8e9daea60b6e36443734260a335273974e1a52,scrypt:32768:8:1$EIKg2DpvivoxPtT4$4f02b3ad1bd179daf6aa2a0db62a62863f7e2b5aa5a5b4cf6fbdc98378954c69abb806f0cee09bb6f97f38bde99fd4045622c9e7bb240939ab0e8953c7821736,scrypt:32768:8:1$QGv9vb8FaFJ0ZYer$655f51fdd887d6c92894e22cac66d8c496c0a84d9a449d046db2209cc57ef6e5d2c2751717f4f9d2329dbc98f3c740f9654df3e052c9e0e4c6dfe51c60cf0d5f,scrypt:32768:8:1$m2JCyLKJi7Q2edNR$bf8a61ffdac8b0bcb287b923fa4ecaa0c76d96108935b190575dc549c93bf467e00f74478c050c85d025ec0babda220b71a54b1913fcba7e9e1227ab5bbef8f0,scrypt:32768:8:1$qgnAurlksNzmvwit$f8b1c2c4f0fee6d800469cdf4b61547fe5301347982208a11da9ae79f9b7a4590a2a7c45551bdb5aadf971d17c76d5c6828d31dbc691dc89615ad6cfc0971e65,scrypt:32768:8:1$WB5xXEj6dEGkfXBn$d0aa371ca037da12e8b704f7277c25186749590285d379f694072ba2c404f104ede2cab41eceb80b20d3b47a8922e2bdf141f87b073b7c0c2f8c6326bcf27530,scrypt:32768:8:1$3jgAdZ3kKaN2WhQk$cac406edaf44c6318035fc0e0a3c66c1e9c75c323b8f858accef355ab0f2d336a4e6d6802514ca376b45252ffa966bd4d44d16ccde0a17a57cd3e6a3ed91af66,scrypt:32768:8:1$jyn7QRmYankUThcy$aeb5e5cad55738ba473cc1163903a28f9e23d2343363c4e758350d83f5ae6357c904721fc6c425e8770ddffd14772fd42c8bba81b1ccbe6580d30da1bbea94d0,scrypt:32768:8:1$gC1ZSFRaeL1p9NBX$d34d808f9a47efcce31b669fd98060ef811ec6c174830327b76fa0a1e30c4185d7595d577919229a712ca69bc5bec86ba3262955fc542e82cc7de75cee563e5c}	112170301094736581888	2026-06-03 05:06:08.59742
+Yesick Rivera	yesickrivera@gmail.com	\N	0	0	\N	predefinido.webp	8fb7701d-190f-4bc7-bcde-99d4d2169097	1	spanish	{scrypt:32768:8:1$Spibj9X4JW1VKAd8$5227f4e5867dd4aef7f7c79bb543f1eae97e1fd796d4da60b34cb5bf70fb8c507ae16a38a0f77817bfdbcae3252fef99b378189411397abbcded79758d8b1280}	112661463237601175087	2026-06-30 20:13:59.01246
 \.
 
 
 --
--- TOC entry 3555 (class 0 OID 16395)
+-- TOC entry 3555 (class 0 OID 16406)
 -- Dependencies: 220
 -- Data for Name: calificacion_historia; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -388,7 +389,7 @@ COPY public.calificacion_historia (codigo_usuario, id_historia, calificacion) FR
 
 
 --
--- TOC entry 3556 (class 0 OID 16403)
+-- TOC entry 3556 (class 0 OID 16414)
 -- Dependencies: 221
 -- Data for Name: generos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -401,7 +402,7 @@ COPY public.generos (id_genero, nombre_genero) FROM stdin;
 
 
 --
--- TOC entry 3557 (class 0 OID 16410)
+-- TOC entry 3557 (class 0 OID 16421)
 -- Dependencies: 222
 -- Data for Name: hashtags; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -416,7 +417,7 @@ segunda	9
 
 
 --
--- TOC entry 3558 (class 0 OID 16417)
+-- TOC entry 3558 (class 0 OID 16428)
 -- Dependencies: 223
 -- Data for Name: hashtags_historias; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -428,7 +429,7 @@ COPY public.hashtags_historias (id_historia, id_hashtag) FROM stdin;
 
 
 --
--- TOC entry 3560 (class 0 OID 16425)
+-- TOC entry 3560 (class 0 OID 16436)
 -- Dependencies: 225
 -- Data for Name: hashtags_sagas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -441,7 +442,7 @@ COPY public.hashtags_sagas (id_saga, id_hashtag) FROM stdin;
 
 
 --
--- TOC entry 3561 (class 0 OID 16432)
+-- TOC entry 3561 (class 0 OID 16443)
 -- Dependencies: 226
 -- Data for Name: historial; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -483,7 +484,7 @@ COPY public.historial (id_historia, tiempo_vista, codigo_usuario, activa) FROM s
 
 
 --
--- TOC entry 3562 (class 0 OID 16440)
+-- TOC entry 3562 (class 0 OID 16453)
 -- Dependencies: 227
 -- Data for Name: historias; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -527,8 +528,8 @@ El eco en el viento de palmira	Inspirada en mi hermosa ciudad y la primera histo
 
 
 --
--- TOC entry 3568 (class 0 OID 33024)
--- Dependencies: 233
+-- TOC entry 3563 (class 0 OID 16467)
+-- Dependencies: 228
 -- Data for Name: lista_historia; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -537,8 +538,8 @@ COPY public.lista_historia (id_lista, id_historia) FROM stdin;
 
 
 --
--- TOC entry 3569 (class 0 OID 33046)
--- Dependencies: 234
+-- TOC entry 3564 (class 0 OID 16474)
+-- Dependencies: 229
 -- Data for Name: lista_usuario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -547,8 +548,8 @@ COPY public.lista_usuario (id_lista, codigo_usuario) FROM stdin;
 
 
 --
--- TOC entry 3567 (class 0 OID 33013)
--- Dependencies: 232
+-- TOC entry 3565 (class 0 OID 16481)
+-- Dependencies: 230
 -- Data for Name: listas_lectura; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -557,8 +558,8 @@ COPY public.listas_lectura (id_lista, nombre_lista, visibilidad) FROM stdin;
 
 
 --
--- TOC entry 3563 (class 0 OID 16451)
--- Dependencies: 228
+-- TOC entry 3566 (class 0 OID 16489)
+-- Dependencies: 231
 -- Data for Name: paises; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -763,8 +764,8 @@ COPY public.paises (id_pais, nombre_pais) FROM stdin;
 
 
 --
--- TOC entry 3564 (class 0 OID 16456)
--- Dependencies: 229
+-- TOC entry 3567 (class 0 OID 16494)
+-- Dependencies: 232
 -- Data for Name: paletas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -773,8 +774,8 @@ COPY public.paletas (id_paleta, color1, color2, color3, color_letra, color_letra
 
 
 --
--- TOC entry 3566 (class 0 OID 16466)
--- Dependencies: 231
+-- TOC entry 3569 (class 0 OID 16504)
+-- Dependencies: 234
 -- Data for Name: saga; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -827,7 +828,7 @@ holamundo	499342j.f.m	-inicio-499342j.f.m-holamundo_saga.webp	-inicio-499342j.f.
 
 
 --
--- TOC entry 3570 (class 0 OID 41272)
+-- TOC entry 3570 (class 0 OID 16518)
 -- Dependencies: 235
 -- Data for Name: usuarios_seguidos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -861,7 +862,7 @@ SELECT pg_catalog.setval('public.hashtags_id_hashtag_seq', 9, true);
 
 --
 -- TOC entry 3579 (class 0 OID 0)
--- Dependencies: 230
+-- Dependencies: 233
 -- Name: paletas_id_paleta_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -869,7 +870,7 @@ SELECT pg_catalog.setval('public.paletas_id_paleta_seq', 7, true);
 
 
 --
--- TOC entry 3364 (class 2606 OID 32975)
+-- TOC entry 3364 (class 2606 OID 16551)
 -- Name: USUARIOS USUARIOS_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -878,7 +879,7 @@ ALTER TABLE ONLY public."USUARIOS"
 
 
 --
--- TOC entry 3366 (class 2606 OID 33011)
+-- TOC entry 3366 (class 2606 OID 16553)
 -- Name: USUARIOS correo; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -887,7 +888,7 @@ ALTER TABLE ONLY public."USUARIOS"
 
 
 --
--- TOC entry 3369 (class 2606 OID 16481)
+-- TOC entry 3369 (class 2606 OID 16555)
 -- Name: generos generos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -896,7 +897,7 @@ ALTER TABLE ONLY public.generos
 
 
 --
--- TOC entry 3371 (class 2606 OID 16483)
+-- TOC entry 3371 (class 2606 OID 16557)
 -- Name: hashtags hashtags_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -905,7 +906,7 @@ ALTER TABLE ONLY public.hashtags
 
 
 --
--- TOC entry 3376 (class 2606 OID 16485)
+-- TOC entry 3376 (class 2606 OID 16559)
 -- Name: historias historias_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -914,7 +915,7 @@ ALTER TABLE ONLY public.historias
 
 
 --
--- TOC entry 3386 (class 2606 OID 33023)
+-- TOC entry 3380 (class 2606 OID 16561)
 -- Name: listas_lectura listas_lectura_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -923,7 +924,7 @@ ALTER TABLE ONLY public.listas_lectura
 
 
 --
--- TOC entry 3380 (class 2606 OID 16487)
+-- TOC entry 3382 (class 2606 OID 16563)
 -- Name: paises paises_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -932,7 +933,7 @@ ALTER TABLE ONLY public.paises
 
 
 --
--- TOC entry 3382 (class 2606 OID 16489)
+-- TOC entry 3384 (class 2606 OID 16565)
 -- Name: paletas paletas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -941,7 +942,7 @@ ALTER TABLE ONLY public.paletas
 
 
 --
--- TOC entry 3384 (class 2606 OID 16491)
+-- TOC entry 3386 (class 2606 OID 16567)
 -- Name: saga saga_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -950,7 +951,7 @@ ALTER TABLE ONLY public.saga
 
 
 --
--- TOC entry 3374 (class 2606 OID 16561)
+-- TOC entry 3374 (class 2606 OID 16569)
 -- Name: historial uk_historial_usuario_historia; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -959,7 +960,7 @@ ALTER TABLE ONLY public.historial
 
 
 --
--- TOC entry 3388 (class 2606 OID 41282)
+-- TOC entry 3388 (class 2606 OID 16571)
 -- Name: usuarios_seguidos unico_usuario_seguidor; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -968,7 +969,7 @@ ALTER TABLE ONLY public.usuarios_seguidos
 
 
 --
--- TOC entry 3377 (class 1259 OID 16492)
+-- TOC entry 3377 (class 1259 OID 16572)
 -- Name: idx_id_historia; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -976,7 +977,7 @@ CREATE INDEX idx_id_historia ON public.historias USING btree (id_historia);
 
 
 --
--- TOC entry 3367 (class 1259 OID 16493)
+-- TOC entry 3367 (class 1259 OID 16573)
 -- Name: idx_id_historia_calificacion; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -984,7 +985,7 @@ CREATE INDEX idx_id_historia_calificacion ON public.calificacion_historia USING 
 
 
 --
--- TOC entry 3378 (class 1259 OID 16494)
+-- TOC entry 3378 (class 1259 OID 16574)
 -- Name: idx_id_saga; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -992,7 +993,7 @@ CREATE INDEX idx_id_saga ON public.historias USING btree (id_saga);
 
 
 --
--- TOC entry 3372 (class 1259 OID 16495)
+-- TOC entry 3372 (class 1259 OID 16575)
 -- Name: idx_nombre_hashtag; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -1000,7 +1001,7 @@ CREATE INDEX idx_nombre_hashtag ON public.hashtags USING btree (nombre_hashtag);
 
 
 --
--- TOC entry 3406 (class 2620 OID 41271)
+-- TOC entry 3406 (class 2620 OID 16576)
 -- Name: saga act_fecha_actualizacion; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1008,7 +1009,7 @@ CREATE TRIGGER act_fecha_actualizacion BEFORE UPDATE ON public.saga FOR EACH ROW
 
 
 --
--- TOC entry 3405 (class 2620 OID 41264)
+-- TOC entry 3405 (class 2620 OID 16577)
 -- Name: historias actr_fecha_actualizacion; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1016,7 +1017,7 @@ CREATE TRIGGER actr_fecha_actualizacion BEFORE UPDATE ON public.historias FOR EA
 
 
 --
--- TOC entry 3389 (class 2606 OID 32977)
+-- TOC entry 3389 (class 2606 OID 16578)
 -- Name: calificacion_historia codigo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1025,7 +1026,7 @@ ALTER TABLE ONLY public.calificacion_historia
 
 
 --
--- TOC entry 3395 (class 2606 OID 32982)
+-- TOC entry 3395 (class 2606 OID 16583)
 -- Name: historial codigo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1034,7 +1035,7 @@ ALTER TABLE ONLY public.historial
 
 
 --
--- TOC entry 3401 (class 2606 OID 33058)
+-- TOC entry 3399 (class 2606 OID 16588)
 -- Name: lista_usuario codigo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1043,7 +1044,7 @@ ALTER TABLE ONLY public.lista_usuario
 
 
 --
--- TOC entry 3398 (class 2606 OID 32987)
+-- TOC entry 3402 (class 2606 OID 16593)
 -- Name: saga codigo_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1052,7 +1053,7 @@ ALTER TABLE ONLY public.saga
 
 
 --
--- TOC entry 3403 (class 2606 OID 41283)
+-- TOC entry 3403 (class 2606 OID 16598)
 -- Name: usuarios_seguidos codigo_usuario_seguido; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1061,7 +1062,7 @@ ALTER TABLE ONLY public.usuarios_seguidos
 
 
 --
--- TOC entry 3404 (class 2606 OID 41288)
+-- TOC entry 3404 (class 2606 OID 16603)
 -- Name: usuarios_seguidos codigo_usuario_seguidor; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1070,7 +1071,7 @@ ALTER TABLE ONLY public.usuarios_seguidos
 
 
 --
--- TOC entry 3391 (class 2606 OID 16511)
+-- TOC entry 3391 (class 2606 OID 16608)
 -- Name: hashtags_historias id_hashtag; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1079,7 +1080,7 @@ ALTER TABLE ONLY public.hashtags_historias
 
 
 --
--- TOC entry 3393 (class 2606 OID 16516)
+-- TOC entry 3393 (class 2606 OID 16613)
 -- Name: hashtags_sagas id_hashtag; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1088,7 +1089,7 @@ ALTER TABLE ONLY public.hashtags_sagas
 
 
 --
--- TOC entry 3390 (class 2606 OID 16521)
+-- TOC entry 3390 (class 2606 OID 16618)
 -- Name: calificacion_historia id_historia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1097,7 +1098,7 @@ ALTER TABLE ONLY public.calificacion_historia
 
 
 --
--- TOC entry 3392 (class 2606 OID 16526)
+-- TOC entry 3392 (class 2606 OID 16623)
 -- Name: hashtags_historias id_historia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1106,7 +1107,7 @@ ALTER TABLE ONLY public.hashtags_historias
 
 
 --
--- TOC entry 3396 (class 2606 OID 16531)
+-- TOC entry 3396 (class 2606 OID 16628)
 -- Name: historial id_historia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1115,7 +1116,7 @@ ALTER TABLE ONLY public.historial
 
 
 --
--- TOC entry 3399 (class 2606 OID 33036)
+-- TOC entry 3397 (class 2606 OID 16633)
 -- Name: lista_historia id_historia; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1124,7 +1125,7 @@ ALTER TABLE ONLY public.lista_historia
 
 
 --
--- TOC entry 3400 (class 2606 OID 33031)
+-- TOC entry 3398 (class 2606 OID 16638)
 -- Name: lista_historia id_lista; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1133,7 +1134,7 @@ ALTER TABLE ONLY public.lista_historia
 
 
 --
--- TOC entry 3402 (class 2606 OID 33053)
+-- TOC entry 3400 (class 2606 OID 16643)
 -- Name: lista_usuario id_lista; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1142,7 +1143,7 @@ ALTER TABLE ONLY public.lista_usuario
 
 
 --
--- TOC entry 3394 (class 2606 OID 16546)
+-- TOC entry 3394 (class 2606 OID 16648)
 -- Name: hashtags_sagas id_saga; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1151,7 +1152,7 @@ ALTER TABLE ONLY public.hashtags_sagas
 
 
 --
--- TOC entry 3397 (class 2606 OID 32992)
+-- TOC entry 3401 (class 2606 OID 16653)
 -- Name: paletas paletas_codigo_usuario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1159,11 +1160,11 @@ ALTER TABLE ONLY public.paletas
     ADD CONSTRAINT paletas_codigo_usuario_fkey FOREIGN KEY (codigo_usuario) REFERENCES public."USUARIOS"(codigo_usuario) NOT VALID;
 
 
--- Completed on 2026-06-28 18:44:14
+-- Completed on 2026-07-01 14:08:49
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict nYbvmV5nwveyK0TOL8BszT74zIj6GHj5CHhk94Lnaehw1VCae4UMlPB9OBXmEdK
+\unrestrict 9E12Z8B46G99qvZs6uUSjFB8Kp4nsVSpjNa336XGbzkCF9dCtKcBFsuBYdj0doG
 

@@ -352,15 +352,17 @@ function Asistente_ia() {
   return (
     <>
       <button
-        onClick={() => setMostrarModal(true)}
-        className="fixed right-0 bottom-15 lg:bottom-0 z-50 w-[120px] lg:w-[240px] h-[87px] overflow-hidden flex items-end justify-end"
+        onClick={() => setMostrarModal(!mostrarModal)}
+        className="hover:cursor-pointer fixed right-0 bottom-15 lg:bottom-0 z-50 w-[120px] lg:w-[240px] h-[87px] overflow-hidden flex items-end justify-end"
       >
         <div className="translate-y-[3px] translate-x-[80px] pointer-events-none">
           <Morris_asistente />
         </div>
       </button>
 
-      {mostrarModal && <Modal_chat />}
+      <div className={`${mostrarModal ? "block" : "hidden"}`}>
+        <Modal_chat />
+      </div>
     </>
   );
 }

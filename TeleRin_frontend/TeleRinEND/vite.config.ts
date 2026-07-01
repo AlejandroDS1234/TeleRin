@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     port: 4210,
     host: true,
-    allowedHosts: ["sustainable-portion-calculate-mem.trycloudflare.com"],
+    allowedHosts: ["suites-surgery-instrumental-angeles.trycloudflare.com"],
     watch: {
       usePolling: true, // ← Agregar esto
     },

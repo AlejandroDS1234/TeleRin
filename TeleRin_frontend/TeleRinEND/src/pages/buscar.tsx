@@ -24,7 +24,7 @@ function Buscar() {
         className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-30"
         src={sobrefondo}
       />
-      <div className="w-full md:w-100 shrink-0">
+      <div className="w-full md:w-100 shrink-0 bg-amber-200">
         <div
           className="
             sticky
@@ -51,7 +51,7 @@ function Buscar() {
       </div>
 
       {/* Resultados */}
-      <div className=" flex-1 z-2 p-3 rounded-sm">
+      <div className=" flex-1 z-2 p-3 rounded-sm bg-blue-600">
         {busqueda.trim().length === 0 ? (
           <p className="text-sm text-gray-600">Escribe algo para buscar historias.</p>
         ) : isLoading ? (
