@@ -478,7 +478,7 @@ function PaginaEditor() {
         onClose={() => setAbrirModalContinuar(false)}
         open={abrirModalContinuar}
       />
-      <div className=" bg-[#e5e3dc] w-full max-w-175 shadow-xl flex flex-col items-center p-4">
+      <div className=" bg-[#dbd9d2] w-full max-w-175 shadow-xl flex flex-col items-center p-4">
         <Editor
           onChangeContenido={(datos) => {
             setContenido(datos);
