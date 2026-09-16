@@ -16,6 +16,7 @@ import Sagas from "../pages/sagas.tsx";
 import Consultas from "../pages/admin/consultas_usuarios.tsx";
 import PanelAdmin from "../pages/admin/panelAdmin.tsx";
 import PerfilOtros from "../pages/perfilOtroUsuario.tsx";
+import ListaDeLectura from "../pages/lista_lectura.tsx";
 import { Routes, Route } from "react-router-dom";
 
 function RutasIngresar() {
@@ -45,6 +46,7 @@ function RutasIngresar() {
           <Route path="/admin" element={<PanelAdmin />} />
           <Route path="/consultas" element={<Consultas />} />
           <Route path="/perfil/:codigo_usuario" element={<PerfilOtros />} />
+          <Route path="/lista_lectura/:id_lista" element={<ListaDeLectura />} />
         </Route>
       </Route>
     </Routes>

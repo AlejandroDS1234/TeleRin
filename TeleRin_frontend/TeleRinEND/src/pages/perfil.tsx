@@ -9,7 +9,7 @@ import {
   HistoriaCard,
   HistoriaCardCargando,
   HistoriaCardEditar,
-} from "../assets/componentes/historias_cards";
+} from "../assets/componentes/cards/historias_cards";
 import { useHistorial } from "./hook/historias/hookHistorial";
 import { useHistoriasUsuario } from "./hook/historias/hookHistoriasUsuario";
 import { usePaises } from "./hook/hookPaises";
@@ -21,9 +21,10 @@ import {
   CardUsuario,
   CardUsuarioPropio,
   CardUsuarioCargando,
-} from "../assets/componentes/card_usuario";
+} from "../assets/componentes/cards/card_usuario";
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
-import { Sagacard, SagaCardCargando } from "../assets/componentes/sagas_cards";
+import { Sagacard, SagaCardCargando } from "../assets/componentes/cards/sagas_cards";
+import { ListasCard } from "../assets/componentes/cards/listas_cards";
 
 function Nombre() {
   const { data: usuario } = useSesion("nombre_usuario");
@@ -604,12 +605,81 @@ function SagasUsuario() {
   );
 }
 
+function ListasLectura() {
+  const { data: usuario } = useSesion("codigo_usuario");
+  const [dato, setdato] = useState([]);
+
+  useEffect(() => {
+    fetch(`/api/listas_lectura/${usuario?.codigo_usuario}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setdato([
+          {
+            id_lista: 2,
+            nombre_lista: "Favoritos de Rock",
+            cantidad_elementos: 120,
+            autor: {
+              nombre_usuario: "Melomano99",
+              foto_perfil_usuario: "predefinido.webp",
+              codigo_usuario: 456,
+            },
+          },
+          {
+            id_lista: 3,
+            nombre_lista: "Películas por Ver",
+            cantidad_elementos: 45,
+            autor: {
+              nombre_usuario: "CinefiloAnonimo",
+              foto_perfil_usuario: "predefinido.webp",
+              codigo_usuario: 789,
+            },
+          },
+          {
+            id_lista: 4,
+            nombre_lista: "Recetas Saludables",
+            cantidad_elementos: 12,
+            autor: {
+              nombre_usuario: "ChefHealthy",
+              foto_perfil_usuario: "predefinido.webp",
+              codigo_usuario: 101,
+            },
+          },
+          {
+            id_lista: 5,
+            nombre_lista: "Lugares del Mundo",
+            cantidad_elementos: 350,
+            autor: {
+              nombre_usuario: "ViajeroSideral",
+              foto_perfil_usuario: "predefinido.webp",
+              codigo_usuario: 202,
+            },
+          },
+        ]); // Datos de ejemplo
+      });
+  }, []);
+
+  return (
+    <div className="flex overflow-x-auto overflow-y-hidden sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+      {dato.map((lista: any) => (
+        <ListasCard
+          key={lista.id_lista}
+          nombreLista={lista.nombre_lista}
+          idLista={lista.id_lista}
+          autor={lista.autor}
+          cantidad_elementos={lista.cantidad_elementos}
+        />
+      ))}
+    </div>
+  );
+}
+
 function Perfil() {
   const [menuActivo, setMenuActivo] = useState("historial");
   const menus = {
     historial: <Historial />,
     historias: <HistoriasUsuario />,
     sagas: <SagasUsuario />,
+    listas: <ListasLectura />,
   };
 
   return (
@@ -650,6 +720,17 @@ function Perfil() {
               title="Sagas creadas"
             >
               Sagas
+            </button>
+            <button
+              className={`flex-1 h-full truncate hover:cursor-pointer ${
+                menuActivo === "listas"
+                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-xl"
+                  : "bg-(--color_principal_claro)"
+              }`}
+              onClick={() => setMenuActivo("listas")}
+              title="Listas"
+            >
+              Listas
             </button>
           </div>
           <div className="contenedor-scroll h-[92%] p-2 overflow-auto scroll-suave ">

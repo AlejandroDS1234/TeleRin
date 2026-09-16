@@ -1,22 +1,32 @@
 import sobrefondo from "../assets/imagenes/sobrefondo_buscar.webp";
 import { useState, useEffect } from "react";
 import { useBuscar } from "./hook/hookBusqueda";
-import { HistoriaCard } from "../assets/componentes/historias_cards";
-import { Sagacard } from "../assets/componentes/sagas_cards";
-import { CardUsuario } from "../assets/componentes/card_usuario";
+import { HistoriaCard } from "../assets/componentes/cards/historias_cards";
+import { Sagacard } from "../assets/componentes/cards/sagas_cards";
+import { CardUsuario } from "../assets/componentes/cards/card_usuario";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 function Buscar() {
-  const [searchText, setSearchText] = useState("");
-  const [busqueda, setBusqueda] = useState("");
-  const { data, isLoading } = useBuscar(busqueda);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchText = searchParams.get("searchText") || "";
+  const [texto, setTexto] = useState(searchText);
+  const [busqueda, setBusqueda] = useState(searchText);
+
+  useEffect(() => {
+    setTexto(searchText);
+    setBusqueda(searchText);
+  }, [searchText]);
 
   useEffect(() => {
     const temporizador = setTimeout(() => {
-      setBusqueda(searchText);
+      navigate(`/buscar?searchText=${encodeURIComponent(texto)}`);
     }, 500);
 
     return () => clearTimeout(temporizador);
-  }, [searchText]);
+  }, [texto]);
+
+  const { data, isLoading } = useBuscar(busqueda);
 
   return (
     <div className="relative flex gap-5 p-5">
@@ -44,17 +54,17 @@ function Buscar() {
             className="w-full border"
             type="text"
             placeholder="Buscar..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            value={texto}
+            onChange={(e) => {
+              setTexto(e.target.value);
+            }}
           />
         </div>
       </div>
 
       {/* Resultados */}
       <div className=" flex-1 z-2 p-3 rounded-sm bg-blue-600">
-        {busqueda.trim().length === 0 ? (
-          <p className="text-sm text-gray-600">Escribe algo para buscar historias.</p>
-        ) : isLoading ? (
+        {isLoading ? (
           <p className="text-sm text-gray-600">Buscando...</p>
         ) : data?.historias?.length === 0 &&
           data?.sagas?.length === 0 &&

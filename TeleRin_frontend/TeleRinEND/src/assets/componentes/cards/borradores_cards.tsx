@@ -1,6 +1,6 @@
 import { Shredder } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useEliminarBorradorHistoria } from "../../pages/hook/historias/hookContinuarHistoria";
+import { useEliminarBorradorHistoria } from "../../../pages/hook/historias/hookContinuarHistoria";
 import { useState } from "react";
 
 export function BorradoresCards({ texto, id_historia }: { texto: string; id_historia: string }) {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRef } from "react";
-import { Sagacard, SagaCardCargando } from "../assets/componentes/sagas_cards";
-import { HistoriaCard, HistoriaCardCargando } from "../assets/componentes/historias_cards";
+import { Sagacard, SagaCardCargando } from "../assets/componentes/cards/sagas_cards";
+import { HistoriaCard, HistoriaCardCargando } from "../assets/componentes/cards/historias_cards";
 import { motion } from "framer-motion";
 import type { Historia, Saga } from "../types";
 import imagen_inicio from "../assets/imagenes/imagen_inicio.webp";

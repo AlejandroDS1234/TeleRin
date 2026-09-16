@@ -2,8 +2,8 @@ import { FilePenLine, Hammer, NotebookText, BookLock, CircleUserRound } from "lu
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { ColorRandom } from "../../function_generales";
-import useScrollLock from "../../hooks/useScrollLock";
+import { ColorRandom } from "../../../function_generales";
+import useScrollLock from "../../../hooks/useScrollLock";
 
 type HistoriaCardProps = {
   idh: string;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "../assets/componentes/modal";
 import type { Genero, Pais } from "../types";
-import { HistoriaCard, HistoriaCardCargando } from "../assets/componentes/historias_cards";
+import { HistoriaCard, HistoriaCardCargando } from "../assets/componentes/cards/historias_cards";
 import { useHistoriasUsuario } from "./hook/historias/hookHistoriasUsuario";
 import { usePaises } from "./hook/hookPaises";
 import { useGeneros } from "./hook/hookGeneros";
@@ -13,9 +13,9 @@ import {
   CardUsuario,
   CardUsuarioPropio,
   CardUsuarioCargando,
-} from "../assets/componentes/card_usuario";
+} from "../assets/componentes/cards/card_usuario";
 import { useOtroUsuario } from "./hook/usuario/hookOtroUsuario";
-import { Sagacard, SagaCardCargando } from "../assets/componentes/sagas_cards";
+import { Sagacard, SagaCardCargando } from "../assets/componentes/cards/sagas_cards";
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
 import { useSesion } from "./hook/usuario/hookSesion";
 import { useSeguir, useDejarDeSeguir } from "./hook/usuario/hookSeguir";

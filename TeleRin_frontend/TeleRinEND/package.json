@@ -24,7 +24,7 @@
         "deep-chat-react": "^2.4.2",
         "events": "^3.3.0",
         "framer-motion": "^12.38.0",
-        "lucide-react": "^1.7.0",
+        "lucide-react": "^1.27.0",
         "quill": "^2.0.3",
         "react": "^19.2.4",
         "react-data-table-component": "^8.3.0",

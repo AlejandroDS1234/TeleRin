@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, jsonify
 from PIL import Image
 import psycopg2.extras
@@ -23,63 +22,181 @@ def crear_saga():
     usuario_actual = obtener_usuario()
     if not usuario_actual:
         return jsonify({"mensaje": "Necesitas usuario para acceder", "tipo": "warning"})
-    nombre_saga=request.form["nombre_saga"].strip()
-    descripcion_saga=request.form["descripcion_saga"].strip()
-    imagen_saga=request.files.get("imagen_saga", None)
-    id_saga=f"""-inicio-{usuario_actual["codigo_usuario"]}-{nombre_saga.strip()}"""
-    if nombre_saga.strip() == "" or descripcion_saga.strip() == "" or imagen_saga.filename == "":
+    nombre_saga = request.form["nombre_saga"].strip()
+    descripcion_saga = request.form["descripcion_saga"].strip()
+    imagen_saga = request.files.get("imagen_saga", None)
+    id_saga = f"""-inicio-{usuario_actual["codigo_usuario"]}-{nombre_saga.strip()}"""
+    if (
+        nombre_saga.strip() == ""
+        or descripcion_saga.strip() == ""
+        or imagen_saga.filename == ""
+    ):
         return jsonify({"mensaje": "Llena todos los datos", "tipo": "danger"})
-    sagas_con_mismo_nombre=dato_en_db(None, {"nombre_saga": nombre_saga, "codigo_usuario": usuario_actual["codigo_usuario"]}, "saga")
+    sagas_con_mismo_nombre = dato_en_db(
+        None,
+        {
+            "nombre_saga": nombre_saga,
+            "codigo_usuario": usuario_actual["codigo_usuario"],
+        },
+        "saga",
+    )
     if sagas_con_mismo_nombre:
-        return jsonify({"mensaje": "Ya existe una saga con ese nombre", "tipo": "danger"})
+        return jsonify(
+            {"mensaje": "Ya existe una saga con ese nombre", "tipo": "danger"}
+        )
     mensaje, resultado = validar_imagen_completa(imagen_saga)
     if resultado:
         return jsonify({"mensaje": mensaje, "tipo": "danger"})
-    if len(nombre_saga.split(" "))>6 or len(nombre_saga)>50:
-        return jsonify({"mensaje": "El nombre de la saga es muy largo","tipo": "danger"})
-    if len(descripcion_saga.split(" "))>60 or len(descripcion_saga)>500:
-        return jsonify({"mensaje": "La descripcion de la saga es muy larga","tipo": "danger"})
-    imagen_saga_nombre, imagen_saga_ruta=ruta_guardado(id_saga, "_saga", "Fotos/fotos_sagas")
+    if len(nombre_saga.split(" ")) > 6 or len(nombre_saga) > 50:
+        return jsonify(
+            {"mensaje": "El nombre de la saga es muy largo", "tipo": "danger"}
+        )
+    if len(descripcion_saga.split(" ")) > 60 or len(descripcion_saga) > 500:
+        return jsonify(
+            {"mensaje": "La descripcion de la saga es muy larga", "tipo": "danger"}
+        )
+    imagen_saga_nombre, imagen_saga_ruta = ruta_guardado(
+        id_saga, "_saga", "Fotos/fotos_sagas"
+    )
     guardar_imagen(imagen_saga, imagen_saga_ruta, "saga")
-    saga = {"id_saga": id_saga, "nombre_saga": nombre_saga, "descripcion_saga": descripcion_saga, "imagen_saga": imagen_saga_nombre, "codigo_usuario": usuario_actual["codigo_usuario"]}
+    saga = {
+        "id_saga": id_saga,
+        "nombre_saga": nombre_saga,
+        "descripcion_saga": descripcion_saga,
+        "imagen_saga": imagen_saga_nombre,
+        "codigo_usuario": usuario_actual["codigo_usuario"],
+    }
     insertar_db("saga", saga)
-    hashtag_db(descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"})
+    hashtag_db(
+        descripcion_saga, id_saga, {"tabla": "hashtags_sagas", "campo": "id_saga"}
+    )
     indexar("sagas", id_saga, obtener_info_saga(id_saga))
     return jsonify({"mensaje": "Saga creada", "tipo": "success", "saga": saga})
+
 
 @sagas_bp.route("/api/sagas_creadas/<usuario>", methods=["POST"])
 def sagas_creadas(usuario):
     usuario_sesion = obtener_usuario()
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s LEFT JOIN historias h ON s.id_saga = h.id_saga AND h.visibilidad_historia IN %s WHERE s.codigo_usuario = %s GROUP BY s.nombre_saga, s.id_saga ORDER BY s.fecha_actualizacion DESC""", ((True,not (usuario_sesion["codigo_usuario"] == usuario)), usuario))
-            sagas= cursor.fetchall()
+            cursor.execute(
+                """SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros FROM "saga" s LEFT JOIN historias h ON s.id_saga = h.id_saga AND h.visibilidad_historia IN %s WHERE s.codigo_usuario = %s GROUP BY s.nombre_saga, s.id_saga ORDER BY s.fecha_actualizacion DESC""",
+                ((True, not (usuario_sesion["codigo_usuario"] == usuario)), usuario),
+            )
+            sagas = cursor.fetchall()
     return jsonify(sagas)
-  
-        
+
+
 @sagas_bp.route("/api/saga_info/<id_saga>")
 def saga(id_saga):
     usuario = obtener_usuario()
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT id_historia FROM "historias" WHERE id_saga = %s AND codigo_usuario = %s""", (id_saga, usuario["codigo_usuario"]))
-            historia_usuario=cursor.fetchall()
-            cursor.execute("""SELECT s.nombre_saga, s.id_saga, s.imagen_saga, s.descripcion_saga, COUNT(h.id_saga) AS libros, u.nombre_usuario FROM "saga" s LEFT JOIN historias h ON s.id_saga = h.id_saga AND h.visibilidad_historia IN %s JOIN "USUARIOS" u ON s.codigo_usuario = u.codigo_usuario WHERE s.id_saga = %s GROUP BY s.nombre_saga, s.id_saga, u.nombre_usuario""", ((True, (not bool(historia_usuario))), id_saga))
-            saga= cursor.fetchone()
+            cursor.execute(
+                """SELECT id_historia FROM "historias" WHERE id_saga = %s AND codigo_usuario = %s""",
+                (id_saga, usuario["codigo_usuario"]),
+            )
+            historia_usuario = cursor.fetchall()
+            cursor.execute(
+                """
+                -- 1. Contamos los libros por saga de forma limpia
+                WITH total_libros_saga AS (
+                    SELECT 
+                        id_saga,
+                        COUNT(*) AS total_libros
+                    FROM historias
+                    WHERE visibilidad_historia IN %s
+                    GROUP BY id_saga
+                ),
+
+                -- 2. Contamos las vistas totales uniendo el historial con las historias para saber a qué saga pertenecen
+                vistas_saga AS (
+                    SELECT 
+                        h.id_saga,
+                        COUNT(hl.id_historia) AS total_vistas -- Cuenta cada registro/fila en el historial
+                    FROM historias h
+                    JOIN historial hl ON h.id_historia = hl.id_historia
+                    WHERE h.visibilidad_historia IN %s
+                    GROUP BY h.id_saga
+                ),
+
+                -- 1. PASO UNO: Sacamos el promedio real de cada historia individual
+                promedio_por_historia AS (
+                    SELECT 
+                        h.id_saga, -- Llevamos el id_saga para el siguiente paso
+                        ch.id_historia,
+                        AVG(ch.calificacion) AS promedio_historia
+                    FROM "calificacion_historia" ch
+                    JOIN "historias" h ON ch.id_historia = h.id_historia
+                    WHERE h.visibilidad_historia IN %s
+                    GROUP BY h.id_saga, ch.id_historia
+                ),
+
+                -- 2. PASO DOS: Tomamos los promedios anteriores y sacamos el promedio de la saga
+                calificacion_final_saga AS (
+                    SELECT 
+                        id_saga,
+                        ROUND(COALESCE(AVG(promedio_historia), 0)) AS calificacion_saga
+                    FROM promedio_por_historia -- ¡Aquí usamos el CTE de arriba!
+                    GROUP BY id_saga
+                )
+
+                --4. Consulta principal: Unimos todo limpiamente
+                SELECT 
+                    s.id_saga, 
+                    s.nombre_saga, 
+                    s.descripcion_saga, 
+                    s.imagen_saga, 
+                    s.codigo_usuario, 
+                    u.nombre_usuario,
+                    u.foto_perfil_usuario,
+                    COALESCE(cl.total_libros, 0) AS cantidad_historias,
+                    COALESCE(vs.total_vistas, 0) AS vistas,
+                    COALESCE(cfs.calificacion_saga, 0) AS calificacion 
+                FROM saga s 
+                JOIN "USUARIOS" u ON s.codigo_usuario = u.codigo_usuario
+                LEFT JOIN total_libros_saga cl ON s.id_saga = cl.id_saga
+                LEFT JOIN vistas_saga vs ON s.id_saga = vs.id_saga
+                LEFT JOIN calificacion_final_saga cfs ON s.id_saga = cfs.id_saga    
+                WHERE s.id_saga = %s          
+            """,
+                (
+                    (True, (not bool(historia_usuario))),
+                    (True, (not bool(historia_usuario))),
+                    (True, (not bool(historia_usuario))),
+                    id_saga,
+                ),
+            )
+            saga = cursor.fetchone()
     if not saga:
-        return jsonify({"redirigir": "/inicio", "mensaje_redirigir": {"mensaje": "Saga no encontrada", "tipo": "danger"}})
+        return jsonify(
+            {
+                "redirigir": "/inicio",
+                "mensaje_redirigir": {
+                    "mensaje": "Saga no encontrada",
+                    "tipo": "danger",
+                },
+            }
+        )
     return saga
+
 
 @sagas_bp.route("/api/sagas_historias/<id_saga>", methods=["POST"])
 def sagas_historias(id_saga):
     usuario = obtener_usuario()
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute("""SELECT id_historia FROM "historias" WHERE id_saga = %s AND codigo_usuario = %s""", (id_saga, usuario["codigo_usuario"]))
-            historia_usuario=cursor.fetchall()
-            cursor.execute("""SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,TO_CHAR(h.fecha_actualizacion,'DD/MM/YYYY'), h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,  ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia IN %s AND h.id_saga = %s GROUP BY h.nombre_historia, h.id_historia,  u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY h.fecha_actualizacion DESC""", ((True,(not bool(historia_usuario))), id_saga))
-            historias=cursor.fetchall()
+            cursor.execute(
+                """SELECT id_historia FROM "historias" WHERE id_saga = %s AND codigo_usuario = %s""",
+                (id_saga, usuario["codigo_usuario"]),
+            )
+            historia_usuario = cursor.fetchall()
+            cursor.execute(
+                """SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,TO_CHAR(h.fecha_actualizacion,'DD/MM/YYYY'), h.descripcion_historia, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,  ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia IN %s AND h.id_saga = %s GROUP BY h.nombre_historia, h.id_historia,  u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY h.fecha_actualizacion DESC""",
+                ((True, (not bool(historia_usuario))), id_saga),
+            )
+            historias = cursor.fetchall()
             print(historia_usuario)
-            resultado = {"editar": (bool(historia_usuario)),"historias":historias}
+            resultado = {"editar": (bool(historia_usuario)), "historias": historias}
             print(resultado)
     return jsonify(resultado)

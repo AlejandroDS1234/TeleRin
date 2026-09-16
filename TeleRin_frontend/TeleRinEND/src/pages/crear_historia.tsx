@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import CrearSaga from "../assets/componentes/crear_saga.tsx";
 import { CustomSelect } from "../assets/componentes/CustomSelect.tsx";
-import { SagasCardHorizontal } from "../assets/componentes/sagas_cards";
-import { BorradoresCards } from "../assets/componentes/borradores_cards";
+import { SagasCardHorizontal } from "../assets/componentes/cards/sagas_cards.tsx";
+import { BorradoresCards } from "../assets/componentes/cards/borradores_cards.tsx";
 import type { Saga } from "../types";
 import type Delta from "quill-delta";
 import { redirigir } from "../function_generales.tsx";
@@ -353,9 +353,9 @@ function Asistente_ia() {
     <>
       <button
         onClick={() => setMostrarModal(!mostrarModal)}
-        className="hover:cursor-pointer fixed right-0 bottom-15 lg:bottom-0 z-50 w-[120px] lg:w-[240px] h-[87px] overflow-hidden flex items-end justify-end"
+        className="hover:cursor-pointer fixed right-0 bottom-15 lg:bottom-0 z-50 w-30 lg:w-60 h-21.75 overflow-hidden flex items-end justify-end"
       >
-        <div className="translate-y-[3px] translate-x-[80px] pointer-events-none">
+        <div className="translate-y-0.75 translate-x-20 pointer-events-none">
           <Morris_asistente />
         </div>
       </button>

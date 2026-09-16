@@ -1,7 +1,7 @@
 import {
   Sagacard,
   SagaCardCargando,
-} from "../../assets/componentes/sagas&historias_cards_admin.tsx";
+} from "../../assets/componentes/cards/sagas&historias_cards_admin.tsx";
 import { useEffect, useState } from "react";
 
 function Sagas() {

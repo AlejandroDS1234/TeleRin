@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ColorRandom } from "../../function_generales";
+import { ColorRandom } from "../../../function_generales";
 
 type LineasProps = {
   grosor: string;

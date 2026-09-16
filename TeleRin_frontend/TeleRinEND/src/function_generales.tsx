@@ -118,7 +118,24 @@ export function useIsLg() {
 }
 
 export function ColorRandom() {
-  const colores = ["#CBC0ADBF", "#86A397BF", "#B9CFD4BF", "#CEE0DCBF"];
+  const colores = [
+    "#CBC0ADBF",
+    "#86A397BF",
+    "#B9CFD4BF",
+    "#CEE0DCBF",
+    "#CBC0ADBF",
+    "#86A397BF",
+    "#B9CFD4BF",
+    "#CEE0DCBF",
+    "#A3B899BF",
+    "#8CA1A5BF",
+    "#9FB1AFFF",
+    "#D4C5B9BF",
+    "#C2B2A2BF",
+    "#E6DFD3BF",
+    "#D1B3B3BF",
+    "#B8A9C4BF",
+  ];
   return colores[Math.floor(Math.random() * colores.length)];
 }
 
