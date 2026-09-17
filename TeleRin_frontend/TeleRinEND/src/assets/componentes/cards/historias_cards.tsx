@@ -201,6 +201,7 @@ export function HistoriaCardEditar({
   descripcion,
   visibilidad,
   autor,
+  opciones,
 }: HistoriaCardProps) {
   const navigate = useNavigate();
   return (
@@ -271,6 +272,7 @@ export function HistoriaCardEditar({
                 <Hammer />
                 <p className="w-full justify-center">En Construccion</p>
               </button>
+              {opciones}
             </MasOpciones>
           </div>
         </small>

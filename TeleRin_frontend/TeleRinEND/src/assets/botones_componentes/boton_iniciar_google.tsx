@@ -43,30 +43,37 @@ function BotonGoogle({ text, size, width }: Props) {
           Iniciando sesión...
         </button>
       ) : (
-        <>
+        <div className="w-full flex flex-col justify-center items-center">
           <GoogleLogin
             text={text}
             size={size}
             width={width}
             onSuccess={async (credentialResponse) => {
-              setCargando(true);
-              const res = await fetch("/api/iniciar_google", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ token: credentialResponse.credential }),
-              });
-              const data = await res.json();
-              setRes(data);
-              redirigir(navigate, data);
+              try {
+                setCargando(true);
+                const res = await fetch("/api/iniciar_google", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ token: credentialResponse.credential }),
+                });
+                const data = await res.json();
+                setRes(data);
+                redirigir(navigate, data);
+              } catch (error) {
+                console.error("Error al iniciar sesión con Google:", error);
+                setRes({ mensaje: "Error al iniciar sesión con Google", tipo: "warning" });
+              } finally {
+                setCargando(false);
+              }
             }}
             onError={() => {
               console.log("Login Failed");
             }}
           />
           {res && <MensajePlano mensaje={res.mensaje} tipo={res.tipo} id={1} />}
-        </>
+        </div>
       )}
     </>
   );

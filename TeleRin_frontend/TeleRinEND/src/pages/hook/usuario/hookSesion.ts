@@ -1,10 +1,6 @@
 import { sesion, editarSesion, cambiarFoto, cerrarSesion } from "../../api/usuario/apiSesion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Usuario } from "../../../types";
-
-type PerfilPayload = Partial<
-  Pick<Usuario, "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero">
-> & { mensaje?: string };
+import type { PerfilPayload } from "../../../types/usuario";
 
 export function useSesion(columnas?: string) {
   return useQuery({

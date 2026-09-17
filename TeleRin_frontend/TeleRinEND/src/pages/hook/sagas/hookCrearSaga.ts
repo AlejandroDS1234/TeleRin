@@ -1,13 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { crearSaga } from "../../api/sagas/apiCrearSaga";
-import type { MessageType, Saga } from "../../../types";
+import type { Saga } from "../../../types";
+import type { CrearSagaData } from "../../../types/sagas";
 import { useSesion } from "../usuario/hookSesion";
-
-type CrearSagaData = {
-  mensaje: string;
-  tipo: MessageType;
-  saga: Saga;
-};
 
 export function useCrearSaga() {
   const { data: usuario } = useSesion("codigo_usuario");

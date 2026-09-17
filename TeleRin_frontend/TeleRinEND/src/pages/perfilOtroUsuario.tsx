@@ -19,6 +19,8 @@ import { Sagacard, SagaCardCargando } from "../assets/componentes/cards/sagas_ca
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
 import { useSesion } from "./hook/usuario/hookSesion";
 import { useSeguir, useDejarDeSeguir } from "./hook/usuario/hookSeguir";
+import { ListasCard } from "../assets/componentes/cards/listas_cards";
+import { useListasLecturaUsuario } from "./hook/listas/hookListasLecturaUsuario";
 
 function Imagen() {
   const { codigo_usuario = "" } = useParams();
@@ -372,11 +374,43 @@ function SagasUsuario() {
   );
 }
 
+function ListasLectura() {
+  const { codigo_usuario = "" } = useParams();
+  const { isLoading, error, data: listas } = useListasLecturaUsuario(codigo_usuario);
+
+  if (isLoading) {
+    return <div>cargando</div>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">Error loading lists. {error.message}</p>;
+  }
+
+  return (
+    <div className="flex overflow-x-auto overflow-y-hidden sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+      {listas?.length === 0 ? (
+        <p className="text-(--color_texto_oscuro)">Sin listas</p>
+      ) : (
+        listas?.map((lista: any) => (
+          <ListasCard
+            key={lista.id_lista}
+            nombreLista={lista.nombre_lista}
+            idLista={lista.id_lista}
+            autor={lista.autor}
+            cantidad_elementos={lista.cantidad_elementos}
+          />
+        ))
+      )}
+    </div>
+  );
+}
+
 function PerfilOtros() {
   const [menuActivo, setMenuActivo] = useState("historias");
   const menus = {
     historias: <HistoriasUsuario />,
     sagas: <SagasUsuario />,
+    listas: <ListasLectura />,
   };
 
   return (
@@ -406,6 +440,17 @@ function PerfilOtros() {
               title="Sagas creadas"
             >
               Sagas
+            </button>
+            <button
+              className={`flex-1 h-full truncate hover:cursor-pointer ${
+                menuActivo === "listas"
+                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-xl"
+                  : "bg-(--color_principal_claro)"
+              }`}
+              onClick={() => setMenuActivo("listas")}
+              title="Listas de lectura"
+            >
+              Listas
             </button>
           </div>
           <div className=" h-[92%] p-5 overflow-auto scroll-suave">

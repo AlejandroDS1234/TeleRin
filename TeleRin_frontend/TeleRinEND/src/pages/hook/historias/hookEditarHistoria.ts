@@ -4,18 +4,7 @@ import {
   guardarBorradorHistoria,
 } from "../../api/historias/apiEditarHistoria";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import type Delta from "quill-delta";
-
-type EditarHistoriaDatos = {
-  historia: Delta;
-  texto_historia: string;
-  id_historia: string;
-};
-
-type BorradorHistoriaDatos = {
-  id_historia: string;
-  borrador_historia: Delta;
-};
+import type { BorradorHistoriaDatos, EditarHistoriaDatos } from "../../../types/historias";
 
 export function useEditarHistoria(id_historia: string) {
   return useQuery({

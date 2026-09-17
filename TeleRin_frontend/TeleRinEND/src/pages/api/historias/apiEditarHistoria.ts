@@ -1,15 +1,4 @@
-import type Delta from "quill-delta";
-
-type EditarHistoriaDatos = {
-  historia: Delta;
-  texto_historia: string;
-  id_historia: string;
-};
-
-type BorradorHistoriaDatos = {
-  id_historia: string;
-  borrador_historia: Delta;
-};
+import type { BorradorHistoriaDatos, EditarHistoriaDatos } from "../../../types/historias";
 
 export async function editarHistoria(id_historia: string) {
   const res = await fetch(`/api/editar_historia/${encodeURIComponent(id_historia)}`, {

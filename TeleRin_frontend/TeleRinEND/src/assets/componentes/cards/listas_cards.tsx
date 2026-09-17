@@ -74,6 +74,7 @@ export function ListasCard({ nombreLista, idLista, cantidad_elementos, autor }: 
       initial="cerrada"
       animate="cerrada"
       whileHover="abierta"
+      onClick={() => navigate(`/lista_lectura/${idLista}`)}
     >
       {Array.from({ length: cantidad }).map((_, i) => (
         <motion.div

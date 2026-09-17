@@ -3,7 +3,12 @@ import datetime
 import psycopg2.extras
 from psycopg2.extras import Json
 import uuid
-from servidor.core.db import conectar, dato_en_db, insertar_db, actualizar_datos
+from servidor.core.db import (
+    conectar,
+    dato_en_db,
+    insertar_db,
+    actualizar_datos,
+)
 from servidor.core.decoradores import necesita
 from servidor.services.servicios_sesion import obtener_usuario, sesion_iniciada
 from servidor.services.servicios_texto import (
@@ -52,7 +57,11 @@ def guardar_historial(id_historia: str):
     with conectar() as db:
         with db.cursor() as cursor:
             cursor.execute(
-                'INSERT INTO "historial" (codigo_usuario, id_historia, tiempo_vista) VALUES (%s, %s, %s) ON CONFLICT (codigo_usuario, id_historia) DO UPDATE SET tiempo_vista = EXCLUDED.tiempo_vista',
+                """INSERT INTO "historial"
+                (codigo_usuario, id_historia, tiempo_vista)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (codigo_usuario, id_historia)
+                DO UPDATE SET tiempo_vista = EXCLUDED.tiempo_vista""",
                 (codigo_usuario, id_historia, tiempo),
             )
     info = obtener_info_historia(id_historia)
@@ -77,7 +86,11 @@ def crear_historia():
     idioma = detectar_idioma(texto_historia)
     id_historia = form.get("id_historia")
     mensajes = [
-        verificar_nommbre_historia(nombre_historia, saga_historia, id_historia),
+        verificar_nommbre_historia(
+            nombre_historia,
+            saga_historia,
+            id_historia,
+        ),
         verificar_descripcion_historia(descripcion_historia),
         verificar_saga(saga_historia),
         verificar_historia(texto_historia),
@@ -247,13 +260,33 @@ def historia(id_historia):
     with conectar() as db:
         with db.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
             cursor.execute(
-                """SELECT id_historia FROM "historias" WHERE id_historia = %s AND codigo_usuario = %s""",
+                """SELECT id_historia
+                FROM "historias"
+                WHERE id_historia = %s AND codigo_usuario = %s""",
                 (id_historia, usuario["codigo_usuario"]),
             )
             historia_usuario = cursor.fetchall()
             cursor.execute(
-                """SELECT h.nombre_historia, h.id_historia, h.visibilidad_historia ,h.id_historia, h.descripcion_historia, h.contenido_historia ,TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p, COUNT(ch.calificacion) AS personas FROM "historias" h LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario WHERE h.visibilidad_historia IN %s AND h.id_historia = %s AND h.publicada = TRUE GROUP BY h.nombre_historia, h.id_historia, h.visibilidad_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario ORDER BY calificacion_p DESC LIMIT 20""",
-                ((True, (not bool(historia_usuario))), id_historia),
+                """SELECT h.nombre_historia, h.id_historia,
+                h.visibilidad_historia ,h.id_historia,
+                h.descripcion_historia, h.contenido_historia, 
+                TO_CHAR(h.fecha_actualizacion, 'DD/MM/YYYY') as fecha_actualizacion,
+                u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario,
+                ROUND(COALESCE(AVG(ch.calificacion), 0)) AS calificacion_p,
+                COUNT(ch.calificacion) AS personas, %s AS mi_historia
+                FROM "historias" h
+                LEFT JOIN "calificacion_historia" ch ON h.id_historia = ch.id_historia
+                JOIN "USUARIOS" u ON h.codigo_usuario = u.codigo_usuario
+                WHERE h.visibilidad_historia IN %s
+                AND h.id_historia = %s
+                AND h.publicada = TRUE
+                GROUP BY h.nombre_historia, h.id_historia, h.visibilidad_historia, h.fecha_actualizacion, u.nombre_usuario, u.foto_perfil_usuario, u.codigo_usuario
+                ORDER BY calificacion_p DESC LIMIT 20""",
+                (
+                    bool(historia_usuario),
+                    (True, (not bool(historia_usuario))),
+                    id_historia,
+                ),
             )
             historia = cursor.fetchone()
     if not historia:

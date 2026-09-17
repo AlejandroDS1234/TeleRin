@@ -25,6 +25,7 @@ import {
 import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
 import { Sagacard, SagaCardCargando } from "../assets/componentes/cards/sagas_cards";
 import { ListasCard } from "../assets/componentes/cards/listas_cards";
+import { useListasLecturaUsuario } from "./hook/listas/hookListasLecturaUsuario";
 
 function Nombre() {
   const { data: usuario } = useSesion("nombre_usuario");
@@ -607,68 +608,31 @@ function SagasUsuario() {
 
 function ListasLectura() {
   const { data: usuario } = useSesion("codigo_usuario");
-  const [dato, setdato] = useState([]);
+  const { isLoading, error, data: listas } = useListasLecturaUsuario(usuario?.codigo_usuario);
 
-  useEffect(() => {
-    fetch(`/api/listas_lectura/${usuario?.codigo_usuario}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setdato([
-          {
-            id_lista: 2,
-            nombre_lista: "Favoritos de Rock",
-            cantidad_elementos: 120,
-            autor: {
-              nombre_usuario: "Melomano99",
-              foto_perfil_usuario: "predefinido.webp",
-              codigo_usuario: 456,
-            },
-          },
-          {
-            id_lista: 3,
-            nombre_lista: "Películas por Ver",
-            cantidad_elementos: 45,
-            autor: {
-              nombre_usuario: "CinefiloAnonimo",
-              foto_perfil_usuario: "predefinido.webp",
-              codigo_usuario: 789,
-            },
-          },
-          {
-            id_lista: 4,
-            nombre_lista: "Recetas Saludables",
-            cantidad_elementos: 12,
-            autor: {
-              nombre_usuario: "ChefHealthy",
-              foto_perfil_usuario: "predefinido.webp",
-              codigo_usuario: 101,
-            },
-          },
-          {
-            id_lista: 5,
-            nombre_lista: "Lugares del Mundo",
-            cantidad_elementos: 350,
-            autor: {
-              nombre_usuario: "ViajeroSideral",
-              foto_perfil_usuario: "predefinido.webp",
-              codigo_usuario: 202,
-            },
-          },
-        ]); // Datos de ejemplo
-      });
-  }, []);
+  if (isLoading) {
+    return <div>cargando</div>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">Error loading lists. {error.message}</p>;
+  }
 
   return (
     <div className="flex overflow-x-auto overflow-y-hidden sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
-      {dato.map((lista: any) => (
-        <ListasCard
-          key={lista.id_lista}
-          nombreLista={lista.nombre_lista}
-          idLista={lista.id_lista}
-          autor={lista.autor}
-          cantidad_elementos={lista.cantidad_elementos}
-        />
-      ))}
+      {listas?.length === 0 ? (
+        <p className="text-(--color_texto_oscuro)">Sin listas</p>
+      ) : (
+        listas?.map((lista: any) => (
+          <ListasCard
+            key={lista.id_lista}
+            nombreLista={lista.nombre_lista}
+            idLista={lista.id_lista}
+            autor={lista.autor}
+            cantidad_elementos={lista.cantidad_elementos}
+          />
+        ))
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import Editor from "../assets/componentes/editor_texto.tsx";
 import { useParams, useNavigate } from "react-router-dom";
-import { Loader, BookHeart, Book, BookLock } from "lucide-react";
+import { Loader, BookHeart, Book, Pen } from "lucide-react";
 import { redirigir } from "../function_generales.tsx";
 import { useHistorias } from "./hook/historias/hookHistorias.ts";
 import { useCalificarHistoria } from "./hook/historias/hookCalificarHistoria.ts";
@@ -94,14 +94,16 @@ function Historia() {
             className: "",
             content: <Calificacion />,
           },
-          !historia.data.visibilidad_historia
-            ? {
-                type: "custom",
-                value: "visibilidad",
-                content: <BookLock />,
-                className: "ml-auto",
-              }
-            : { type: "custom", value: "visibilidad", content: <Book />, className: "ml-auto" },
+          historia.data.mi_historia && {
+            type: "custom",
+            value: "editar",
+            className: "ml-auto hover:cursor-pointer",
+            content: (
+              <Pen
+                onClick={() => navigate(`/editor?id_historia=${encodeURIComponent(id_historia)}`)}
+              />
+            ),
+          },
         ]}
       />
     </div>

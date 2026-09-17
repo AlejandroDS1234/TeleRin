@@ -1,10 +1,7 @@
 import type { Usuario } from "../../../types";
 import { enviarInfoServer } from "../../../function_generales";
 import type { ApiMessage, RedirectPayload } from "../../../types";
-
-type PerfilPayload = Partial<
-  Pick<Usuario, "nombre_usuario" | "descripcion_personal" | "id_pais" | "id_genero">
-> & { mensaje?: string };
+import type { PerfilPayload } from "../../../types/usuario";
 type FotoPerfilResponse = ApiMessage & { foto_perfil_usuario?: string };
 type EditarSesionResponse = {
   mensaje: ApiMessage;
