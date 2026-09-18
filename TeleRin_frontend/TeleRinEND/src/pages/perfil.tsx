@@ -630,7 +630,7 @@ function ListasLectura() {
   }
 
   return (
-    <div className="flex overflow-x-auto overflow-y-hidden sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+    <div className="flex overflow-x-auto overflow-y-hidden sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4 pt-4">
       {listas?.length === 0 ? (
         <p className="text-(--color_texto_oscuro)">Sin listas</p>
       ) : (
