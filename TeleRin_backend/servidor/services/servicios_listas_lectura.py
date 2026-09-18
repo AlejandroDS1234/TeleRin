@@ -14,5 +14,3 @@ def crear_lista_lectura(nombre: str, codigo_usuario: str, visibilidad: bool):
             "codigo_usuario": codigo_usuario,
         },
     )
-   
-    

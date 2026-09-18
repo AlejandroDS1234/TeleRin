@@ -1,9 +1,10 @@
-import { FilePenLine, Hammer, NotebookText, BookLock, CircleUserRound } from "lucide-react";
+import { FilePenLine, NotebookText, BookLock, CircleUserRound, FolderBookmark } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { ColorRandom } from "../../../function_generales";
 import useScrollLock from "../../../hooks/useScrollLock";
+import { ModalListasLectura } from "../modal_listas_lectura";
 
 type HistoriaCardProps = {
   idh: string;
@@ -19,7 +20,7 @@ type HistoriaCardProps = {
   opciones?: ReactNode;
 };
 
-function MasOpciones({ children }: { children?: ReactNode }) {
+function MasOpciones({ children }: { children: (cerrarMenu: () => void) => ReactNode }) {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [abiertoArriba, setAbiertoArrriba] = useState(true);
   const [abiertoIzquierda, setAbiertoIzquierda] = useState(true);
@@ -44,6 +45,8 @@ function MasOpciones({ children }: { children?: ReactNode }) {
       setMenuDimensiones({ alto: 0, ancho: 0 });
     }
   }, [menuAbierto]);
+
+  const cerrarMenu = () => setMenuAbierto(false);
 
   useEffect(() => {
     const cerrarClickAfuera = (e: MouseEvent | TouchEvent) => {
@@ -119,13 +122,24 @@ function MasOpciones({ children }: { children?: ReactNode }) {
                 : `${(botonref.current?.getBoundingClientRect().right || 0) - 5}px`,
             }}
           >
-            {children}
+            {children(cerrarMenu)}
           </div>,
           document.body
         )}
     </button>
   );
 }
+// Diseño para las opciones en el menu de la card
+/* <button
+      className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+    >
+      <Hammer />
+      <p className="w-full justify-center">En Proceso</p>
+    </button> */
 
 export function HistoriaCard({
   idh,
@@ -136,148 +150,100 @@ export function HistoriaCard({
   opciones,
 }: HistoriaCardProps) {
   const navigate = useNavigate();
+  const [abrirModalLista, setAbrirModalLista] = useState(false);
   return (
-    <Link
-      to={`/historia/${encodeURIComponent(idh)}`}
-      className="bg-radial from-[#d9cebc] via-[#f3efe7] to-[#b3d4bf] group relative  border-[#6f675d]/50  border border-dotted flex-none w-50 sm:w-full h-50"
-    >
-      {!visibilidad && (
-        <BookLock
-          height={25}
-          className="bg-(--neutral-150) absolute -top-3 -right-3 p-0.5 rounded-full "
-        />
-      )}
-      <div className="bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] absolute inset-0 w-full h-full group-hover:animate-pulse group-hover:[animation-duration:2s]" />
-      <div className="absolute flex flex-col gap-4 p-4 pr-3 w-full h-full ">
-        <h3
-          className="font-bold text-2xl w-full  line-clamp-3 break-all animate-none"
-          title={titulo}
-        >
-          {titulo}
-        </h3>
-        <p className="w-full line-clamp-3 hidden">{descripcion}</p>
-        <small className="mt-auto w-full h-8 flex gap-1 items-center">
-          <div
-            className="flex gap-1 items-center max-w-[75%] hover:bg-(--bg-surface-muted) rounded-2xl pr-2 transition-bg-color duration-300"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              navigate(`/perfil/${encodeURIComponent(autor.codigo_usuario)}`);
-            }}
+    <>
+      <Link
+        to={`/historia/${encodeURIComponent(idh)}`}
+        className="bg-radial from-[#d9cebc] via-[#f3efe7] to-[#b3d4bf] group relative  border-[#6f675d]/50  border border-dotted flex-none w-50 sm:w-full h-50"
+      >
+        {!visibilidad && (
+          <BookLock
+            height={25}
+            className="bg-(--neutral-150) absolute -top-3 -right-3 p-0.5 rounded-full "
+          />
+        )}
+        <div className="bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] absolute inset-0 w-full h-full group-hover:animate-pulse group-hover:[animation-duration:2s]" />
+        <div className="absolute flex flex-col gap-4 p-4 pr-3 w-full h-full ">
+          <h3
+            className="font-bold text-2xl w-full line-clamp-3 wrap-break-word animate-none"
+            title={titulo}
           >
-            <div className="aspect-square h-8 relative ">
-              <img
-                src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
-                className="absolute object-cover rounded-full aspect-square w-full h-full"
-                loading="lazy"
-              />
+            {titulo}
+          </h3>
+          <p className="w-full line-clamp-3 hidden">{descripcion}</p>
+          <small className="mt-auto w-full h-8 flex gap-1 items-center">
+            <div
+              className="flex gap-1 items-center max-w-[75%] hover:bg-(--bg-surface-muted) rounded-2xl pr-2 transition-bg-color duration-300"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate(`/perfil/${encodeURIComponent(autor.codigo_usuario)}`);
+              }}
+            >
+              <div className="aspect-square h-8 relative ">
+                <img
+                  src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
+                  className="absolute object-cover rounded-full aspect-square w-full h-full"
+                  loading="lazy"
+                />
+              </div>
+              <p className="font-bold truncate">{autor.nombre_usuario}</p>
             </div>
-            <p className="font-bold truncate">{autor.nombre_usuario}</p>
-          </div>
-          <div className="ml-auto">
-            <MasOpciones>
-              <button
-                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                <Hammer />
-                <p className="w-full justify-center">En Proceso</p>
-              </button>
-              {opciones}
-            </MasOpciones>
-          </div>
-        </small>
-      </div>
-    </Link>
+            <div className="ml-auto">
+              <MasOpciones>
+                {(cerrarMenu) => (
+                  <>
+                    <BotonAgregarLista
+                      onAbrir={() => {
+                        cerrarMenu();
+                        setAbrirModalLista(true);
+                      }}
+                    />
+                    {opciones}
+                  </>
+                )}
+              </MasOpciones>
+            </div>
+          </small>
+        </div>
+      </Link>
+      <ModalListasLectura open={abrirModalLista} onClose={() => setAbrirModalLista(false)} />
+    </>
   );
 }
 
-export function HistoriaCardEditar({
-  idh,
-  titulo,
-  descripcion,
-  visibilidad,
-  autor,
-  opciones,
-}: HistoriaCardProps) {
+export function BotonEditarHistoria({ id_historia }: { id_historia: string }) {
   const navigate = useNavigate();
   return (
-    <Link
-      to={`/historia/${encodeURIComponent(idh)}`}
-      className="bg-radial from-[#d9cebc] via-[#f3efe7] to-[#b3d4bf] group relative  border-[#6f675d]/50  border border-dotted flex-none w-50 sm:w-full h-50"
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        navigate(`/editor?id_historia=${encodeURIComponent(id_historia)}`);
+      }}
+      className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
     >
-      {!visibilidad && (
-        <BookLock
-          height={25}
-          className="bg-(--neutral-150) absolute -top-3 -right-3 p-0.5 rounded-full"
-        />
-      )}
-      <div className="bg-linear-to-bl from-[#e7ddcd] via-[#f3efe7] to-[#d4ddd7] absolute inset-0 w-full h-full group-hover:animate-pulse group-hover:[animation-duration:2s]" />
-      <div className="absolute flex flex-col gap-4 p-4 pr-3 w-full h-full ">
-        <h3 className="font-bold text-2xl w-full line-clamp-3" title={titulo}>
-          {titulo}
-        </h3>
-        <p className="w-full line-clamp-3 hidden">{descripcion}</p>
-        <small className="mt-auto w-full h-8 flex gap-1 items-center ">
-          <div
-            className="flex gap-1 items-center  hover:bg-(--bg-surface-muted) rounded-2xl pr-2 max-w-[75%] transition-bg-color duration-300"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              navigate(`/perfil/${encodeURIComponent(autor.codigo_usuario)}`);
-            }}
-          >
-            <div className="aspect-square h-8 relative">
-              <img
-                src={`/api/Fotos/perfil/${autor.foto_perfil_usuario}?size=reducida`}
-                className="absolute object-cover rounded-full aspect-square w-full h-full"
-              />
-            </div>
-            <p className="font-bold truncate">{autor.nombre_usuario}</p>
-          </div>
+      <FilePenLine />
+      <p className="w-full justify-center text-center">Editar</p>
+    </button>
+  );
+}
 
-          <div className="ml-auto">
-            <MasOpciones>
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  navigate(`/editor?id_historia=${encodeURIComponent(idh)}`);
-                }}
-                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
-              >
-                <FilePenLine />
-                <p className="w-full justify-center text-center">Editar</p>
-              </div>
-              <button
-                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                <Hammer />
-                <p className="w-full justify-center">En Proceso</p>
-              </button>
-              <button
-                className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-              >
-                <Hammer />
-                <p className="w-full justify-center">En Construccion</p>
-              </button>
-              {opciones}
-            </MasOpciones>
-          </div>
-        </small>
-      </div>
-    </Link>
+export function BotonAgregarLista({ onAbrir }: { onAbrir: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onAbrir();
+      }}
+      className="flex h-10 w-full items-center px-2 justify-center bg-(--color_principal_opaco) hover:bg-amber-300 hover:cursor-pointer"
+    >
+      <FolderBookmark />
+      <p className="w-full justify-center text-center">Agregar a Lista</p>
+    </button>
   );
 }
 

@@ -102,7 +102,7 @@ export function ListasCard({ nombreLista, idLista, cantidad_elementos, autor }: 
         style={{ zIndex: cantidad }}
       >
         <div className="absolute w-[20%] h-3 -top-3 rounded-tr-md rounded-tl-md bg-[#EFE9DE] border-t border-l border-r "></div>
-        <h3 className="font-bold text-2xl text-center w-full line-clamp-2 break-all">
+        <h3 className="font-bold text-2xl text-center w-full line-clamp-2 wrap-break-word">
           {nombreLista}
         </h3>
         <div className="w-full h-min mt-auto flex justify-between items-center">

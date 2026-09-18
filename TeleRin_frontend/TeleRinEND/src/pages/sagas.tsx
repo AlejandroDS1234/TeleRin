@@ -4,7 +4,7 @@ import { ColorRandom } from "../function_generales";
 import {
   HistoriaCardCargando,
   HistoriaCard,
-  HistoriaCardEditar,
+  BotonEditarHistoria,
 } from "../assets/componentes/cards/historias_cards";
 import { useHistoriasSagas } from "./hook/sagas/hookHistoriasSaga";
 import { useSagaInfo } from "./hook/sagas/hookSagaInfo";
@@ -78,7 +78,6 @@ function SagasInfo() {
 function SagasHistorias() {
   const { id_saga = "" } = useParams();
   const { isLoading, error, data } = useHistoriasSagas(id_saga);
-  const Card = data?.editar ? HistoriaCardEditar : HistoriaCard;
 
   if (isLoading) {
     return (
@@ -101,7 +100,7 @@ function SagasHistorias() {
     <>
       {data.historias?.length ? (
         data.historias?.map((historia: Historia) => (
-          <Card
+          <HistoriaCard
             key={historia.id_historia}
             idh={historia.id_historia}
             titulo={historia.nombre_historia}
@@ -113,6 +112,7 @@ function SagasHistorias() {
               foto_perfil_usuario: historia.foto_perfil_usuario,
               codigo_usuario: historia.codigo_usuario,
             }}
+            opciones={data?.editar && <BotonEditarHistoria id_historia={historia.id_historia} />}
           />
         ))
       ) : (

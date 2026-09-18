@@ -1,5 +1,13 @@
 import { useSesion, useEditarSesion, useEditarFotoSesion } from "./hook/usuario/hookSesion";
-import { UserPen, NotepadText, Loader, ImagePlus, ThumbsUp, SquareX } from "lucide-react";
+import {
+  UserPen,
+  NotepadText,
+  Loader,
+  ImagePlus,
+  ThumbsUp,
+  SquareX,
+  FilePenLine,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import type { ChangeEvent } from "react";
 import { MensajePlano } from "../assets/componentes/mensaje";
@@ -8,7 +16,7 @@ import type { Genero, Pais } from "../types";
 import {
   HistoriaCard,
   HistoriaCardCargando,
-  HistoriaCardEditar,
+  BotonEditarHistoria,
 } from "../assets/componentes/cards/historias_cards";
 import { useHistorial } from "./hook/historias/hookHistorial";
 import { useHistoriasUsuario } from "./hook/historias/hookHistoriasUsuario";
@@ -26,6 +34,7 @@ import { useSagasCreadas } from "./hook/sagas/hookSagasCreadas";
 import { Sagacard, SagaCardCargando } from "../assets/componentes/cards/sagas_cards";
 import { ListasCard } from "../assets/componentes/cards/listas_cards";
 import { useListasLecturaUsuario } from "./hook/listas/hookListasLecturaUsuario";
+import { useNavigate } from "react-router-dom";
 
 function Nombre() {
   const { data: usuario } = useSesion("nombre_usuario");
@@ -531,6 +540,7 @@ function Historial() {
 function HistoriasUsuario() {
   const { data: usuario } = useSesion("codigo_usuario");
   const { isLoading, error, data } = useHistoriasUsuario(usuario?.codigo_usuario);
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -549,7 +559,7 @@ function HistoriasUsuario() {
     <div className="flex overflow-x-auto overflow-y-visible sm:grid sm:overflow-visible w-full sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
       {data?.length ? (
         data.map((historia: any) => (
-          <HistoriaCardEditar
+          <HistoriaCard
             key={historia.id_historia}
             idh={historia.id_historia}
             titulo={historia.nombre_historia}
@@ -561,6 +571,7 @@ function HistoriasUsuario() {
               foto_perfil_usuario: historia.foto_perfil_usuario,
               codigo_usuario: historia.codigo_usuario,
             }}
+            opciones={<BotonEditarHistoria id_historia={historia.id_historia} />}
           />
         ))
       ) : (
@@ -638,7 +649,7 @@ function ListasLectura() {
 }
 
 function Perfil() {
-  const [menuActivo, setMenuActivo] = useState("historial");
+  const [menuActivo, setMenuActivo] = useState("historias");
   const menus = {
     historial: <Historial />,
     historias: <HistoriasUsuario />,
@@ -652,17 +663,6 @@ function Perfil() {
         <PerfilInfo />
         <div className="h-full w-full">
           <div className=" h-10 sm:h-10 flex items-end divide-x divide-(--color_bordes) border-b">
-            <button
-              className={`flex-1 h-full truncate hover:cursor-pointer ${
-                menuActivo === "historial"
-                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-xl"
-                  : "bg-(--color_principal_claro)"
-              }`}
-              onClick={() => setMenuActivo("historial")}
-              title="Tu historial"
-            >
-              Historial
-            </button>
             <button
               className={`flex-1 h-full truncate hover:cursor-pointer ${
                 menuActivo === "historias"
@@ -695,6 +695,17 @@ function Perfil() {
               title="Listas"
             >
               Listas
+            </button>
+            <button
+              className={`flex-1 h-full truncate hover:cursor-pointer ${
+                menuActivo === "historial"
+                  ? "bg-(--neutral-150) text-(--color_texto_botones) font-bold text-xl"
+                  : "bg-(--color_principal_claro)"
+              }`}
+              onClick={() => setMenuActivo("historial")}
+              title="Tu historial"
+            >
+              Historial
             </button>
           </div>
           <div className="contenedor-scroll h-[92%] p-2 overflow-auto scroll-suave ">
